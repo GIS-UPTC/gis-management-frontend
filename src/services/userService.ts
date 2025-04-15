@@ -20,6 +20,7 @@ export const userService = {
   },
 
   createUser: async (userData: Omit<User, 'id'>) => {
+    console.log(userData)
     const response = await api.post<User>('/users', userData);
     return response.data;
   },

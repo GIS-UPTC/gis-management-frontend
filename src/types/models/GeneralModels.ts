@@ -106,9 +106,6 @@ export interface Place {
   export interface GroupParticipation {
     id: number;
     responsibilities: Responsibility[];
-    program: Program;
-    is_group_leader: boolean;
-    is_main_researcher: boolean;
   }
   
   /**
@@ -192,7 +189,10 @@ export interface Place {
     other_surname: string;
     interest_topics: InterestTopic[];
     participations: GroupParticipation[];
+    program: Program;
     role_granting_list: RoleGranting[];
+    is_group_leader: boolean;
+    is_main_researcher: boolean;
   }
   
   /**

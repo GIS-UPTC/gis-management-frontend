@@ -1,0 +1,332 @@
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import Header from '@/components/layout/Header';
+import { User } from '@/types/models/GeneralModels';
+import { loginService } from '@/services/loginService';
+import { toast } from 'react-hot-toast';
+import { userService } from '@/services/userService';
+
+export default function ProfilePage() {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const loadUser = () => {
+      try {
+        const currentUser = loginService.getUser();
+        if (!currentUser) {
+          toast.error('No se encontró información del usuario');
+          return;
+        }
+        setUser(currentUser);
+      } catch (error) {
+        console.error('Error al cargar el perfil:', error);
+        toast.error('Error al cargar el perfil del usuario');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadUser();
+  }, []);
+
+  const handleChangePassword = async () => {
+    if (newPassword !== confirmPassword) {
+      toast.error('Las contraseñas no coinciden');
+      return;
+    }
+
+    /*if (newPassword.length < 6) {
+      toast.error('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }*/
+
+    if (!user) return;
+
+    setIsSubmitting(true);
+    try {
+      await userService.changePassword(user.id, newPassword);
+      toast.success('Contraseña actualizada correctamente');
+      setIsPasswordDialogOpen(false);
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (error) {
+      toast.error('Error al cambiar la contraseña');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <>
+        <Header moduleName="Perfil" />
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex justify-center items-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (!user) {
+    return (
+      <>
+        <Header moduleName="Perfil" />
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center py-8 text-gray-500">
+            No se encontró información del usuario
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Header moduleName="Perfil" />
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold mb-6">Mi Perfil</h1>
+
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Imagen del usuario y badges */}
+            <div className="md:col-span-2 flex flex-col md:flex-row items-center justify-between mb-6">
+              <div className="flex flex-col md:flex-row items-center">
+                <div className="w-40 h-40 rounded-full overflow-hidden mb-4 md:mb-0 md:mr-6">
+                  <img
+                    src={user.photo_url || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+                    alt={`${user.first_name} ${user.surname}`}
+                    width={150}
+                    height={150}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <div className="flex flex-col items-center md:items-start">
+                  <h2 className="text-xl font-bold">{user.first_name} {user.surname}</h2>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {user.is_group_leader && (
+                      <span className="inline-block px-3 py-1 text-sm font-semibold text-blue-800 bg-blue-100 rounded-full">
+                        Líder de Grupo
+                      </span>
+                    )}
+                    {user.is_main_researcher && (
+                      <span className="inline-block px-3 py-1 text-sm font-semibold text-purple-800 bg-purple-100 rounded-full">
+                        Investigador Principal
+                      </span>
+                    )}
+                    <span className={`inline-block px-3 py-1 text-sm font-semibold rounded-full ${user.is_Active ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-800'}`}>
+                      {user.is_Active ? 'Activo' : 'Inactivo'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsPasswordDialogOpen(true)}
+                className="mt-4 md:mt-0 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                Cambiar Contraseña
+              </button>
+            </div>
+
+            <div>
+              <h2 className="text-lg font-semibold mb-4">Información Personal</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Nombres</label>
+                  <p className="mt-1">{user.first_name} {user.other_name || ''}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Apellidos</label>
+                  <p className="mt-1">{user.surname} {user.other_surname || ''}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">DNI</label>
+                  <p className="mt-1">{user.dni}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Correo Electrónico</label>
+                  <p className="mt-1">{user.email}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Fecha de Nacimiento</label>
+                  <p className="mt-1">{user.birthdate ? new Date(user.birthdate).toLocaleDateString() : 'No especificada'}</p>
+                </div>
+                {user.entry_date && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Fecha de Ingreso</label>
+                    <p className="mt-1">{new Date(user.entry_date).toLocaleDateString()}</p>
+                  </div>
+                )}
+                {user.deparure_date && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Fecha de Salida</label>
+                    <p className="mt-1">{new Date(user.deparure_date).toLocaleDateString()}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-lg font-semibold mb-4">Información Académica</h2>
+              <div className="space-y-4">
+                {user.program && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Programa</label>
+                      <p className="mt-1">{user.program.name}</p>
+                    </div>
+                    {user.program.faculty && (
+                      <>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Facultad</label>
+                          <p className="mt-1">{user.program.faculty.name}</p>
+                        </div>
+                        {user.program.faculty.university && (
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Universidad</label>
+                            <p className="mt-1">{user.program.faculty.university.name}</p>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Sección de intereses */}
+            <div className="md:col-span-2">
+              <h2 className="text-lg font-semibold mb-4">Temas de Interés</h2>
+              {user.interest_topics && user.interest_topics.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {user.interest_topics.map((interest, index) => (
+                    <span
+                      key={index}
+                      className="inline-block px-3 py-1 text-sm font-semibold text-gray-700 bg-blue-100 rounded-full"
+                    >
+                      {typeof interest === 'object' ? 
+                        (interest.description || 'Tema sin nombre') : 
+                        interest}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 italic">No se han especificado temas de interés</p>
+              )}
+            </div>
+
+            {/* Enlaces o links */}
+            {user.links && user.links.length > 0 && (
+              <div className="md:col-span-2">
+                <h2 className="text-lg font-semibold mb-4">Enlaces</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {user.links.map((link, index) => (
+                    <a 
+                      key={index}
+                      href={link.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline flex items-center"
+                    >
+                      {link.name || link.link}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Roles y permisos */}
+            <div className="md:col-span-2">
+              <h2 className="text-lg font-semibold mb-4">Roles y Permisos</h2>
+              {user.role_granting_list && user.role_granting_list.length > 0 ? (
+                <div className="space-y-4">
+                  {user.role_granting_list.map((roleGrant) => (
+                    <div key={roleGrant.id} className="bg-gray-50 p-4 rounded-lg">
+                      <h3 className="font-medium text-gray-900">{roleGrant.role?.name || 'Rol sin nombre'}</h3>
+                      <div className="mt-2">
+                        <h4 className="text-sm font-medium text-gray-700">Permisos:</h4>
+                        <div className="flex flex-wrap gap-2 mt-1">
+                          {roleGrant.permissions?.map((permission) => (
+                            <span
+                              key={permission.id}
+                              className="inline-block px-2 py-1 text-xs font-semibold text-gray-700 bg-yellow-100 rounded-full"
+                            >
+                              {permission.name}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 italic">No tiene roles asignados</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Diálogo de Cambio de Contraseña */}
+        {isPasswordDialogOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md">
+              <h2 className="text-xl font-bold mb-4">Cambiar Contraseña</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Nueva Contraseña
+                  </label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Ingrese su nueva contraseña"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Confirmar Contraseña
+                  </label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Confirme su nueva contraseña"
+                  />
+                </div>
+              </div>
+              <div className="mt-6 flex justify-end space-x-3">
+                <button
+                  onClick={() => {
+                    setIsPasswordDialogOpen(false);
+                    setNewPassword('');
+                    setConfirmPassword('');
+                  }}
+                  className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleChangePassword}
+                  disabled={isSubmitting}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Guardando...' : 'Guardar'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
+  );
+} 

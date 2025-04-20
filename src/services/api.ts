@@ -1,26 +1,44 @@
-import axios from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import { AUTH_ERROR_MESSAGES } from '@/utils/errorHandler';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Interceptor para manejar errores globales
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response) {
-      // El servidor respondió con un código de estado fuera del rango 2xx
-      console.error('Error response:', error.response.data);
-    } else if (error.request) {
-      // La solicitud fue hecha pero no se recibió respuesta
-      console.error('Error request:', error.request);
-    } else {
-      // Algo sucedió al configurar la solicitud que desencadenó un error
-      console.error('Error message:', error.message);
+// Interceptor para agregar el token de autenticación
+api.interceptors.request.use(
+  (config) => {
+    const token = sessionStorage.getItem('access_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
+    return config;
+  },
+  (error) => {
+    console.log("Api - Interceptor Error -> ", error)
+    return Promise.reject(error);
+  }
+);
+
+// Interceptor para manejar respuestas y errores
+api.interceptors.response.use(
+  (response: AxiosResponse) => response,
+  (error: AxiosError<{ detail: string }>) => {
+    if (error.response?.data?.detail) {
+      const detail = error.response.data.detail;
+      
+      if (AUTH_ERROR_MESSAGES.includes(detail)) {
+        sessionStorage.removeItem('access_token');
+        
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login';
+        }
+      }
+    }
+    
     return Promise.reject(error);
   }
 );

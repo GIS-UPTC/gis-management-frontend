@@ -3,36 +3,36 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/layout/Header';
-import UserForm from '@/components/users/UserForm';
-import { User } from '@/types/models/GeneralModels';
-import { userService, UserServiceError } from '@/services/userService';
+import RoleForm from '@/components/roles/RoleForm';
+import { Role } from '@/types/models/GeneralModels';
+import { roleService, RoleServiceError } from '@/services/roleService';
 import { toast } from 'react-hot-toast';
 
-export default function NewUserPage() {
+export default function NewRolePage() {
   const searchParams = useSearchParams();
   const [isEditing, setIsEditing] = useState(false);
-  const [userData, setUserData] = useState<User | null>(null);
+  const [roleData, setRoleData] = useState<Role | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const editUser = searchParams.get('edit');
-    if (editUser) {
+    const editRole = searchParams.get('edit');
+    if (editRole) {
       setIsEditing(true);
-      fetchUserData(editUser);
+      fetchRoleData(editRole);
     }
   }, [searchParams]);
 
-  const fetchUserData = async (userName: string) => {
+  const fetchRoleData = async (roleName: string) => {
     setIsLoading(true);
     try {
-      const searchResults = await userService.searchUsersByName(userName);
+      const searchResults = await roleService.searchRoles(roleName);
       if (searchResults.length > 0) {
-        setUserData(searchResults[0]);
+        setRoleData(searchResults[0]);
       } else {
-        toast.error('Usuario no encontrado');
+        toast.error('Rol no encontrado');
       }
     } catch (error) {
-      if (error instanceof UserServiceError) {
+      if (error instanceof RoleServiceError) {
         toast.error(error.message);
       } else {
         const errorMessage = 'Ocurrió un error inesperado. Por favor, intente nuevamente.';
@@ -45,11 +45,11 @@ export default function NewUserPage() {
 
   return (
     <>
-      <Header moduleName="Gestión de Usuarios" />
+      <Header moduleName="Gestión de Roles" />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
           <h1 className="text-2xl font-bold">
-            {isEditing ? 'Editar Usuario' : 'Nuevo Usuario'}
+            {isEditing ? 'Editar Rol' : 'Nuevo Rol'}
           </h1>
         </div>
         {isLoading ? (
@@ -57,7 +57,7 @@ export default function NewUserPage() {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
           </div>
         ) : (
-          <UserForm initialData={userData} isEditing={isEditing} />
+          <RoleForm initialData={roleData} isEditing={isEditing} />
         )}
       </div>
     </>

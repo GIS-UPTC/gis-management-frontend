@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Role, Permission, RoleGranting, Access } from '@/types/models/GeneralModels';
-import { roleService } from '@/services/roleService';
+import { roleService, RoleServiceError } from '@/services/roleService';
 import { Combobox } from '@headlessui/react';
 import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { toast } from 'react-hot-toast';
@@ -33,8 +33,12 @@ export default function RoleSelector({ selectedRoleGrantings, onRoleGrantingsCha
         const roles = await roleService.searchRoles(query);
         setAvailableRoles(roles);
       } catch (error) {
-        console.error('Error searching roles:', error);
-        toast.error('Error al buscar roles');
+        if (error instanceof RoleServiceError) {
+          toast.error(error.message);
+        } else {
+          const errorMessage = 'Ocurrió un error inesperado. Por favor, intente nuevamente.';
+          toast.error(errorMessage);
+        }
         setAvailableRoles([]);
       } finally {
         setIsLoading(false);
@@ -89,7 +93,7 @@ export default function RoleSelector({ selectedRoleGrantings, onRoleGrantingsCha
     <div className="space-y-6">
       {/* Búsqueda de roles */}
       <div>
-        <h4 className="text-sm font-medium text-gray-700 mb-2">Buscar roles:</h4>
+        <h4 className="text-sm font-medium text-gray-700 mb-2">Roles y permisos:</h4>
         <Combobox value={selectedRole} onChange={handleAddRole}>
           <div className="relative">
             <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border focus-within:border-orange-500">
@@ -125,7 +129,7 @@ export default function RoleSelector({ selectedRoleGrantings, onRoleGrantingsCha
                       }`
                     }
                     value={role}
-                    disabled={selectedRoleGrantings.some(rg => rg.role.id === role.id)}
+                    disabled={selectedRoleGrantings.some(rg => rg.id === role.id)}
                   >
                     {({ selected, active }: ComboboxOptionRenderProps) => (
                       <>
@@ -153,7 +157,6 @@ export default function RoleSelector({ selectedRoleGrantings, onRoleGrantingsCha
 
       {/* Roles y permisos asignados */}
       <div>
-        <h4 className="text-sm font-medium text-gray-700 mb-2">Roles asignados:</h4>
         <div className="space-y-4">
           {selectedRoleGrantings.map(roleGranting => (
             <div key={roleGranting.id} className="border rounded-lg p-4">

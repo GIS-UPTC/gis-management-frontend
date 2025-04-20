@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Program } from '@/types/models/GeneralModels';
 import { Combobox } from '@headlessui/react';
 import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
-import { programService } from '@/services/programService';
+import { programService, ProgramServiceError } from '@/services/programService';
 import { toast } from 'react-hot-toast';
 
 interface ProgramSelectorProps {
@@ -32,8 +32,12 @@ export default function ProgramSelector({ selectedProgram, onProgramChange }: Pr
         const programs = await programService.searchPrograms(query);
         setAvailablePrograms(programs);
       } catch (error) {
-        console.error('Error searching programs:', error);
-        toast.error('Error al buscar programas');
+        if (error instanceof ProgramServiceError) {
+          toast.error(error.message);
+        } else {
+          const errorMessage = 'Ocurrió un error inesperado. Por favor, intente nuevamente.';
+          toast.error(errorMessage);
+        }
         setAvailablePrograms([]);
       } finally {
         setIsLoading(false);

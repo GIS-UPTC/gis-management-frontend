@@ -20,8 +20,12 @@ module.exports = {
           800: '#075985',
           900: '#0c4a6e',
         },
+        customLightYellow: '#F3EFDD',
+        customDarkYellow: '#F9E27D',
+        customMiddleYellow: '#F6E9AD',
+        customDarkGreen: '#7AAB5E'
       },
     },
   },
   plugins: [],
-} 
+}

@@ -3,14 +3,19 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { HiMenu, HiX } from 'react-icons/hi';
+import { FaUser } from 'react-icons/fa'; // Importamos el icono de usuario
 
 interface HeaderProps {
   moduleName: string;
+  userName?: string; // Nombre completo del usuario actual
 }
 
-const Header: React.FC<HeaderProps> = ({ moduleName }) => {
+const Header: React.FC<HeaderProps> = ({ moduleName, userName = '' }) => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  // Codificar el nombre de usuario para que sea seguro usarlo en una URL
+  const encodedUserName = encodeURIComponent(userName);
 
   const navItems = [
     { name: 'Inicio', path: '/' },
@@ -46,21 +51,31 @@ const Header: React.FC<HeaderProps> = ({ moduleName }) => {
 
           {/* Navegación para desktop */}
           <nav className="hidden md:block">
-            <ul className="flex space-x-6">
+            <ul className="flex space-x-6 items-center">
               {navItems.map((item) => (
                 <li key={item.path}>
                   <Link
                     href={item.path}
-                    className={`text-sm font-medium transition-colors hover:text-primary-600 ${
+                    className={`text-base font-medium transition-colors hover:text-primary-600 ${
                       pathname === item.path
                         ? 'text-primary-600 border-b-2 border-primary-600'
-                        : 'text-gray-600'
+                        : 'text-black'
                     }`}
                   >
                     {item.name}
                   </Link>
                 </li>
               ))}
+              {/* Icono de usuario */}
+              <li>
+                <Link 
+                  href={`/profile`}
+                  className="ml-4 p-2 rounded-full hover:bg-yellow-200 transition-colors flex items-center justify-center"
+                  aria-label="Perfil de usuario"
+                >
+                  <FaUser className="text-gray-800" size={20} />
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>
@@ -84,6 +99,17 @@ const Header: React.FC<HeaderProps> = ({ moduleName }) => {
                   </Link>
                 </li>
               ))}
+              {/* Icono de usuario en menú móvil */}
+              <li>
+                <Link
+                  href={`/perfil?nombre=${encodedUserName}`}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`flex items-center py-2 px-4 rounded-lg transition-colors text-gray-600 hover:bg-gray-50`}
+                >
+                  <FaUser className="mr-2" size={18} />
+                  <span>Perfil</span>
+                </Link>
+              </li>
             </ul>
           </nav>
         )}
@@ -92,4 +118,4 @@ const Header: React.FC<HeaderProps> = ({ moduleName }) => {
   );
 };
 
-export default Header; 
+export default Header;

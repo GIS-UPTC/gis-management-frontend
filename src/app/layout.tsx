@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Grupo de Investigación",
-  description: "Sistema de gestión de grupo de investigación",
+  title: "GIS - Grupo de Investigación",
+  description: "Sistema de gestión de investigación",
 };
 
 export default function RootLayout({
@@ -17,9 +18,11 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={inter.className} suppressHydrationWarning>
-        <main className="min-h-screen bg-gray-50">
-          {children}
-        </main>
+        <ProtectedRoute>
+          <main className="min-h-screen bg-gray-50">
+            {children}
+          </main>
+        </ProtectedRoute>
       </body>
     </html>
   );

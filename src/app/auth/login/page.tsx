@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { loginService } from '@/services/loginService';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,17 +12,19 @@ export default function LoginPage() {
     password: '',
   });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     
     try {
-      // TODO: Implementar la llamada a la API de autenticación
-      console.log('Login attempt:', formData);
+      const response = await loginService.login(formData);
       router.push('/');
     } catch (error) {
       console.error('Error during login:', error);
+      setError(error instanceof Error ? error.message : 'Error en la autenticación');
     } finally {
       setLoading(false);
     }
@@ -53,6 +56,11 @@ export default function LoginPage() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          {error && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { InterestTopic } from '@/types/models/GeneralModels';
 import { Combobox } from '@headlessui/react';
 import { ChevronUpDownIcon, XMarkIcon } from '@heroicons/react/20/solid';
-import { topicService } from '@/services/topicService';
+import { topicService, TopicServiceError } from '@/services/topicService';
 import { toast } from 'react-hot-toast';
 
 interface TopicSelectorProps {
@@ -19,6 +19,8 @@ export default function TopicSelector({ selectedTopics, onTopicsChange }: TopicS
   const [query, setQuery] = useState('');
   const [availableTopics, setAvailableTopics] = useState<InterestTopic[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  // Contador para generar IDs temporales negativos para nuevos tópicos
+  const [tempIdCounter, setTempIdCounter] = useState(-1);
 
   useEffect(() => {
     const searchTopics = async () => {
@@ -36,8 +38,12 @@ export default function TopicSelector({ selectedTopics, onTopicsChange }: TopicS
         );
         setAvailableTopics(filteredTopics);
       } catch (error) {
-        console.error('Error searching topics:', error);
-        toast.error('Error al buscar tópicos');
+        if (error instanceof TopicServiceError) {
+          toast.error(error.message);
+        } else {
+          const errorMessage = 'Ocurrió un error inesperado. Por favor, intente nuevamente.';
+          toast.error(errorMessage);
+        }
         setAvailableTopics([]);
       } finally {
         setIsLoading(false);
@@ -48,11 +54,30 @@ export default function TopicSelector({ selectedTopics, onTopicsChange }: TopicS
     return () => clearTimeout(debounceTimer);
   }, [query, selectedTopics]);
 
-  const handleSelect = (topic: InterestTopic | null) => {
-    if (topic && !selectedTopics.find(t => t.id === topic.id)) {
-      onTopicsChange([...selectedTopics, topic]);
-      setQuery('');
+  const handleSelect = (topic: InterestTopic | string | null) => {
+    if (topic === null) return;
+    
+    // Si el topic es un string, significa que es la opción "Agregar tópico"
+    if (typeof topic === 'string') {
+      // Crear un nuevo tópico con ID temporal negativo
+      const newTopic: InterestTopic = {
+        id: tempIdCounter,
+        description: query.trim()
+      };
+      
+      // Actualizar el contador para el próximo ID temporal
+      setTempIdCounter(prev => prev - 1);
+      
+      // Añadir el nuevo tópico a los seleccionados
+      onTopicsChange([...selectedTopics, newTopic]);
+    } else {
+      // Es un tópico existente
+      if (!selectedTopics.find(t => t.id === topic.id)) {
+        onTopicsChange([...selectedTopics, topic]);
+      }
     }
+    
+    setQuery('');
   };
 
   const handleRemove = (topicId: number) => {
@@ -61,27 +86,8 @@ export default function TopicSelector({ selectedTopics, onTopicsChange }: TopicS
 
   return (
     <div className="space-y-4">
-      {/* Selected Topics */}
-      <div className="flex flex-wrap gap-2">
-        {selectedTopics.map(topic => (
-          <div
-            key={topic.id}
-            className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm"
-          >
-            <span>{topic.description}</span>
-            <button
-              type="button"
-              onClick={() => handleRemove(topic.id)}
-              className="p-0.5 hover:bg-orange-200 rounded-full"
-            >
-              <XMarkIcon className="h-4 w-4" />
-            </button>
-          </div>
-        ))}
-      </div>
-
       {/* Combobox for adding new topics */}
-      <Combobox<InterestTopic | null> value={null} onChange={handleSelect}>
+      <Combobox value={null} onChange={handleSelect}>
         <div className="relative">
           <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border focus-within:border-orange-500">
             <Combobox.Input
@@ -103,9 +109,37 @@ export default function TopicSelector({ selectedTopics, onTopicsChange }: TopicS
                 Buscando tópicos...
               </div>
             ) : availableTopics.length === 0 && query !== '' ? (
-              <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
-                {query.length < 3 ? 'Escriba al menos 3 caracteres para buscar' : 'No se encontraron tópicos.'}
-              </div>
+              query.length < 3 ? (
+                <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+                  Escriba al menos 3 caracteres para buscar
+                </div>
+              ) : (
+                !isLoading && (
+                  <Combobox.Option
+                    className={({ active }: { active: boolean }) =>
+                      `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                        active ? 'bg-orange-100 text-orange-900' : 'text-gray-900'
+                      }`
+                    }
+                    value="create-new-topic" // Usamos un string especial como valor
+                  >
+                    {({ active }: ComboboxOptionRenderProps) => (
+                      <>
+                        <span className={`block truncate font-medium`}>
+                          Agregar tópico: "{query.trim()}"
+                        </span>
+                        <span
+                          className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                            active ? 'text-orange-600' : 'text-orange-600'
+                          }`}
+                        >
+                          <PlusIcon className="h-5 w-5" aria-hidden="true" />
+                        </span>
+                      </>
+                    )}
+                  </Combobox.Option>
+                )
+              )
             ) : (
               availableTopics.map((topic) => (
                 <Combobox.Option
@@ -139,6 +173,25 @@ export default function TopicSelector({ selectedTopics, onTopicsChange }: TopicS
           </Combobox.Options>
         </div>
       </Combobox>
+
+      {/* Selected Topics */}
+      <div className="flex flex-wrap gap-2">
+        {selectedTopics.map(topic => (
+          <div
+            key={topic.id}
+            className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm"
+          >
+            <span>{topic.description}</span>
+            <button
+              type="button"
+              onClick={() => handleRemove(topic.id)}
+              className="p-0.5 hover:bg-orange-200 rounded-full"
+            >
+              <XMarkIcon className="h-4 w-4" />
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -153,4 +206,16 @@ function CheckIcon(props: React.SVGProps<SVGSVGElement>) {
       />
     </svg>
   );
-} 
+}
+
+function PlusIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" {...props}>
+      <path
+        fillRule="evenodd"
+        d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+}

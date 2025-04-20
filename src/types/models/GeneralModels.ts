@@ -82,7 +82,7 @@ export interface Place {
     id: number;
     description: string;
   }
-  
+
   /**
    * MODELOS PARA PARTICIPACIÓN Y RESPONSABILIDADES
    * Estos modelos representan la participación de usuarios en grupos y sus responsabilidades
@@ -93,7 +93,7 @@ export interface Place {
    * - Se usa como parte de GroupParticipation
    * - Define las responsabilidades asignadas a un usuario en un grupo específico
    */
-  export interface Responsibility {
+  export interface Responsability {
     id: number;
     description: string;
   }
@@ -105,7 +105,7 @@ export interface Place {
    */
   export interface GroupParticipation {
     id: number;
-    responsibilities: Responsibility[];
+    responsibilities: Responsability[];
   }
   
   /**
@@ -184,11 +184,12 @@ export interface Place {
     entry_date: string; // formato date-time
     links: Link[];
     is_Active: boolean; // nota: mantiene la mayúscula como en la API
-    deparure_date: string | null; // formato date-time (hay un typo en la API, debería ser departure_date)
-    other_name: string;
-    other_surname: string;
+    deparure_date?: string; // formato date-time (hay un typo en la API, debería ser departure_date)
+    other_name?: string;
+    other_surname?: string;
     interest_topics: InterestTopic[];
     participations: GroupParticipation[];
+    responsabilities: Responsability[];
     program: Program;
     role_granting_list: RoleGranting[];
     is_group_leader: boolean;
@@ -257,4 +258,35 @@ export interface Place {
     is_active?: boolean;
     page?: number;
     page_size?: number;
+  }
+
+  export interface Organization {
+    id: number;
+    name: string;
+    image_url: string;
+    organization_image_url: string;
+    slogan: string;
+    code: string;
+    clasiffications: Classification[];
+    acronym: string;
+    mission: string;
+    vision: string;
+    links: Link[];
+  }
+
+  export interface Classification {
+    classification: string;
+    year: number;
+  }
+
+  export interface ResearchLine {
+    id: number;
+    name: string;
+    is_active: boolean;
+    coordinator: User;
+  }
+
+  export interface ChangePasswordResponse {
+    userId: number,
+    newPassword: string,
   }

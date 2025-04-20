@@ -1,18 +1,35 @@
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { User } from '@/types/models/GeneralModels';
 
 interface UserTableProps {
   users: User[];
 }
 
-const UserTable: React.FC<UserTableProps> = ({ users }) => {
+export default function UserTable({ users }: UserTableProps) {
+  const router = useRouter();
+
+  const handleRowClick = (user: User) => {
+    const fullName = `${user.first_name}${user.other_name ? ` ${user.other_name}` : ''} ${user.surname}${user.other_surname ? ` ${user.other_surname}` : ''}`;
+    const encodedName = encodeURIComponent(fullName.trim());
+    const encodedDni = encodeURIComponent(user.dni);
+    router.push(`/usuarios/${encodedName}?dni=${encodedDni}`);
+  };
+
+  const formatName = (user: User) => {
+    const firstName = user.first_name;
+    const otherName = user.other_name ? ` ${user.other_name}` : '';
+    const surname = user.surname;
+    const otherSurname = user.other_surname ? ` ${user.other_surname}` : '';
+    return `${firstName}${otherName} ${surname}${otherSurname}`;
+  };
+
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white">
         <thead className="bg-yellow-200">
           <tr>
-            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Nombres</th>
-            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Apellidos</th>
+            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Nombre Completo</th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Correo</th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">DNI</th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Roles</th>
@@ -21,12 +38,13 @@ const UserTable: React.FC<UserTableProps> = ({ users }) => {
         </thead>
         <tbody className="divide-y divide-gray-200">
           {users.map((user) => (
-            <tr key={user.id}>
+            <tr
+              key={user.id}
+              onClick={() => handleRowClick(user)}
+              className="cursor-pointer hover:bg-gray-50 transition-colors"
+            >
               <td className="px-6 py-4 text-sm text-gray-900">
-                {user.first_name} {user.other_name}
-              </td>
-              <td className="px-6 py-4 text-sm text-gray-900">
-                {user.surname} {user.other_surname}
+                {formatName(user)}
               </td>
               <td className="px-6 py-4 text-sm text-gray-900">{user.email}</td>
               <td className="px-6 py-4 text-sm text-gray-900">{user.dni}</td>
@@ -42,11 +60,10 @@ const UserTable: React.FC<UserTableProps> = ({ users }) => {
               </td>
               <td className="px-6 py-4 text-sm">
                 <span
-                  className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${
-                    user.is_Active
-                      ? 'bg-green-200 text-green-800'
-                      : 'bg-gray-200 text-gray-800'
-                  }`}
+                  className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${user.is_Active
+                    ? 'bg-green-200 text-green-800'
+                    : 'bg-gray-200 text-gray-800'
+                    }`}
                 >
                   {user.is_Active ? 'Activo' : 'Inactivo'}
                 </span>
@@ -57,6 +74,4 @@ const UserTable: React.FC<UserTableProps> = ({ users }) => {
       </table>
     </div>
   );
-};
-
-export default UserTable; 
+} 

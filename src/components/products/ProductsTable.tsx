@@ -2,6 +2,7 @@ import React from 'react';
 import { Product } from '@/types/models/GeneralModels';
 import { FaTrash, FaEye } from 'react-icons/fa';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface ProductsTableProps {
   products: Product[];
@@ -9,66 +10,59 @@ interface ProductsTableProps {
 }
 
 export default function ProductsTable({ products, onDelete }: ProductsTableProps) {
+  const router = useRouter();
+
+  const handleRowClick = (product: Product) => {
+    const encodedName = encodeURIComponent(product.name);
+    router.push(`/productos/${encodedName}`);
+  };
+
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+      <table className="min-w-full bg-white">
+        <thead className="bg-yellow-200">
           <tr>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Código
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Nombre
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Tipo
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Subtipo
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Proyecto
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Acciones
-            </th>
+            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Código</th>
+            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Nombre</th>
+            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Tipo</th>
+            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Subtipo</th>
+            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Proyecto</th>
+            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Acciones</th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody className="divide-y divide-gray-200">
           {products.map((product) => (
-            <tr key={product.code} className="hover:bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            <tr
+              key={product.code}
+              className="cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={() => handleRowClick(product)}
+            >
+              <td className="px-6 py-4 text-sm text-gray-900">
                 {product.code}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                <Link href={`/productos/${encodeURIComponent(product.name)}`} className="text-blue-600 hover:underline">
-                  {product.name}
-                </Link>
+              <td className="px-6 py-4 text-sm text-gray-900">
+                {product.name}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="px-6 py-4 text-sm text-gray-900">
                 {product.type.name}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="px-6 py-4 text-sm text-gray-900">
                 {product.type.subtype_name || 'N/A'}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="px-6 py-4 text-sm text-gray-900">
                 {product.project?.title || 'N/A'}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 space-x-2">
-                <Link 
-                  href={`/productos/${encodeURIComponent(product.name)}`}
-                  className="text-blue-600 hover:text-blue-800 inline-block mr-3"
-                  title="Ver detalles"
-                >
-                  <FaEye size={18} />
-                </Link>
+              <td className="px-6 py-4 text-sm">
                 {onDelete && (
                   <button
-                    onClick={() => onDelete(product.code)}
-                    className="text-red-600 hover:text-red-900 inline-block"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDelete(product.code);
+                    }}
+                    className="px-3 py-1 rounded-md text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200"
                     title="Eliminar producto"
                   >
-                    <FaTrash size={18} />
+                    <FaTrash className="inline mr-1" size={14} /> Eliminar
                   </button>
                 )}
               </td>

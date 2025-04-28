@@ -38,7 +38,7 @@ export default function OrganizationPage() {
   if (loading) {
     return (
       <>
-        <Header moduleName="Gestión de Usuarios" />
+        <Header moduleName="Usuarios" />
         <div className="container mx-auto px-4 py-8">
           <p className="text-lg">Cargando la información de la organización...</p>
         </div>
@@ -49,7 +49,7 @@ export default function OrganizationPage() {
   if (error) {
     return (
       <>
-        <Header moduleName="Gestión de Usuarios" />
+        <Header moduleName="Usuarios" />
         <div className="container mx-auto px-4 py-8">
           <p className="text-red-600 font-semibold">{error}</p>
         </div>

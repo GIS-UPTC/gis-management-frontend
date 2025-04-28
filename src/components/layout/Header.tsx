@@ -19,9 +19,9 @@ const Header: React.FC<HeaderProps> = ({ moduleName, userName = '' }) => {
 
   // Menú principal (reorganizado según especificaciones)
   const navItems = [
-    { name: 'Inicio', path: '/' },
     { name: 'Proyectos', path: '/proyectos' },
     { name: 'Avances', path: '/avances' },
+    { name: 'Productos', path: '/productos' },
     { name: 'Reportes', path: '/reportes' },
   ];
 
@@ -36,14 +36,16 @@ const Header: React.FC<HeaderProps> = ({ moduleName, userName = '' }) => {
     <header className="bg-[#F9E27D] shadow-md">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center space-x-4">
-            <Image
-              src="/images/logo-gis.png"
-              alt="GIS Logo"
-              width={120}
-              height={120}
-              className="object-contain"
-            />
+          <div className="flex items-center space-x-1">
+            <Link href="/" title='Inicio'>
+              <Image
+                src="/images/logo-gis.png"
+                alt="GIS Logo"
+                width={135}
+                height={135}
+                className="object-contain cursor-pointer"
+              />
+            </Link>
             <h1 className="text-xl font-semibold text-gray-800 hidden sm:block">{moduleName}</h1>
           </div>
 
@@ -98,7 +100,7 @@ const Header: React.FC<HeaderProps> = ({ moduleName, userName = '' }) => {
                         key={item.path}
                         href={item.path}
                         className={`block px-4 py-2 text-sm hover:bg-gray-100 ${
-                          pathname === item.path ? 'bg-gray-50 text-primary-600' : 'text-gray-700'
+                          pathname === item.path ? 'bg-gray-50 text-primary-600' : 'text-black'
                         }`}
                       >
                         {item.name}

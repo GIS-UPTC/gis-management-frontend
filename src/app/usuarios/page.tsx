@@ -37,7 +37,7 @@ export default function UsersPage() {
 
   return (
     <>
-      <Header moduleName="Gestión de Usuarios" />
+      <Header moduleName="Usuarios" />
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Listado de Usuarios</h1>

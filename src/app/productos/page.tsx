@@ -22,11 +22,9 @@ export default function ProductosPage() {
   const loadProducts = async (query: string) => {
     setIsLoading(true);
     try {
-      if(!query && query !== '') {
-        const productData = await productService.getProduct(query || ' ');
-        // Si la respuesta es un solo producto, lo convertimos en un array
-        const productArray = Array.isArray(productData) ? productData : [productData];
-        setProducts(productArray);
+      if(query.length > 2) {
+        const productData = await productService.getProducts(query);
+        setProducts(productData);
       }
     } catch (error) {
       if (error instanceof ProductServiceError) {
@@ -64,7 +62,7 @@ export default function ProductosPage() {
 
   return (
     <>
-      <Header moduleName="Gestión de Productos" />
+      <Header moduleName="Productos" />
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Listado de Productos</h1>

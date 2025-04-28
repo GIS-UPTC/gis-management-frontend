@@ -65,7 +65,7 @@ export default function NewProjectPage() {
 
   return (
     <>
-      <Header moduleName="Gestión de Proyectos" />
+      <Header moduleName="Proyectos" />
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">

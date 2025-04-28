@@ -43,7 +43,7 @@ export default function RoleDetailsPage() {
   if (isLoading) {
     return (
       <>
-        <Header moduleName="Gestión de Roles" />
+        <Header moduleName="Roles" />
         <div className="container mx-auto px-4 py-8">
           <div className="flex justify-center items-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
@@ -56,7 +56,7 @@ export default function RoleDetailsPage() {
   if (!role) {
     return (
       <>
-        <Header moduleName="Gestión de Roles" />
+        <Header moduleName="Roles" />
         <div className="container mx-auto px-4 py-8">
           <div className="text-center py-8 text-gray-500">
             Rol no encontrado
@@ -68,7 +68,7 @@ export default function RoleDetailsPage() {
 
   return (
     <>
-      <Header moduleName="Gestión de Roles" />
+      <Header moduleName="Roles" />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6 flex justify-between items-center">
           <h1 className="text-2xl font-bold">Detalles del Rol</h1>

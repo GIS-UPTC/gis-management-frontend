@@ -37,7 +37,7 @@ export default function ProjectDetailsPage() {
   if (isLoading) {
     return (
       <>
-        <Header moduleName="Gestión de Proyectos" />
+        <Header moduleName="Proyectos" />
         <div className="container mx-auto px-4 py-8">
           <div className="flex justify-center items-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
@@ -50,7 +50,7 @@ export default function ProjectDetailsPage() {
   if (!project) {
     return (
       <>
-        <Header moduleName="Gestión de Proyectos" />
+        <Header moduleName="Proyectos" />
         <div className="container mx-auto px-4 py-8">
           <div className="text-center py-8 text-gray-500">
             Proyecto no encontrado
@@ -110,7 +110,7 @@ export default function ProjectDetailsPage() {
 
   return (
     <>
-      <Header moduleName="Gestión de Proyectos" />
+      <Header moduleName="Proyectos" />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6 flex justify-between items-center">
           <h1 className="text-2xl font-bold">Detalles del Proyecto</h1>

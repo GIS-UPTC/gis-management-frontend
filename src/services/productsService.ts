@@ -52,9 +52,9 @@ export const productService = {
     }
   },
 
-  async getProduct(name: string): Promise<Product> {
+  async getProducts(name: string): Promise<Product[]> {
     try {
-      const response = await api.get<Product>(`/products/${name}`);
+      const response = await api.get<Product[]>(`/products/${name}`);
       return response.data;
     } catch (error) {
       return handleApiError(

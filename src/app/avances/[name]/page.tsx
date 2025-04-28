@@ -64,7 +64,7 @@ export default function ProgressDetailPage({ params }: ProgressDetailPageProps) 
 
   return (
     <>
-      <Header moduleName="Gestión de Avances" />
+      <Header moduleName="Avances" />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="mb-6 flex items-center">
           <Link href="/progresses" className="mr-4">

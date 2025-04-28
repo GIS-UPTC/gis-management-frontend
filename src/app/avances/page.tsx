@@ -39,7 +39,7 @@ export default function ProgressesPage() {
 
   return (
     <>
-      <Header moduleName="Gestión de Avances" />
+      <Header moduleName="Avances" />
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Listado de Avances</h1>
@@ -57,7 +57,7 @@ export default function ProgressesPage() {
               <SearchBar 
                 onSearch={handleSearch} 
                 isLoading={isLoading} 
-                placeholder="Ingrese y seleccione un avance (mínimo 3 caracteres)..."
+                placeholder="Buscar avances (ingrese el nombre del proyecto)..."
               />
             </div>
           </div>

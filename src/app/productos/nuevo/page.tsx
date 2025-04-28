@@ -25,7 +25,7 @@ export default function NewProductPage() {
   const fetchProductData = async (productName: string) => {
     setIsLoading(true);
     try {
-      const product = await productService.getProduct(productName);
+      const product = await productService.getProducts(productName);
       setProductData(product);
     } catch (error) {
       if (error instanceof ProductServiceError) {
@@ -41,7 +41,7 @@ export default function NewProductPage() {
 
   return (
     <>
-      <Header moduleName="Gestión de Productos" />
+      <Header moduleName="Productos" />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
           <h1 className="text-2xl font-bold">

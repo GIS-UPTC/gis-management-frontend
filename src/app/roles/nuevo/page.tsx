@@ -45,7 +45,7 @@ export default function NewRolePage() {
 
   return (
     <>
-      <Header moduleName="Gestión de Roles" />
+      <Header moduleName="Roles" />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
           <h1 className="text-2xl font-bold">

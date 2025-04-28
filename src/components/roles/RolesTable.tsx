@@ -11,6 +11,7 @@ export default function RoleTable({ roles }: RoleTableProps) {
 
   const handleRowClick = (role: Role) => {
     const encodedName = encodeURIComponent(role.name);
+    console.log(encodedName);
     router.push(`/roles/${encodedName}`);
   };
 

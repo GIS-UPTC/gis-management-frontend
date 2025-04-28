@@ -14,13 +14,14 @@ export default function SearchBar({
 }: SearchBarProps) {
   const [query, setQuery] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSearch(query);
+  const handleSearch = () => {
+    if (query.length >= 3) {
+      onSearch(query);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto">
+    <div className="w-full max-w-4xl mx-auto">
       <div className="relative">
         <span className="absolute inset-y-0 left-0 flex items-center pl-3">
           <FaSearch className="text-gray-400" />
@@ -34,7 +35,8 @@ export default function SearchBar({
           disabled={isLoading}
         />
         <button
-          type="submit"
+          type="button"
+          onClick={handleSearch}
           className="absolute right-2 top-1/2 transform -translate-y-1/2 px-4 py-1 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={isLoading || query.length < 3}
         >
@@ -48,6 +50,6 @@ export default function SearchBar({
           )}
         </button>
       </div>
-    </form>
+    </div>
   );
 }

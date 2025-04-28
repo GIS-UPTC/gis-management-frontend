@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Program } from '@/types/models/GeneralModels';
 import { Combobox } from '@headlessui/react';
 import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
-import { programService, ProgramServiceError } from '@/services/programService';
+import { programService, ProgramServiceError } from '@/services/extras/programService';
 import { toast } from 'react-hot-toast';
 
 interface ProgramSelectorProps {

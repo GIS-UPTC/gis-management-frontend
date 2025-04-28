@@ -20,12 +20,12 @@ export default function DialogAddProgram({
     // Facultad
     const [facultyName, setFacultyName] = useState("");
     const [facultyPlaceIsNull, setFacultyPlaceIsNull] = useState(true);
-    const [facultyPlace, setFacultyPlace] = useState<Place>({ id: 0, name: "", place_id: null, place_name: null });
+    const [facultyPlace, setFacultyPlace] = useState<Place>({ id: 0, name: "", place: null });
 
     // Universidad
     const [uniId, setUniId] = useState<number>(0);
     const [uniName, setUniName] = useState("");
-    const [uniPlace, setUniPlace] = useState<Place>({ id: 0, name: "", place_id: null, place_name: null });
+    const [uniPlace, setUniPlace] = useState<Place>({ id: 0, name: "", place: null });
 
     function handleSave(e: React.FormEvent) {
         e.preventDefault();
@@ -145,13 +145,13 @@ export default function DialogAddProgram({
                                                 </div>
                                                 <div>
                                                     <label className="block text-xs text-gray-500 mb-1">
-                                                        Nombre referencial
+                                                        Ubicación referencial
                                                     </label>
                                                     <input
                                                         type="text"
-                                                        placeholder="Nombre referencial del lugar"
-                                                        value={facultyPlace.place_name || ''}
-                                                        onChange={(e) => setFacultyPlace({ ...facultyPlace, place_name: e.target.value })}
+                                                        placeholder="Ubicación referencial"
+                                                        value={facultyPlace.place?.name || ''}
+                                                        onChange={(e) => setFacultyPlace({ ...facultyPlace, place: { id: 0, name: e.target.value, place: null } })}
                                                         className="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                                     />
                                                 </div>
@@ -197,13 +197,13 @@ export default function DialogAddProgram({
                                             </div>
                                             <div>
                                                 <label className="block text-xs text-gray-500 mb-1">
-                                                    Nombre referencial
+                                                    Ubicación referencial
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    placeholder="Nombre referencial del lugar"
-                                                    value={uniPlace.place_name || ''}
-                                                    onChange={(e) => setUniPlace({ ...uniPlace, place_name: e.target.value })}
+                                                    placeholder="Ubicación referencial"
+                                                    value={uniPlace.place?.name || ''}
+                                                    onChange={(e) => setUniPlace({ ...uniPlace, place: { id: 0, name: e.target.value, place: null } })}
                                                     className="block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                                 />
                                             </div>

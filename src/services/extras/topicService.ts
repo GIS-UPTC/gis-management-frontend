@@ -1,11 +1,7 @@
 import { handleApiError } from '@/utils/errorHandler';
-import api from './api';
+import api from '../api';
 import { InterestTopic } from '@/types/models/GeneralModels';
 import { AxiosError } from 'axios';
-
-interface ErrorResponse {
-  detail: string;
-}
 
 export class TopicServiceError extends Error {
   constructor(message: string) {
@@ -21,14 +17,11 @@ export const topicService = {
       console.log(response);
       return response.data;
     } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      if (axiosError.response?.data?.detail) {
-        if(axiosError.response.data.detail === 'Token invalido' || axiosError.response.data.detail === 'Se ha terminado el tiempo de la sesion') {
-          sessionStorage.removeItem('access_token');
-        }
-        throw new TopicServiceError(axiosError.response.data.detail);
-      }
-      throw new TopicServiceError('Error al buscar temas de interés. Por favor, intente nuevamente.');
+      return handleApiError(
+        error,
+        TopicServiceError,
+        'Error al buscar roles. Por favor, intente nuevamente.'
+      );
     }
   }
 };

@@ -1,4 +1,4 @@
-import api from './api';
+import api from '../api';
 import { Program } from '@/types/models/GeneralModels';
 import { AxiosError } from 'axios';
 

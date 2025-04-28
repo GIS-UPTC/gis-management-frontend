@@ -11,9 +11,25 @@ export class RoleServiceError extends ServiceError {
 }
 
 export const roleService = {
+
+  async fetchRoles(name: string): Promise<Role[]> {
+    try {
+      const response = await api.get<Role[]>(`/roles/${name}?with_inactives=false&all=true`);
+      console.log(response.data)
+      return response.data;
+    } catch (error) {
+      return handleApiError(
+        error, 
+        RoleServiceError, 
+        'Error al buscar roles. Por favor, intente nuevamente.'
+      );
+    }
+  },
+
   async searchRoles(name: string): Promise<Role[]> {
     try {
       const response = await api.get<Role[]>(`/roles/${name}?with_inactives=false`);
+      console.log(response.data)
       return response.data;
     } catch (error) {
       return handleApiError(

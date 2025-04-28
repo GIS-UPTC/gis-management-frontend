@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { InterestTopic } from '@/types/models/GeneralModels';
 import { Combobox } from '@headlessui/react';
 import { ChevronUpDownIcon, XMarkIcon } from '@heroicons/react/20/solid';
-import { topicService, TopicServiceError } from '@/services/topicService';
+import { topicService, TopicServiceError } from '@/services/extras/topicService';
 import { toast } from 'react-hot-toast';
 
 interface TopicSelectorProps {

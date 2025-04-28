@@ -11,7 +11,7 @@ import { ResearchLine, User } from "./GeneralModels";
 export interface Objective {
     id: number;
     description: string;
-    type: "GN" | string; // GN = General, podría tener otros valores
+    type: "GN" | "ES";
   }
   
   /**
@@ -32,7 +32,7 @@ export interface Objective {
     user: User;
     start_date: string; // formato date-time
     end_date: string; // formato date-time
-    role: "JI" | string; // JI = Joven Investigador, podría tener otros valores
+    role: "JI" | "CI" | "IP" | "SE" | "EM"; 
     responsibility: string;
     user_id: number;
   }
@@ -55,10 +55,10 @@ export interface Objective {
    */
   export interface Cooperation {
     id: number;
-    in_charge: InCharge;
-    cooperator: User;
-    type: "EX" | string; // EX = Externa, podría tener otros valores
-    cooperator_id: number;
+    in_charge: InCharge | null;
+    cooperator: User | null;
+    type: "EX" | "IN";
+    cooperator_id: number | null;
   }
   
   /**
@@ -77,7 +77,7 @@ export interface Objective {
     creation_date: string; // formato date-time
     duration_days: number;
     schedule_url: string;
-    status: "EJ" | string; // EJ = En ejecución, podría tener otros valores
+    status: "EJ" | "AC" | "IN" | "CN" | "FN";
     research_line: ResearchLine;
     convocation: string;
     has_financing: boolean;

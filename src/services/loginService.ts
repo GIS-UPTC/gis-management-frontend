@@ -28,6 +28,8 @@ export const loginService = {
     const encryptedPassword = encryptPassword(credentials.password);
     formData.append('password', encryptedPassword);
 
+    console.log(formData);
+
     try {
       console.log("Iniciando solicitud de login");
       const response = await api.post('/auth', formData, {
@@ -35,7 +37,7 @@ export const loginService = {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       });
-      console.log("Respuesta de login recibida");
+      console.log(response.data);
 
       const { access_token, user } = response.data;
       

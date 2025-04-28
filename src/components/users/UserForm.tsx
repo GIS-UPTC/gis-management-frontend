@@ -52,7 +52,10 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
 
   useEffect(() => {
     if (initialData) {
-      setFormData(initialData);
+      setFormData({
+        ...initialData,
+        responsabilities: initialData.responsabilities || []
+      });
       if (initialData.photo_url) {
         setPreviewUrl(initialData.photo_url);
       }
@@ -61,10 +64,19 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+
+    if (name === 'dni') {
+      const numValue = e.target.value.replace(/\D/g, '')
+      setFormData(prev => ({
+        ...prev,
+        [name]: numValue
+      }));
+    }else{
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleAddLink = () => {
@@ -167,7 +179,7 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
         await userService.createUser(userData, selectedFile || undefined);
         toast.success('Usuario creado exitosamente');
       }
-      window.location.href = '/users';
+      window.location.href = '/usuarios';
     } catch (error) {
       console.error('Error saving user:', error);
       const errorMessage = error instanceof Error ? error.message : 'Error al guardar el usuario';
@@ -295,6 +307,11 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded-lg"
                   required
+                  max={(() => {
+                    const today = new Date();
+                    const maxDate = new Date(today.getFullYear() - 15, today.getMonth(), today.getDate());
+                    return maxDate.toISOString().split('T')[0];
+                  })()}
                 />
               </div>
               <div className="col-span-1 sm:col-span-2">
@@ -337,6 +354,11 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded-lg"
                   required
+                  max={(() => {
+                    const today = new Date();
+                    const maxDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                    return maxDate.toISOString().split('T')[0];
+                  })()}
                 />
               </div>
               <div>
@@ -349,6 +371,11 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
                   value={formData.deparure_date || ''}
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded-lg"
+                  max={(() => {
+                    const today = new Date();
+                    const maxDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                    return maxDate.toISOString().split('T')[0];
+                  })()}
                 />
               </div>
               <div className="col-span-1 sm:col-span-2">

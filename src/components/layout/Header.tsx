@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { HiMenu, HiX } from 'react-icons/hi';
-import { FaUser } from 'react-icons/fa'; // Importamos el icono de usuario
+import { FaUser, FaChevronDown } from 'react-icons/fa'; // Icono para el dropdown
 
 interface HeaderProps {
   moduleName: string;
@@ -17,12 +17,19 @@ const Header: React.FC<HeaderProps> = ({ moduleName, userName = '' }) => {
   // Codificar el nombre de usuario para que sea seguro usarlo en una URL
   const encodedUserName = encodeURIComponent(userName);
 
+  // Menú principal (reorganizado según especificaciones)
   const navItems = [
     { name: 'Inicio', path: '/' },
+    { name: 'Proyectos', path: '/proyectos' },
+    { name: 'Avances', path: '/avances' },
+    { name: 'Reportes', path: '/reportes' },
+  ];
+
+  // Submenú para "Gestión Grupo" (antes "Más opciones")
+  const dropdownItems = [
+    { name: 'Lineas', path: '/lineas' },
     { name: 'Usuarios', path: '/usuarios' },
     { name: 'Roles', path: '/roles' },
-    { name: 'Lineas', path: '/lineas' },
-    { name: 'Proyectos', path: '/proyectos' },
   ];
 
   return (
@@ -66,6 +73,41 @@ const Header: React.FC<HeaderProps> = ({ moduleName, userName = '' }) => {
                   </Link>
                 </li>
               ))}
+              
+              {/* Menú desplegable "Gestión Grupo" (antes "Más opciones") */}
+              <li className="relative group">
+                <button 
+                  className={`text-base font-medium flex items-center transition-colors hover:text-primary-600 ${
+                    dropdownItems.some(item => pathname === item.path)
+                      ? 'text-primary-600 border-b-2 border-primary-600'
+                      : 'text-black'
+                  }`}
+                >
+                  Gestión Grupo
+                  <FaChevronDown className="ml-1" size={12} />
+                </button>
+                
+                {/* Área invisible para asegurar que hay espacio entre el botón y el menú */}
+                <div className="absolute w-full h-4 top-full left-0"></div>
+                
+                {/* Submenú desplegable - con hover mediante Tailwind group */}
+                <div className="hidden group-hover:block absolute left-0 top-full pt-4 z-10">
+                  <div className="w-48 rounded-md shadow-lg bg-customMiddleYellow ring-1 ring-black ring-opacity-5 py-1">
+                    {dropdownItems.map((item) => (
+                      <Link
+                        key={item.path}
+                        href={item.path}
+                        className={`block px-4 py-2 text-sm hover:bg-gray-100 ${
+                          pathname === item.path ? 'bg-gray-50 text-primary-600' : 'text-gray-700'
+                        }`}
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </li>
+              
               {/* Icono de usuario */}
               <li>
                 <Link 
@@ -99,6 +141,29 @@ const Header: React.FC<HeaderProps> = ({ moduleName, userName = '' }) => {
                   </Link>
                 </li>
               ))}
+              
+              {/* Sección "Gestión Grupo" en móvil */}
+              <li>
+                <div className="py-2 px-4 text-gray-600 font-medium">Gestión Grupo:</div>
+              </li>
+              
+              {/* Mostrar las opciones adicionales directamente en el menú móvil */}
+              {dropdownItems.map((item) => (
+                <li key={item.path}>
+                  <Link
+                    href={item.path}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`block py-2 px-4 ml-4 rounded-lg transition-colors ${
+                      pathname === item.path
+                        ? 'bg-primary-50 text-primary-600'
+                        : 'text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+              
               {/* Icono de usuario en menú móvil */}
               <li>
                 <Link

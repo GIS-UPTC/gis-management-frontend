@@ -1,5 +1,6 @@
 import api from './api';
 import { Program, ResearchLine } from '@/types/models/GeneralModels';
+import { handleApiError } from '@/utils/errorHandler';
 import { AxiosError } from 'axios';
 
 interface ErrorResponse {
@@ -21,6 +22,21 @@ interface CreateResearchLineData {
 }
 
 export const researchLineService = {
+
+  async fetchResearchLines(name: string): Promise<ResearchLine[]> {
+    try {
+      const response = await api.get<ResearchLine[]>(`/research_lines/${name}?with_inactives=false&all=true`);
+      console.log(response.data)
+      return response.data;
+    } catch (error) {
+      return handleApiError(
+        error, 
+        ResearchLineServiceError, 
+        'Error al obtener lineas de investigacion. Por favor, intente nuevamente.'
+      );
+    }
+  },
+
   async searchResearchLine(name: string, withInactives: boolean = true): Promise<ResearchLine[]> {
     try {
       console.log(withInactives)

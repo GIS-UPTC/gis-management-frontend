@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Role, Access } from '@/types/models/GeneralModels';
 import { roleService } from '@/services/roleService';
-import { accessService } from '@/services/accessService';
+import { accessService } from '@/services/extras/accessService';
 import { toast } from 'react-hot-toast';
 import { Combobox } from '@headlessui/react';
 import { ChevronUpDownIcon } from '@heroicons/react/20/solid';

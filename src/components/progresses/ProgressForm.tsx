@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Progress, User } from '@/types/models/GeneralModels';
 import { userService } from '@/services/userService';
 import { projectService } from '@/services/projectService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import { XMarkIcon, DocumentIcon } from '@heroicons/react/24/outline';
 import { Project } from '@/types/models/project.models';
 import { progressService } from '@/services/progressesService';
@@ -51,10 +51,10 @@ export default function ProgressForm({ onSuccess }: ProgressFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const progressTypes = [
-    { value: "PI", label: "Progreso Inicial" },
-    { value: "IO", label: "Otro Intermedio" },
-    { value: "IF", label: "Informe Final" },
-    { value: "FI", label: "Final" }
+    { value: "PI", label: "Propuesta Inicial" },
+    { value: "IO", label: "Informe Operativo o de Avance" },
+    { value: "IF", label: "Informe Financiero" },
+    { value: "FI", label: "Informe Final" }
   ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -191,21 +191,14 @@ export default function ProgressForm({ onSuccess }: ProgressFormProps) {
       setIsSubmitting(false);
       return;
     }
-    
-    // Validar archivo o enlace
-    if (!fileInfo.file && !formData.document_link) {
-      setError('Debe subir un archivo o proporcionar un enlace al documento');
-      setIsSubmitting(false);
-      return;
-    }
 
     try {
       const progressData: Omit<Progress, 'id'> = {
         user: formData.user,
         project: formData.project,
-        date: formData.date,
+        date: null,
         type: formData.type,
-        document_link: formData.document_link,
+        document_link: null,
         description: formData.description,
         user_id: formData.user.id,
         project_id: formData.project.id
@@ -251,6 +244,7 @@ export default function ProgressForm({ onSuccess }: ProgressFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="bg-customLightYellow rounded-lg shadow max-w-4xl mx-auto p-6">
+      <Toaster position="top-center" />
       <div className="space-y-6">
         {/* Usuario */}
         <div>
@@ -370,25 +364,6 @@ export default function ProgressForm({ onSuccess }: ProgressFormProps) {
           </div>
         </div>
 
-        {/* Fecha */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Fecha
-          </label>
-          <input
-            type="date"
-            name="date"
-            value={formData.date || ''}
-            onChange={handleInputChange}
-            className="w-full p-2 border rounded-lg"
-            max={(() => {
-                const today = new Date();
-                const maxDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                return maxDate.toISOString().split('T')[0];
-              })()}
-          />
-        </div>
-
         {/* Tipo de Avance */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -412,7 +387,7 @@ export default function ProgressForm({ onSuccess }: ProgressFormProps) {
         {/* Archivo */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Archivo del Avance {!fileInfo.file && !formData.document_link && <span className="text-red-500">*</span>}
+            Archivo del Avance <span className="text-red-500">*</span>
           </label>
           <div className="mb-2">
             <input
@@ -448,24 +423,6 @@ export default function ProgressForm({ onSuccess }: ProgressFormProps) {
               </div>
             </div>
           )}
-        </div>
-        
-        {/* Enlace al documento */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Enlace al Documento {!fileInfo.file && !formData.document_link && <span className="text-red-500">*</span>}
-          </label>
-          <input
-            type="url"
-            name="document_link"
-            value={formData.document_link || ''}
-            onChange={handleInputChange}
-            placeholder="https://..."
-            className="w-full p-2 border rounded-lg"
-          />
-          <p className="text-sm text-gray-500 mt-1">
-            {fileInfo.file ? 'Opcional si se sube un archivo' : 'Requerido si no se sube un archivo'}
-          </p>
         </div>
 
         {/* Descripción */}

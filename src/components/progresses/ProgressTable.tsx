@@ -12,10 +12,10 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
     const router = useRouter();
 
     const progressTypes: Record<string, string> = {
-        "PI": "Progreso Inicial",
-        "OI": "Otro Intermedio",
-        "IF": "Informe Final",
-        "FI": "Final"
+        "PI": "Propuesta Inicial",
+        "IO": "Informe Operativo o de Avance",
+        "IF": "Informe Financiero",
+        "FI": "Informe Final"
     };
 
     const handleRowClick = (progress: Progress) => {

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import { ResearchLine } from '@/types/models/GeneralModels';
 import { researchLineService, ResearchLineServiceError } from '@/services/researchLineService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import ResearchLinesTable from '@/components/research-lines/ResearchLinesTable';
 
 export default function ResearchLinesPage() {
@@ -37,6 +37,7 @@ export default function ResearchLinesPage() {
 
   return (
     <>
+    <Toaster position="top-center" />
       <Header moduleName="Líneas de Investigación" />
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">

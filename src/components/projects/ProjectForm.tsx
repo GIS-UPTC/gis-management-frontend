@@ -3,7 +3,7 @@ import { Project } from '@/types/models/project.models';
 import { ResearchLine } from '@/types/models/GeneralModels';
 import BasicInfoSection from './sections/BasicInfoSection';
 import CooperationSection from './sections/CooperationSection';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import ObjectivesSection from './sections/ObjectivesSection';
 import TeamSection from './sections/TeamSection';
 
@@ -162,6 +162,7 @@ export default function ProjectForm({ initialData, onSubmit, isEditing = false }
 
   return (
     <form onSubmit={handleSubmit} className="bg-customLightYellow rounded-lg shadow max-w-4xl mx-auto">
+      <Toaster position="top-center" />
       <div className="flex flex-col sm:flex-row border-b">
         <button
           type="button"

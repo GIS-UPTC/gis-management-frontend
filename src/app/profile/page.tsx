@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Header from '@/components/layout/Header';
 import { User } from '@/types/models/GeneralModels';
 import { loginService } from '@/services/loginService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import { userService } from '@/services/userService';
 
 export default function ProfilePage() {
@@ -90,6 +90,7 @@ export default function ProfilePage() {
 
   return (
     <>
+    <Toaster position="top-center" />
       <Header moduleName="Perfil" />
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold mb-6">Mi Perfil</h1>

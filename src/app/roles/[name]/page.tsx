@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import { Role } from '@/types/models/GeneralModels';
 import { roleService, RoleServiceError } from '@/services/roleService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 export default function RoleDetailsPage() {
   const params = useParams();
@@ -68,6 +68,7 @@ export default function RoleDetailsPage() {
 
   return (
     <>
+    <Toaster position="top-center" />
       <Header moduleName="Roles" />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6 flex justify-between items-center">
@@ -103,7 +104,7 @@ export default function RoleDetailsPage() {
 
             {/* Accesos del rol */}
             <div>
-              <h2 className="text-lg font-semibold mb-4">Accesos Asignados</h2>
+              <h2 className="text-lg font-semibold mb-4">Privilegios Asignados</h2>
               {role.accesses && role.accesses.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {role.accesses.map((access, index) => (

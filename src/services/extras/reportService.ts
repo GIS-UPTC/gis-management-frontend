@@ -18,6 +18,8 @@ export const reportService = {
         report_type: reportData.report_type,
         start_date: reportData.start_date,
         end_date: reportData.end_date,
+        line_id: null,
+        researcher_id: null,
 
         ...(reportData.line_id ? { line_id: reportData.line_id} : {}),
         ...(reportData.researcher_id ? { researcher_id: reportData.researcher_id} : {}),

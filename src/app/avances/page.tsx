@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import { Progress } from '@/types/models/GeneralModels';
 import { progressService } from '@/services/progressesService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import SearchBar from '@/components/ui/SearchBar';
 import ProgressTable from '@/components/progresses/ProgressTable';
 
@@ -24,7 +24,7 @@ export default function ProgressesPage() {
 
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const results = await progressService.searchProgresses(query);
       setProgresses(results);
@@ -39,10 +39,12 @@ export default function ProgressesPage() {
 
   return (
     <>
+      <Toaster position="top-center" />
       <Header moduleName="Avances" />
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Listado de Avances</h1>
+
           <Link
             href="/avances/nuevo"
             className="bg-customDarkGreen hover:bg-green-200 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
@@ -54,9 +56,9 @@ export default function ProgressesPage() {
         <div className="mb-6">
           <div className="flex gap-2">
             <div className="flex-grow">
-              <SearchBar 
-                onSearch={handleSearch} 
-                isLoading={isLoading} 
+              <SearchBar
+                onSearch={handleSearch}
+                isLoading={isLoading}
                 placeholder="Buscar avances (ingrese el nombre del proyecto)..."
               />
             </div>

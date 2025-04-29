@@ -11,6 +11,7 @@ import { Project } from '@/types/models/project.models';
 import ResearchLineCombobox from '@/components/ui/ResearchLineComboBox';
 import SelectionCard from '@/components/progresses/components/SelectionCard';
 import { reportService } from '@/services/extras/reportService';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function GenerateReportPage() {
   // Report state
@@ -65,6 +66,7 @@ export default function GenerateReportPage() {
         const projects = await projectService.searchProjects(query);
         setProjects(projects)
       } catch (error) {
+        toast.error('Error al buscar proyectos');
         console.error('Error searching projects:', error);
         return [];
       } finally {
@@ -81,6 +83,7 @@ export default function GenerateReportPage() {
         const users = await userService.searchUsersByName(query);
         setResearchers(users)
       } catch (error) {
+        toast.error('Error al buscar usuarios');
         console.error('Error searching users:', error);
         return [];
       } finally {
@@ -96,6 +99,7 @@ export default function GenerateReportPage() {
       const lines = await researchLineService.fetchResearchLines(' ');
       setLines(lines);
     } catch (error) {
+      toast.error('Error al cargar las líneas de investigación');
       console.error('Error fetching research lines:', error);
     } finally {
       setIsLoadingLines(false);
@@ -143,6 +147,7 @@ export default function GenerateReportPage() {
       const result = await reportService.generateReport(report)
       console.log(result)
     } catch (error) {
+      toast.error('Error al generar el reporte');
       console.log(error)
     }
   };
@@ -166,6 +171,7 @@ export default function GenerateReportPage() {
 
   return (
     <>
+    <Toaster position="top-center" />
       <Header moduleName="Reportes" />
       <div className="w-full max-w-4xl mx-auto py-6">
         <h1 className="text-2xl font-bold mb-6">Generación de Reportes</h1>

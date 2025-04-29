@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import { Progress } from '@/types/models/GeneralModels';
 import { progressService } from '@/services/progressesService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import { ArrowLeftIcon, DocumentIcon, LinkIcon, UserIcon, CalendarIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
@@ -46,10 +46,10 @@ export default function ProgressDetailPage({ params }: ProgressDetailPageProps) 
   }, [decodedName]);
 
   const progressTypes: Record<string, string> = {
-    "PI": "Progreso Inicial",
-    "IO": "Otro Intermedio",
-    "IF": "Informe Final",
-    "FI": "Final"
+    "PI": "Propuesta Inicial",
+    "IO": "Informe Operativo o de Avance",
+    "IF": "Informe Financiero",
+    "FI": "Informe Final"
   };
 
   const formatDate = (dateString: string | null) => {
@@ -64,6 +64,7 @@ export default function ProgressDetailPage({ params }: ProgressDetailPageProps) 
 
   return (
     <>
+    <Toaster position="top-center" />
       <Header moduleName="Avances" />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="mb-6 flex items-center">
@@ -143,10 +144,10 @@ export default function ProgressDetailPage({ params }: ProgressDetailPageProps) 
                 {progress.document_link ? (
                   <div className="flex items-center">
                     <LinkIcon className="h-6 w-6 text-blue-600 mr-2" />
-                    <a 
-                      href={progress.document_link} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
+                    <a
+                      href={progress.document_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="text-blue-600 hover:underline break-all"
                     >
                       {progress.document_link}
@@ -154,8 +155,7 @@ export default function ProgressDetailPage({ params }: ProgressDetailPageProps) 
                   </div>
                 ) : (
                   <div className="flex items-center">
-                    <DocumentIcon className="h-6 w-6 text-green-600 mr-2" />
-                    <span>Archivo adjunto al sistema</span>
+                    <span>No hay archivo anexado</span>
                   </div>
                 )}
               </div>

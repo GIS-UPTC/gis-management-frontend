@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Product, Type } from '@/types/models/GeneralModels';
 import { Project } from '@/types/models/project.models';
 import { productService } from '@/services/productsService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import SearchBar from '@/components/ui/SearchBar';
 import { projectService } from '@/services/projectService';
 import SelectionCard from '../progresses/components/SelectionCard';
@@ -244,6 +244,7 @@ export default function ProductForm({
 
   return (
     <form onSubmit={handleSubmit} className="bg-customLightYellow rounded-lg shadow max-w-4xl mx-auto p-6">
+      <Toaster position="top-center" />
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>

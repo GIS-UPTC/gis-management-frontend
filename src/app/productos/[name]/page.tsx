@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import { Product } from '@/types/models/GeneralModels';
 import { productService, ProductServiceError } from '@/services/productsService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 export default function ProductDetailsPage() {
   const params = useParams();
@@ -68,6 +68,7 @@ export default function ProductDetailsPage() {
 
   return (
     <>
+    <Toaster position="top-center" />
       <Header moduleName="Productos" />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6 flex justify-between items-center">

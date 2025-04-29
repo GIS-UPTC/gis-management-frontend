@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Project, Objective, ProjectKeyword } from '@/types/models/project.models';
 import { projectService } from '@/services/projectService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 interface ObjectivesSectionProps {
   formData: Omit<Project, 'id'>;
@@ -80,6 +80,7 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
 
   return (
     <div className="space-y-6">
+      <Toaster position="top-center" />
       {/* Objectives Section */}
       <div>
         <h3 className="text-lg font-semibold mb-4">Objetivos *</h3>

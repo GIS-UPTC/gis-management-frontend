@@ -5,7 +5,7 @@ import { useParams, useSearchParams } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import { User } from '@/types/models/GeneralModels';
 import { userService, UserServiceError } from '@/services/userService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 export default function UserDetailsPage() {
   const params = useParams();
@@ -83,6 +83,7 @@ export default function UserDetailsPage() {
 
   return (
     <>
+    <Toaster position="top-center" />
       <Header moduleName="Usuarios" />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6 flex justify-between items-center">

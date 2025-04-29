@@ -3,7 +3,7 @@ import { Role, Permission, RoleGranting } from '@/types/models/GeneralModels';
 import { roleService, RoleServiceError } from '@/services/roleService';
 import { Combobox } from '@headlessui/react';
 import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import { permissionService } from '@/services/extras/permissionsService';
 
 interface RoleSelectorProps {
@@ -73,6 +73,7 @@ export default function RoleSelector({ selectedRoleGrantings, onRoleGrantingsCha
 
   return (
     <div className="space-y-6">
+      <Toaster position="top-center" />
       {/* Selector de roles */}
       <div>
         <h4 className="text-sm font-medium text-gray-700 mb-2">Seleccionar rol:</h4>

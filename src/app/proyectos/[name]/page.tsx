@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import { projectService, ProjectServiceError } from '@/services/projectService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import { Project } from '@/types/models/project.models';
 
 export default function ProjectDetailsPage() {
@@ -84,11 +84,11 @@ export default function ProjectDetailsPage() {
 
   const getParticipationRoleLabel = (role: string) => {
     const roleMap: Record<string, string> = {
-      'JI': 'Jefe de Investigación',
-      'CI': 'Co-Investigador',
+      'JI': 'Joven Investigador',
+      'CI': 'CoInvestigador',
       'IP': 'Investigador Principal',
-      'SE': 'Secretario',
-      'EM': 'Equipo Miembro'
+      'SE': 'Semillero',
+      'EM': 'Estudiante de Maestria'
     };
     return roleMap[role] || role;
   };
@@ -110,6 +110,7 @@ export default function ProjectDetailsPage() {
 
   return (
     <>
+    <Toaster position="top-center" />
       <Header moduleName="Proyectos" />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6 flex justify-between items-center">

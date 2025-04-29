@@ -6,7 +6,7 @@ import Header from '@/components/layout/Header';
 import ProductsTable from '@/components/products/ProductsTable';
 import { Product } from '@/types/models/GeneralModels';
 import { productService, ProductServiceError } from '@/services/productsService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import SearchBar from '@/components/ui/SearchBar';
 
 export default function ProductosPage() {
@@ -62,6 +62,7 @@ export default function ProductosPage() {
 
   return (
     <>
+    <Toaster position="top-center" />
       <Header moduleName="Productos" />
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">

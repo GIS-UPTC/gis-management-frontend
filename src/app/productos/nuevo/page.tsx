@@ -26,7 +26,7 @@ export default function NewProductPage() {
     setIsLoading(true);
     try {
       const product = await productService.getProducts(productName);
-      setProductData(product);
+      setProductData(product[0]);
     } catch (error) {
       if (error instanceof ProductServiceError) {
         toast.error(error.message);

@@ -33,10 +33,11 @@ export const progressService = {
                 type: progressData.type,
                 user_id: progressData.user.id,
                 project_id: progressData.project.id,
+                //document_link: null,
+                //date: null,
+                //description: null,
 
-                ...(progressData.date ? { date: progressData.date } : {}),
-                ...(progressData.document_link ? { document_link: progressData.document_link } : {}),
-                ...(progressData.description ? { description: progressData.description } : {})
+                //...(progressData.description ? { description: progressData.description } : {})
             }
 
             const formData = new FormData();

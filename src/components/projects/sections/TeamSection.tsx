@@ -4,7 +4,7 @@ import { ResearchLine } from '@/types/models/GeneralModels';
 import { User } from '@/types/models/GeneralModels';
 import { researchLineService } from '@/services/researchLineService';
 import { userService } from '@/services/userService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import { Combobox } from '@headlessui/react';
 import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
@@ -106,6 +106,7 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
 
   return (
     <div className="space-y-6">
+      <Toaster position="top-center" />
       {/* Research Line Section */}
       <div>
         <h3 className="text-lg font-semibold mb-4">Línea de Investigación</h3>

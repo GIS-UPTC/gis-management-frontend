@@ -6,7 +6,7 @@ import Header from '@/components/layout/Header';
 import UserTable from '@/components/users/UserTable';
 import { User } from '@/types/models/GeneralModels';
 import { userService, UserServiceError } from '@/services/userService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -37,6 +37,7 @@ export default function UsersPage() {
 
   return (
     <>
+    <Toaster position="top-center" />
       <Header moduleName="Usuarios" />
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">

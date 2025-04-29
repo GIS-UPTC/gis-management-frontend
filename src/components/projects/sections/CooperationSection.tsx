@@ -3,7 +3,7 @@ import { Project, Cooperation, InCharge } from '@/types/models/project.models';
 import { User } from '@/types/models/GeneralModels';
 import { projectService } from '@/services/projectService';
 import { userService } from '@/services/userService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 interface CooperationSectionProps {
   formData: Omit<Project, 'id'>;
@@ -163,6 +163,7 @@ export default function CooperationSection({ formData, setFormData }: Cooperatio
 
   return (
     <div className="space-y-6">
+      <Toaster position="top-center" />
       <h3 className="text-lg font-semibold mb-4">Cooperaciones</h3>
       <div className="space-y-4">
         {formData.cooperation_list.map(cooperation => (

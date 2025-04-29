@@ -4,7 +4,7 @@ import { userService } from '@/services/userService';
 import TopicSelector from './TopicSelector';
 import ProgramSelector from './ProgramSelector';
 import RoleSelector from './RoleSelector';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import ResponsabilitiesSelector from './ResponsabilitiesSelector';
 import DialogAddProgram from './DialogAddProgramProps';
 
@@ -191,7 +191,8 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
   };
 
   return (
-    <div>
+    <>
+    <Toaster position="top-center" />
       <form onSubmit={activeTab === 'personal' ? handlePersonalNext : handleSubmit} className="bg-customLightYellow rounded-lg shadow max-w-4xl mx-auto">
         <div className="flex flex-col sm:flex-row border-b">
           <button
@@ -536,6 +537,6 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
           setIsDialogOpen(false);
         }}
       />
-    </div>
+    </>
   );
 } 

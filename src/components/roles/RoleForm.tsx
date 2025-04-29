@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Role, Access } from '@/types/models/GeneralModels';
 import { roleService } from '@/services/roleService';
 import { accessService } from '@/services/extras/accessService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import { Combobox } from '@headlessui/react';
 import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon } from '@heroicons/react/24/outline';
@@ -132,6 +132,7 @@ export default function RoleForm({ initialData, isEditing = false }: RoleFormPro
 
   return (
     <form onSubmit={handleSubmit} className="bg-customLightYellow rounded-lg shadow max-w-4xl mx-auto p-6">
+      <Toaster position="top-center" />
       <div className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">

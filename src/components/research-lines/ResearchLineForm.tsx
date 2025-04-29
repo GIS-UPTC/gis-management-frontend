@@ -3,7 +3,7 @@ import { ResearchLine } from '@/types/models/GeneralModels';
 import { User } from '@/types/models/GeneralModels';
 import { researchLineService } from '@/services/researchLineService';
 import { userService } from '@/services/userService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import { Combobox } from '@headlessui/react';
 import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
@@ -118,6 +118,7 @@ export default function ResearchLineForm({
 
   return (
     <form onSubmit={handleSubmit} className="bg-customLightYellow rounded-lg shadow max-w-4xl mx-auto p-6">
+      <Toaster position="top-center" />
       <div className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">

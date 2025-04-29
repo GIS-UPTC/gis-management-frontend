@@ -3,7 +3,7 @@ import { InterestTopic } from '@/types/models/GeneralModels';
 import { Combobox } from '@headlessui/react';
 import { ChevronUpDownIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { topicService, TopicServiceError } from '@/services/extras/topicService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 interface TopicSelectorProps {
   selectedTopics: InterestTopic[];
@@ -86,6 +86,7 @@ export default function TopicSelector({ selectedTopics, onTopicsChange }: TopicS
 
   return (
     <div className="space-y-4">
+      <Toaster position="top-center" />
       {/* Combobox for adding new topics */}
       <Combobox value={null} onChange={handleSelect}>
         <div className="relative">

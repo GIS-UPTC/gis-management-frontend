@@ -6,7 +6,7 @@ import Header from '@/components/layout/Header';
 import RoleTable from '@/components/roles/RolesTable';
 import { Role } from '@/types/models/GeneralModels';
 import { roleService, RoleServiceError } from '@/services/roleService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 export default function RolesPage() {
   const [roles, setRoles] = useState<Role[]>([]);
@@ -37,6 +37,7 @@ export default function RolesPage() {
 
   return (
     <>
+    <Toaster position="top-center" />
       <Header moduleName="Roles" />
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">

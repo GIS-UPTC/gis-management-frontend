@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import { Project } from '@/types/models/project.models';
 import ProjectTable from '@/components/projects/ProjectTable';
 import { projectService } from '@/services/projectService';
@@ -32,6 +32,7 @@ export default function ProjectsPage() {
 
   return (
     <>
+    <Toaster position="top-center" />
       <Header moduleName="Proyectos" />
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">

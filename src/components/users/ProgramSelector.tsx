@@ -3,7 +3,7 @@ import { Program } from '@/types/models/GeneralModels';
 import { Combobox } from '@headlessui/react';
 import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { programService, ProgramServiceError } from '@/services/extras/programService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 interface ProgramSelectorProps {
   selectedProgram: Program | null;
@@ -52,6 +52,7 @@ export default function ProgramSelector({ selectedProgram, onProgramChange }: Pr
 
   return (
     <div className="w-full">
+      <Toaster position="top-center" />
       <Combobox value={selectedProgram} onChange={onProgramChange}>
         <div className="relative">
           <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border focus-within:border-orange-500">

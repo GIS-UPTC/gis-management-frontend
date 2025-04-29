@@ -30,7 +30,7 @@ export default function RoleTable({ roles }: RoleTableProps) {
           <tr>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Nombre</th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Estado</th>
-            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Accesos</th>
+            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Privilegios</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">

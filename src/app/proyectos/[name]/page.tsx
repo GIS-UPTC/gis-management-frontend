@@ -103,7 +103,7 @@ export default function ProjectDetailsPage() {
       
       setIsStatusDropdownOpen(false);
       window.location.reload(); 
-    } catch (error) {
+    } catch {
       toast.error('Error al actualizar el estado');
     }
   };

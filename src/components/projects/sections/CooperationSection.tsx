@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Project, Cooperation, InCharge } from '@/types/models/project.models';
 import { User } from '@/types/models/GeneralModels';
-import { projectService } from '@/services/projectService';
+
 import { userService } from '@/services/userService';
 import { toast, Toaster } from 'react-hot-toast';
 
@@ -29,7 +29,7 @@ export default function CooperationSection({ formData, setFormData }: Cooperatio
       setIsLoading(true);
       const results = await userService.searchUsersByName(query);
       setUsers(results);
-    } catch (error) {
+    } catch {
       toast.error('Error al buscar usuarios');
     } finally {
       setIsLoading(false);

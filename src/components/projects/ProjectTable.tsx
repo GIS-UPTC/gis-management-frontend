@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Project } from '@/types/models/project.models';
-import { projectService } from '@/services/projectService';
+
 
 interface ProjectTableProps {
   projects: Project[];
@@ -9,6 +9,14 @@ interface ProjectTableProps {
 
 export default function ProjectTable({ projects }: ProjectTableProps) {
   const router = useRouter();
+
+  const projectStatus: Record<string, string> = {
+    "AC": "Activo",
+    "IN": "Inactivo",
+    "EJ": "En ejecución",
+    "CN": "Cancelado",
+    "FN": "Finalizado"
+};
 
   const handleRowClick = (project: Project) => {
     router.push(`/proyectos/${project.title}`);
@@ -24,7 +32,7 @@ export default function ProjectTable({ projects }: ProjectTableProps) {
   };
 
   const getStatus = (status: string) => {
-    return status === 'EJ' ? 'En ejecución' : status;
+    return projectStatus[status] || status;
   };
 
   return (

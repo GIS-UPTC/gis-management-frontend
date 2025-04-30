@@ -62,7 +62,7 @@ export default function ResearchLineCombobox({
                     }`
                   }
                 >
-                  {({ selected, active }) => (
+                  {({ selected }) => (
                     <>
                       <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                         {line.name}

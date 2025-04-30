@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Progress } from '@/types/models/GeneralModels';
-import { DocumentIcon, LinkIcon } from '@heroicons/react/24/outline';
+import { LinkIcon } from '@heroicons/react/24/outline';
 import { progressService } from '@/services/progressesService';
 
 interface ProgressTableProps {
@@ -28,7 +28,7 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
         e.stopPropagation(); // Evita que se active el click de la fila
 
         try {
-            const results = await progressService.deleteProgress(progress.id);
+            await progressService.deleteProgress(progress.id);
             window.location.reload();
 
         } catch (error) {
@@ -37,10 +37,14 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
         }
     };
 
-    const formatDate = (dateString: string | null) => {
+    const formatDate = (dateString: string | null): string => {
         if (!dateString) return 'N/A';
         const date = new Date(dateString);
-        return date.toLocaleDateString();
+
+        return date.toLocaleString('es-ES', {
+            dateStyle: 'short',
+            timeStyle: 'short'
+        });
     };
 
     const truncateText = (text: string | null, maxLength: number) => {
@@ -53,12 +57,14 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
             <table className="min-w-full bg-white">
                 <thead className="bg-yellow-200">
                     <tr>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Proyecto</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Usuario</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Tipo</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Fecha</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Documento</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Eliminar progreso</th>
+                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Proyecto asociado</th>
+                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Estado proyecto asociado</th>
+                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Usuario que reporta</th>
+                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Tipo de avance</th>
+                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Fecha y hora</th>
+                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Documento adjunto</th>
+                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Descripción avance</th>
+                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Eliminar avance</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -82,6 +88,11 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
                             <td className="px-6 py-4 text-sm text-gray-900">
                                 {formatDate(progress.date)}
                             </td>
+                            <td className="px-6 py-4 text-sm text-gray-900">
+                                <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-200 text-green-800">
+                                    {progress.project.status}
+                                </span>
+                            </td>
                             <td className="px-6 py-4 text-sm">
                                 {progress.document_link ? (
                                     <span className="inline-flex items-center text-blue-600">
@@ -92,6 +103,13 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
                                     <span className="inline-flex items-center text-green-600">
                                         No hay documento
                                     </span>
+                                )}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-900">
+                                {progress.description ? (
+                                    progress.description
+                                ) : (
+                                    'No hay descripción'
                                 )}
                             </td>
                             <td className="px-6 py-4 text-sm">

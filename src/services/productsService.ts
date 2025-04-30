@@ -2,7 +2,6 @@
 import { handleApiError, ServiceError } from '@/utils/errorHandler';
 import api from './api';
 import { Product, Type } from '@/types/models/GeneralModels';
-import { json } from 'stream/consumers';
 
 export class ProductServiceError extends ServiceError {
   constructor(message: string) {

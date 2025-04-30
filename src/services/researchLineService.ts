@@ -1,5 +1,5 @@
 import api from './api';
-import { Program, ResearchLine } from '@/types/models/GeneralModels';
+import { ResearchLine } from '@/types/models/GeneralModels';
 import { handleApiError } from '@/utils/errorHandler';
 import { AxiosError } from 'axios';
 
@@ -12,13 +12,6 @@ export class ResearchLineServiceError extends Error {
     super(message);
     this.name = 'ProgramServiceError';
   }
-}
-
-interface CreateResearchLineData {
-  name: string;
-  is_active?: boolean;
-  coordinator?: string;
-  coordinator_id: number;
 }
 
 export const researchLineService = {

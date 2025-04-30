@@ -1,11 +1,6 @@
 import api from '../api';
 import { Permission } from '@/types/models/GeneralModels';
 import { handleApiError } from '@/utils/errorHandler';
-import { AxiosError } from 'axios';
-
-interface ErrorResponse {
-    detail: string;
-}
 
 export class PermissionServiceError extends Error {
     constructor(message: string) {

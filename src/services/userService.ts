@@ -1,12 +1,7 @@
 import api from '@/services/api';
-import { User, SearchParams, RoleGranting, ChangePasswordResponse } from '@/types/models/GeneralModels';
+import { User, RoleGranting } from '@/types/models/GeneralModels';
 import { encryptPassword } from '@/utils/encryptPassword';
 import { handleApiError } from '@/utils/errorHandler';
-import { AxiosError } from 'axios';
-
-interface ErrorResponse {
-  detail: string;
-}
 
 export class UserServiceError extends Error {
   constructor(message: string) {

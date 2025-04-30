@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Project } from '@/types/models/project.models';
-import { ResearchLine } from '@/types/models/GeneralModels';
+
 import BasicInfoSection from './sections/BasicInfoSection';
 import CooperationSection from './sections/CooperationSection';
 import { toast, Toaster } from 'react-hot-toast';
@@ -75,7 +75,7 @@ const initialFormData: Omit<Project, 'id'> = {
   cooperation_list: []
 };
 
-export default function ProjectForm({ initialData, onSubmit, isEditing = false }: ProjectFormProps) {
+export default function ProjectForm({ initialData, onSubmit }: ProjectFormProps) {
   const [activeSection, setActiveSection] = useState<'basic' | 'objectives' | 'team' | 'cooperation'>('basic');
   const [formData, setFormData] = useState<Omit<Project, 'id'>>(initialData || initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -111,7 +111,7 @@ export default function ProjectForm({ initialData, onSubmit, isEditing = false }
         }
 
         onSubmit(formData);
-      } catch (error) {
+      } catch {
         toast.error('Error al guardar el proyecto');
       } finally {
         setIsSubmitting(false);

@@ -32,7 +32,7 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
       setIsLoading(true);
       const results = await researchLineService.fetchResearchLines(' ');
       setResearchLines(results);
-    } catch (error) {
+    } catch {
       toast.error('Error al cargar líneas de investigación');
     } finally {
       setIsLoading(false);
@@ -48,7 +48,7 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
         !formData.participations.some(p => p.user.id === user.id)
       );
       setUsers(filteredUsers);
-    } catch (error) {
+    } catch{
       toast.error('Error al cargar usuarios');
     } finally {
       setIsLoading(false);
@@ -145,7 +145,7 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
                         value={line}
                         className={({ active }) => `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-orange-100 text-orange-900' : 'text-gray-900'}`}
                       >
-                        {({ selected, active }: { selected: boolean, active: boolean }) => (
+                        {({ selected }) => (
                           <>
                             <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                               {line.name}

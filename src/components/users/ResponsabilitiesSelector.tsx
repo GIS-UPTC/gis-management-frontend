@@ -1,7 +1,6 @@
 import React, { useState, KeyboardEvent } from 'react';
 import { Responsability } from '@/types/models/GeneralModels';
 import { XMarkIcon } from '@heroicons/react/20/solid';
-import { Toaster } from 'react-hot-toast';
 
 interface ResponsabilitySelectorProps {
   selectedResponsabilities: Responsability[];

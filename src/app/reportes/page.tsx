@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Report, ResearchLine, User } from '@/types/models/GeneralModels';
 import { projectService } from '@/services/projectService';
 import { userService } from '@/services/userService';

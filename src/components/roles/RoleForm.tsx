@@ -22,11 +22,6 @@ interface RoleFormProps {
   isEditing?: boolean;
 }
 
-interface ComboboxOptionRenderProps {
-  selected: boolean;
-  active: boolean;
-}
-
 export default function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
   const [formData, setFormData] = useState<FormData>(initialData || initialFormData);
   const [query, setQuery] = useState('');
@@ -75,18 +70,6 @@ export default function RoleForm({ initialData, isEditing = false }: RoleFormPro
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
-  };
-
-  const handleAddAccess = (accesses: Access[] | null) => {
-    if (accesses && accesses.length > 0) {
-      const newAccess = accesses[accesses.length - 1];
-      if (!formData.accesses.some(a => a.id === newAccess.id)) {
-        setFormData(prev => ({
-          ...prev,
-          accesses: [...prev.accesses, newAccess]
-        }));
-      }
-    }
   };
 
   const handleRemoveAccess = (accessId: number) => {

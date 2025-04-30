@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, ReactNode, useState } from 'react';
-import { User, Access } from '@/types/models/GeneralModels';
+import { User } from '@/types/models/GeneralModels';
 
 // Mapeo de rutas a accesos requeridos
 const routeAccessMap: Record<string, string[]> = {

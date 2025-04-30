@@ -5,7 +5,7 @@ import Header from '@/components/layout/Header';
 import { Progress } from '@/types/models/GeneralModels';
 import { progressService } from '@/services/progressesService';
 import { toast, Toaster } from 'react-hot-toast';
-import { ArrowLeftIcon, DocumentIcon, LinkIcon, UserIcon, CalendarIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, LinkIcon, UserIcon, CalendarIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
 interface ProgressDetailPageProps {

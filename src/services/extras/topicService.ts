@@ -1,7 +1,6 @@
 import { handleApiError } from '@/utils/errorHandler';
 import api from '../api';
 import { InterestTopic } from '@/types/models/GeneralModels';
-import { AxiosError } from 'axios';
 
 export class TopicServiceError extends Error {
   constructor(message: string) {

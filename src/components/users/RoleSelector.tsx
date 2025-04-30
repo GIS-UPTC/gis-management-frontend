@@ -11,11 +11,6 @@ interface RoleSelectorProps {
   onRoleGrantingsChange: (roleGrantings: RoleGranting[]) => void;
 }
 
-interface ComboboxOptionRenderProps {
-  selected: boolean;
-  active: boolean;
-}
-
 export default function RoleSelector({ selectedRoleGrantings, onRoleGrantingsChange }: RoleSelectorProps) {
   const [availableRoles, setAvailableRoles] = useState<Role[]>([]);
   const [isRoleLoading, setIsRoleLoading] = useState(false);
@@ -165,7 +160,8 @@ const RolePermissionsEditor = ({ roleGranting, onPermissionsChange, onRemove }: 
         setAvailablePermissions(permissions.filter(p =>
           !roleGranting.permissions.some(existing => existing.id === p.id)
         ));
-      } catch (error) {
+      } catch {
+        toast.error('Error al buscar permisos');
         setAvailablePermissions([]);
       } finally {
         setIsPermissionLoading(false);
@@ -188,6 +184,7 @@ const RolePermissionsEditor = ({ roleGranting, onPermissionsChange, onRemove }: 
 
   return (
     <div className="border rounded-lg p-4">
+      <Toaster position="top-center" />
       <div className="flex items-center justify-between mb-4">
         <h5 className="font-medium">{roleGranting.role?.name || 'Rol sin nombre'}</h5>
         <button

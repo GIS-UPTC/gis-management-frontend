@@ -20,7 +20,7 @@ export default function LoginPage() {
     setError(null);
     
     try {
-      const response = await loginService.login(formData);
+      await loginService.login(formData);
       router.push('/');
     } catch (error) {
       console.error('Error during login:', error);

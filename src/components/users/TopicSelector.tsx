@@ -127,7 +127,7 @@ export default function TopicSelector({ selectedTopics, onTopicsChange }: TopicS
                     {({ active }: ComboboxOptionRenderProps) => (
                       <>
                         <span className={`block truncate font-medium`}>
-                          Agregar tópico: "{query.trim()}"
+                          Agregar tópico: &quot;{query.trim()}&quot;
                         </span>
                         <span
                           className={`absolute inset-y-0 left-0 flex items-center pl-3 ${

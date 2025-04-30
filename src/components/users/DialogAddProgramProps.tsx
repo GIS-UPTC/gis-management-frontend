@@ -1,6 +1,5 @@
 import { Place, Program } from "@/types/models/GeneralModels";
 import React, { useState } from "react";
-import toast from "react-hot-toast";
 
 interface DialogAddProgramProps {
     isOpen: boolean;
@@ -23,7 +22,6 @@ export default function DialogAddProgram({
     const [facultyPlace, setFacultyPlace] = useState<Place>({ id: 0, name: "", place: null });
 
     // Universidad
-    const [uniId, setUniId] = useState<number>(0);
     const [uniName, setUniName] = useState("");
     const [uniPlace, setUniPlace] = useState<Place>({ id: 0, name: "", place: null });
 
@@ -38,7 +36,7 @@ export default function DialogAddProgram({
                 id: 0,
                 name: facultyName,
                 university: {
-                    id: uniId,
+                    id: 0,
                     name: uniName,
                     place: uniPlace,
                 },

@@ -3,8 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/layout/Header';
 import { Organization } from '@/types/models/GeneralModels';
-import { groupInformationService, GroupInformationServiceError } from '@/services/extras/groupInformationService'; // <--- Ajusta esta ruta según tu proyecto
-import Image from 'next/image';
+import { groupInformationService, GroupInformationServiceError } from '@/services/extras/groupInformationService'; 
 import toast from 'react-hot-toast';
 
 export default function OrganizationPage() {

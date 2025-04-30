@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, InterestTopic, Link as UserLink, GroupParticipation, RoleGranting, Program, Responsability } from '@/types/models/GeneralModels';
+import { User, InterestTopic, RoleGranting, Program, Responsability } from '@/types/models/GeneralModels';
 import { userService } from '@/services/userService';
 import TopicSelector from './TopicSelector';
 import ProgramSelector from './ProgramSelector';

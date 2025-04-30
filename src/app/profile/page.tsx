@@ -55,7 +55,7 @@ export default function ProfilePage() {
       setIsPasswordDialogOpen(false);
       setNewPassword('');
       setConfirmPassword('');
-    } catch (error) {
+    } catch {
       toast.error('Error al cambiar la contraseña');
     } finally {
       setIsSubmitting(false);

@@ -1,4 +1,3 @@
-import { handleApiError } from '@/utils/errorHandler';
 import api from '../api';
 import { Access, Role } from '@/types/models/GeneralModels';
 import { AxiosError } from 'axios';

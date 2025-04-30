@@ -61,7 +61,7 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
       setIsLoading(true);
       const results = await projectService.searchKeywords(query);
       setKeywords(results);
-    } catch (error) {
+    } catch {
       toast.error('Error al buscar palabras clave');
     } finally {
       setIsLoading(false);

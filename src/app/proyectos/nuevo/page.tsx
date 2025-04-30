@@ -56,7 +56,7 @@ export default function NewProjectPage() {
         toast.success('Proyecto creado exitosamente');
       }
       router.push('/proyectos');
-    } catch (error) {
+    } catch {
       toast.error('Error al guardar el proyecto');
     } finally {
       setIsLoading(false);

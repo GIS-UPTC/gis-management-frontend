@@ -27,7 +27,7 @@ export default function ResearchLinesTable({ programs }: ResearchLineTableProps)
     e.stopPropagation(); // Evita que se active el click de la fila
     
     try {
-      const results = await researchLineService.updateStatusResearchLine(program.id);
+      await researchLineService.updateStatusResearchLine(program.id);
       window.location.reload();
       
     } catch (error) {

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Product } from '@/types/models/GeneralModels';
-import { FaTrash, FaEye } from 'react-icons/fa';
-import Link from 'next/link';
+import { FaTrash } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 
 interface ProductsTableProps {

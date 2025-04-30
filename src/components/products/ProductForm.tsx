@@ -97,22 +97,6 @@ export default function ProductForm({
     }));
   };
 
-  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const typeId = parseInt(e.target.value);
-    const selectedType = productTypes.find(type => type.id === typeId) || {
-      id: null,
-      name: '',
-      subtype_id: null,
-      subtype_name: null
-    };
-
-    setFormData(prev => ({
-      ...prev,
-      type: {
-        ...selectedType
-      }
-    }));
-  };
 
   const handleSubtypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const subtypeId = parseInt(e.target.value);

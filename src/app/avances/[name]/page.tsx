@@ -28,7 +28,7 @@ export default function ProgressDetailPage({ params }: PageProps) {
     "EJ": "En ejecución",
     "CN": "Cancelado",
     "FN": "Finalizado"
-};
+  };
 
   useEffect(() => {
     const fetchProgressDetail = async () => {
@@ -164,7 +164,7 @@ export default function ProgressDetailPage({ params }: PageProps) {
 
             {/* Documento o Enlace */}
             <div className="mb-6">
-              <h2 className="text-xl font-semibold mb-3">Documentación</h2>
+              <h2 className="text-xl font-semibold mb-3">Documento adjunto</h2>
               <div className="bg-white rounded-lg p-4">
                 {progress.document_link ? (
                   <div className="flex items-center">
@@ -186,15 +186,23 @@ export default function ProgressDetailPage({ params }: PageProps) {
               </div>
             </div>
 
-            {/* Descripción */}
-            {progress.description && (
-              <div>
-                <h2 className="text-xl font-semibold mb-3">Descripción</h2>
-                <div className="bg-white rounded-lg p-4">
-                  <p className="whitespace-pre-line">{progress.description}</p>
-                </div>
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-3">Descripción</h2>
+              <div className="bg-white rounded-lg p-4">
+                {progress.description ? (
+                  <div>
+                    <h2 className="text-xl font-semibold mb-3">Descripción</h2>
+                    <div className="bg-white rounded-lg p-4">
+                      <p className="whitespace-pre-line">{progress.description}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center">
+                    <span>No hay descripción</span>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
         ) : (
           <div className="text-center py-8 text-gray-500">

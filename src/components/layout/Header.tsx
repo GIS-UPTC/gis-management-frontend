@@ -169,7 +169,7 @@ const Header: React.FC<HeaderProps> = ({ moduleName, userName = '' }) => {
               {/* Icono de usuario en menú móvil */}
               <li>
                 <Link
-                  href={`/perfil?nombre=${encodedUserName}`}
+                  href={`/profile`}
                   onClick={() => setIsMenuOpen(false)}
                   className={`flex items-center py-2 px-4 rounded-lg transition-colors text-gray-600 hover:bg-gray-50`}
                 >

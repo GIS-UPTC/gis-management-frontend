@@ -7,15 +7,11 @@ import { FaUser, FaChevronDown } from 'react-icons/fa'; // Icono para el dropdow
 
 interface HeaderProps {
   moduleName: string;
-  userName?: string; // Nombre completo del usuario actual
 }
 
-const Header: React.FC<HeaderProps> = ({ moduleName, userName = '' }) => {
+const Header: React.FC<HeaderProps> = ({ moduleName}) => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
-  // Codificar el nombre de usuario para que sea seguro usarlo en una URL
-  const encodedUserName = encodeURIComponent(userName);
 
   // Menú principal (reorganizado según especificaciones)
   const navItems = [

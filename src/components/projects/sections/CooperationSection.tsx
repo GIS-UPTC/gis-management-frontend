@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Project, Cooperation, InCharge } from '@/types/models/project.models';
 import { User } from '@/types/models/GeneralModels';
 

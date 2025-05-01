@@ -6,6 +6,8 @@ import Header from '@/components/layout/Header';
 import { ResearchLine } from '@/types/models/GeneralModels';
 import { researchLineService, ResearchLineServiceError } from '@/services/researchLineService';
 import { toast, Toaster } from 'react-hot-toast';
+import Link from 'next/link';
+import ArrowLeftIcon from '@heroicons/react/24/outline/ArrowLeftIcon';
 
 export default function ResearchLineDetailsPage() {
   const params = useParams();
@@ -70,8 +72,11 @@ export default function ResearchLineDetailsPage() {
     <>
     <Toaster position="top-center" />
       <Header moduleName="Líneas de Investigación" />
-      <div className="container mx-auto px-4 py-8">
+      <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="mb-6 flex justify-between items-center">
+          <Link href="/lineas" className="mr-4">
+            <ArrowLeftIcon className="h-8 w-8 text-black hover:text-orange-600" />
+          </Link>
           <h1 className="text-2xl font-bold">Detalles de la Línea de Investigación</h1>
           <button
             onClick={() => window.location.href = `/lineas/nuevo?edit=${encodeURIComponent(researchLine.name)}`}

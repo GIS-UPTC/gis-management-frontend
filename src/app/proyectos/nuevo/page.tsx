@@ -7,6 +7,8 @@ import ProjectForm from '@/components/projects/ProjectForm';
 import { Project } from '@/types/models/project.models';
 import { projectService, ProjectServiceError } from '@/services/projectService';
 import { toast } from 'react-hot-toast';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
 
 export default function NewProjectPage() {
   const router = useRouter();
@@ -67,7 +69,10 @@ export default function NewProjectPage() {
     <>
       <Header moduleName="Proyectos" />
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center mb-6">
+          <Link href="/proyectos" className="mr-4">
+            <ArrowLeftIcon className="h-8 w-8 text-black hover:text-orange-600" />
+          </Link>
           <h1 className="text-2xl font-bold">
             {isEditing ? 'Editar Proyecto' : 'Nuevo Proyecto'}
           </h1>

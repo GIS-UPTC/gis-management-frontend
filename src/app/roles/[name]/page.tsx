@@ -6,6 +6,8 @@ import Header from '@/components/layout/Header';
 import { Role } from '@/types/models/GeneralModels';
 import { roleService, RoleServiceError } from '@/services/roleService';
 import { toast, Toaster } from 'react-hot-toast';
+import ArrowLeftIcon from '@heroicons/react/24/outline/ArrowLeftIcon';
+import Link from 'next/link';
 
 export default function RoleDetailsPage() {
   const params = useParams();
@@ -70,8 +72,11 @@ export default function RoleDetailsPage() {
     <>
     <Toaster position="top-center" />
       <Header moduleName="Roles" />
-      <div className="container mx-auto px-4 py-8">
+      <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="mb-6 flex justify-between items-center">
+          <Link href="/roles" className="mr-4">
+            <ArrowLeftIcon className="h-8 w-8 text-black hover:text-orange-600" />
+          </Link>
           <h1 className="text-2xl font-bold">Detalles del Rol</h1>
           <button
             onClick={() => window.location.href = `/roles/nuevo?edit=${encodeURIComponent(role.name)}`}

@@ -12,6 +12,8 @@ import ResearchLineCombobox from '@/components/ui/ResearchLineComboBox';
 import SelectionCard from '@/components/progresses/components/SelectionCard';
 import { reportService } from '@/services/extras/reportService';
 import toast, { Toaster } from 'react-hot-toast';
+import { ArrowLeftIcon } from '@heroicons/react/16/solid';
+import Link from 'next/link';
 
 export default function GenerateReportPage() {
   // Report state
@@ -171,9 +173,12 @@ export default function GenerateReportPage() {
 
   return (
     <>
-    <Toaster position="top-center" />
+      <Toaster position="top-center" />
       <Header moduleName="Reportes" />
       <div className="w-full max-w-4xl mx-auto py-6">
+        <Link href="/" className="mr-4">
+          <ArrowLeftIcon className="h-8 w-8 text-black hover:text-orange-600" />
+        </Link>
         <h1 className="text-2xl font-bold mb-6">Generación de Reportes</h1>
 
         <div className="bg-white p-6 rounded shadow">

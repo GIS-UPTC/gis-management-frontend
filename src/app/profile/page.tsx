@@ -6,6 +6,8 @@ import { User } from '@/types/models/GeneralModels';
 import { loginService } from '@/services/loginService';
 import { toast, Toaster } from 'react-hot-toast';
 import { userService } from '@/services/userService';
+import ArrowLeftIcon from '@heroicons/react/24/outline/ArrowLeftIcon';
+import Link from 'next/link';
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
@@ -90,10 +92,15 @@ export default function ProfilePage() {
 
   return (
     <>
-    <Toaster position="top-center" />
+      <Toaster position="top-center" />
       <Header moduleName="Perfil" />
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6">Mi Perfil</h1>
+      <div className="w-full max-w-4xl mx-auto px-4 py-8">
+        <div className="flex items-center mb-6">
+          <Link href="/" className="mr-4">
+            <ArrowLeftIcon className="h-8 w-8 text-black hover:text-orange-600" />
+          </Link>
+          <h1 className="text-2xl font-bold">Mi Perfil</h1>
+        </div>
 
         <div className="bg-white rounded-lg shadow p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -212,8 +219,8 @@ export default function ProfilePage() {
                       key={index}
                       className="inline-block px-3 py-1 text-sm font-semibold text-gray-700 bg-blue-100 rounded-full"
                     >
-                      {typeof interest === 'object' ? 
-                        (interest.description || 'Tema sin nombre') : 
+                      {typeof interest === 'object' ?
+                        (interest.description || 'Tema sin nombre') :
                         interest}
                     </span>
                   ))}
@@ -229,7 +236,7 @@ export default function ProfilePage() {
                 <h2 className="text-lg font-semibold mb-4">Enlaces</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {user.links.map((link, index) => (
-                    <a 
+                    <a
                       key={index}
                       href={link.link}
                       target="_blank"

@@ -6,6 +6,8 @@ import Header from '@/components/layout/Header';
 import { User } from '@/types/models/GeneralModels';
 import { userService, UserServiceError } from '@/services/userService';
 import { toast, Toaster } from 'react-hot-toast';
+import Link from 'next/link';
+import ArrowLeftIcon from '@heroicons/react/24/outline/ArrowLeftIcon';
 
 export default function UserDetailsPage() {
   const params = useParams();
@@ -85,8 +87,11 @@ export default function UserDetailsPage() {
     <>
     <Toaster position="top-center" />
       <Header moduleName="Usuarios" />
-      <div className="container mx-auto px-4 py-8">
+      <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="mb-6 flex justify-between items-center">
+          <Link href="/usuarios" className="mr-4">
+            <ArrowLeftIcon className="h-8 w-8 text-black hover:text-orange-600" />
+          </Link>
           <h1 className="text-2xl font-bold">Detalles del Usuario</h1>
           <button
             onClick={() => window.location.href = `/usuarios/nuevo?edit=${encodeURIComponent(user.first_name + ' ' + user.surname)}`}

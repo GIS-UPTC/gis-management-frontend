@@ -22,7 +22,7 @@ export default function ProductosPage() {
   const loadProducts = async (query: string) => {
     setIsLoading(true);
     try {
-      if(query.length > 2) {
+      if (query.length > 2) {
         const productData = await productService.getProducts(query);
         setProducts(productData);
       }
@@ -62,7 +62,7 @@ export default function ProductosPage() {
 
   return (
     <>
-    <Toaster position="top-center" />
+      <Toaster position="top-center" />
       <Header moduleName="Productos" />
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
@@ -76,9 +76,9 @@ export default function ProductosPage() {
         </div>
 
         <div className="mb-6">
-          <SearchBar 
-            onSearch={handleSearch} 
-            isLoading={isLoading} 
+          <SearchBar
+            onSearch={handleSearch}
+            isLoading={isLoading}
             placeholder="Buscar productos..."
           />
         </div>

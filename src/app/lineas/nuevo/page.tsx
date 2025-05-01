@@ -7,6 +7,8 @@ import ResearchLineForm from '@/components/research-lines/ResearchLineForm';
 import { ResearchLine } from '@/types/models/GeneralModels';
 import { researchLineService, ResearchLineServiceError } from '@/services/researchLineService';
 import { toast } from 'react-hot-toast';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
 
 export default function NewResearchLinePage() {
   const searchParams = useSearchParams();
@@ -51,8 +53,11 @@ export default function NewResearchLinePage() {
   return (
     <>
       <Header moduleName="Líneas de Investigación" />
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-6">
+      <div className="w-full max-w-4xl mx-auto px-4 py-8">
+        <div className="mb-6 flex items-center">
+          <Link href="/lineas" className="mr-4">
+            <ArrowLeftIcon className="h-8 w-8 text-black hover:text-orange-600" />
+          </Link>
           <h1 className="text-2xl font-bold">
             {isEditing ? 'Editar Línea de Investigación' : 'Nueva Línea de Investigación'}
           </h1>

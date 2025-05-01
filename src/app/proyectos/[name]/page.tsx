@@ -6,6 +6,8 @@ import Header from '@/components/layout/Header';
 import { projectService, ProjectServiceError } from '@/services/projectService';
 import { toast, Toaster } from 'react-hot-toast';
 import { Project } from '@/types/models/project.models';
+import ArrowLeftIcon from '@heroicons/react/24/outline/ArrowLeftIcon';
+import Link from 'next/link';
 
 export default function ProjectDetailsPage() {
   const params = useParams();
@@ -112,8 +114,11 @@ export default function ProjectDetailsPage() {
     <>
     <Toaster position="top-center" />
       <Header moduleName="Proyectos" />
-      <div className="container mx-auto px-4 py-8">
+      <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="mb-6 flex justify-between items-center">
+          <Link href="/proyectos" className="mr-4">
+            <ArrowLeftIcon className="h-8 w-8 text-black hover:text-orange-600" />
+          </Link>
           <h1 className="text-2xl font-bold">Detalles del Proyecto</h1>
           <button
             onClick={() => window.location.href = `/proyectos/nuevo?edit=${encodeURIComponent(project.title)}`}

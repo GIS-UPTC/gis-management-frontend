@@ -7,6 +7,8 @@ import RoleForm from '@/components/roles/RoleForm';
 import { Role } from '@/types/models/GeneralModels';
 import { roleService, RoleServiceError } from '@/services/roleService';
 import { toast } from 'react-hot-toast';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
 
 export default function NewRolePage() {
   const searchParams = useSearchParams();
@@ -47,7 +49,10 @@ export default function NewRolePage() {
     <>
       <Header moduleName="Roles" />
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-6">
+        <div className="mb-6 flex items-center">
+          <Link href="/roles" className="mr-4">
+            <ArrowLeftIcon className="h-8 w-8 text-gray-600 hover:text-orange-600" />
+          </Link>
           <h1 className="text-2xl font-bold">
             {isEditing ? 'Editar Rol' : 'Nuevo Rol'}
           </h1>

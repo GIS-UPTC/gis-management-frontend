@@ -7,6 +7,7 @@ import { progressService } from '@/services/progressesService';
 import { toast, Toaster } from 'react-hot-toast';
 import { ArrowLeftIcon, LinkIcon, UserIcon, CalendarIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 interface PageProps {
   params: {
@@ -16,24 +17,39 @@ interface PageProps {
 }
 
 export default function ProgressDetailPage({ params }: PageProps) {
+  const searchParams = useSearchParams();
   const [progress, setProgress] = useState<Progress | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Decode the name parameter
-  const decodedName = decodeURIComponent(params.name);
+  const projectStatus: Record<string, string> = {
+    "AC": "Activo",
+    "IN": "Inactivo",
+    "EJ": "En ejecución",
+    "CN": "Cancelado",
+    "FN": "Finalizado"
+};
 
   useEffect(() => {
     const fetchProgressDetail = async () => {
-      if (!decodedName) {
-        setError('Nombre de avance no válido');
+      const decodedName = decodeURIComponent(params.name as string);
+      const decodedId = searchParams.get('id');
+
+      if (!decodedName || !decodedId) {
+        setError('Nombre de avance o ID no ingresados');
         setIsLoading(false);
         return;
       }
 
       try {
         const progressData = await progressService.searchProgresses(decodedName);
-        setProgress(progressData[0]);
+        const foundProgress = progressData.find(u => u.id === Number(decodedId));
+        if (!foundProgress) {
+          setError('Avance no encontrado');
+          setIsLoading(false);
+          return;
+        }
+        setProgress(foundProgress);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Error al cargar la información del avance';
         setError(errorMessage);
@@ -44,7 +60,7 @@ export default function ProgressDetailPage({ params }: PageProps) {
     };
 
     fetchProgressDetail();
-  }, [decodedName]);
+  }, [params.name, searchParams]);
 
   const progressTypes: Record<string, string> = {
     "PI": "Propuesta Inicial",
@@ -53,24 +69,24 @@ export default function ProgressDetailPage({ params }: PageProps) {
     "FI": "Informe Final"
   };
 
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return 'No especificada';
+  const formatDate = (dateString: string | null): string => {
+    if (!dateString) return 'N/A';
     const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+
+    return date.toLocaleString('es-ES', {
+      dateStyle: 'short',
+      timeStyle: 'short'
     });
   };
 
   return (
     <>
-    <Toaster position="top-center" />
+      <Toaster position="top-center" />
       <Header moduleName="Avances" />
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="mb-6 flex items-center">
-          <Link href="/progresses" className="mr-4">
-            <ArrowLeftIcon className="h-5 w-5 text-gray-600 hover:text-orange-600" />
+      <div className="w-full max-w-4xl mx-auto px-4 py-8">
+        <div className="flex items-center mb-6">
+          <Link href="/avances" className="mr-4">
+            <ArrowLeftIcon className="h-8 w-8 text-black hover:text-orange-600" />
           </Link>
           <h1 className="text-2xl font-bold">Detalle del Avance</h1>
         </div>
@@ -88,17 +104,25 @@ export default function ProgressDetailPage({ params }: PageProps) {
             {/* Detalles del Proyecto */}
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-3">Información del Proyecto</h2>
-              <div className="bg-white rounded-lg p-4">
-                <h3 className="font-bold text-lg">{progress.project.title}</h3>
-                {progress.project.description && (
-                  <p className="text-gray-700 mt-2">{progress.project.description}</p>
-                )}
+              <div className="bg-white rounded-lg p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-white rounded-lg p-4">
+                  <h3 className="font-bold text-lg">{progress.project.title}</h3>
+                  {progress.project.description && (
+                    <p className="text-gray-700 mt-2">{progress.project.description}</p>
+                  )}
+                </div>
+                <div className="flex items-center">
+                  <div>
+                    <p className="text-sm text-gray-500">Estado del proyecto</p>
+                    <p className="font-medium">{projectStatus[progress.project.status]}</p>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Información del Usuario */}
             <div className="mb-6">
-              <h2 className="text-xl font-semibold mb-3">Usuario</h2>
+              <h2 className="text-xl font-semibold mb-3">Usuario que reporta</h2>
               <div className="bg-white rounded-lg p-4 flex items-center">
                 <UserIcon className="h-10 w-10 text-orange-500 mr-3" />
                 <div>
@@ -131,7 +155,7 @@ export default function ProgressDetailPage({ params }: PageProps) {
                     <CalendarIcon className="h-6 w-6 text-orange-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Fecha</p>
+                    <p className="text-sm text-gray-500">Fecha y hora</p>
                     <p className="font-medium">{formatDate(progress.date)}</p>
                   </div>
                 </div>

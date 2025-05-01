@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { Progress } from '@/types/models/GeneralModels';
 import { LinkIcon } from '@heroicons/react/24/outline';
 import { progressService } from '@/services/progressesService';
+import { FaTrash } from 'react-icons/fa';
 
 interface ProgressTableProps {
     progresses: Progress[];
@@ -13,15 +14,24 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
 
     const progressTypes: Record<string, string> = {
         "PI": "Propuesta Inicial",
-        "IO": "Informe Operativo o de Avance",
+        "IO": "Informe Operativo",
         "IF": "Informe Financiero",
         "FI": "Informe Final"
     };
 
+    const projectStatus: Record<string, string> = {
+        "AC": "Activo",
+        "IN": "Inactivo",
+        "EJ": "En ejecución",
+        "CN": "Cancelado",
+        "FN": "Finalizado"
+    };
+
     const handleRowClick = (progress: Progress) => {
         // Use project and user information to create a unique identifier
-        const encodedName = encodeURIComponent(`${progress.project.title}_${progress.id}`);
-        router.push(`/progresses/${encodedName}`);
+        const encodedName = encodeURIComponent(`${progress.project.title}`);
+        const encodedId = encodeURIComponent(`${progress.id}`);
+        router.push(`/avances/${encodedName}?id=${encodedId}`);
     };
 
     const handleDeleteProgress = async (progress: Progress, e: React.MouseEvent) => {
@@ -58,7 +68,7 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
                 <thead className="bg-yellow-200">
                     <tr>
                         <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Proyecto asociado</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Estado proyecto asociado</th>
+                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Estado proyecto</th>
                         <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Usuario que reporta</th>
                         <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Tipo de avance</th>
                         <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Fecha y hora</th>
@@ -78,20 +88,23 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
                                 {truncateText(progress.project.title, 30)}
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-900">
-                                {progress.user.first_name} {progress.user.surname}
+                                <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-200 text-green-800">
+                                    {projectStatus[progress.project.status] || progress.project.status}
+                                </span>
+
                             </td>
                             <td className="px-6 py-4 text-sm">
+                                {progress.user.first_name} {progress.user.surname}
+
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-900">
                                 <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-orange-200 text-orange-800">
                                     {progressTypes[progress.type] || progress.type}
                                 </span>
+
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-900">
                                 {formatDate(progress.date)}
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-900">
-                                <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-200 text-green-800">
-                                    {progress.project.status}
-                                </span>
                             </td>
                             <td className="px-6 py-4 text-sm">
                                 {progress.document_link ? (
@@ -114,9 +127,13 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
                             </td>
                             <td className="px-6 py-4 text-sm">
                                 <button
-                                    onClick={(e) => handleDeleteProgress(progress, e)}
-                                    className={`px-3 py-1 rounded-md text-sm font-medium 'bg-red-100 text-red-700 hover:bg-red-200'`}
+                                    onClick={(e) => {
+                                        handleDeleteProgress(progress, e)
+                                    }}
+                                    className="px-3 py-1 rounded-md text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200"
+                                    title="Eliminar avance"
                                 >
+                                    <FaTrash className="inline mr-1" size={14} /> Eliminar
                                 </button>
                             </td>
                         </tr>

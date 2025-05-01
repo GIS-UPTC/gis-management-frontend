@@ -7,6 +7,8 @@ import ProductForm from '@/components/products/ProductForm';
 import { Product } from '@/types/models/GeneralModels';
 import { productService, ProductServiceError } from '@/services/productsService';
 import { toast } from 'react-hot-toast';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
 
 export default function NewProductPage() {
   const searchParams = useSearchParams();
@@ -42,8 +44,11 @@ export default function NewProductPage() {
   return (
     <>
       <Header moduleName="Productos" />
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-6">
+      <div className="w-full max-w-4xl mx-auto px-4 py-8">
+        <div className="flex items-center mb-6">
+          <Link href="/productos" className="mr-4">
+            <ArrowLeftIcon className="h-8 w-8 text-black hover:text-orange-600" />
+          </Link>
           <h1 className="text-2xl font-bold">
             {isEditing ? 'Editar Producto' : 'Nuevo Producto'}
           </h1>

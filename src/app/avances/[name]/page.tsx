@@ -8,13 +8,14 @@ import { toast, Toaster } from 'react-hot-toast';
 import { ArrowLeftIcon, LinkIcon, UserIcon, CalendarIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
-interface ProgressDetailPageProps {
+interface PageProps {
   params: {
     name: string;
   };
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-export default function ProgressDetailPage({ params }: ProgressDetailPageProps) {
+export default function ProgressDetailPage({ params }: PageProps) {
   const [progress, setProgress] = useState<Progress | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

@@ -3,8 +3,6 @@ import { Role, Access } from '@/types/models/GeneralModels';
 import { roleService } from '@/services/roleService';
 import { accessService } from '@/services/extras/accessService';
 import { toast, Toaster } from 'react-hot-toast';
-import { Combobox } from '@headlessui/react';
-import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
 interface FormData extends Omit<Role, 'id'> {
@@ -24,45 +22,52 @@ interface RoleFormProps {
 
 export default function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
   const [formData, setFormData] = useState<FormData>(initialData || initialFormData);
-  const [query, setQuery] = useState('');
-  const [availableAccesses, setAvailableAccesses] = useState<Access[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
+  const [allAccesses, setAllAccesses] = useState<Access[]>([]);
+  const [filteredAccesses, setFilteredAccesses] = useState<Access[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Cargar todos los accesos al montar el componente
+  useEffect(() => {
+    const fetchAllAccesses = async () => {
+      setIsLoading(true);
+      try {
+        // Asumiendo que accessService tiene un método fetchAccesses
+        const accesses = await accessService.fetchAccesses(' ');
+        setAllAccesses(accesses);
+        setFilteredAccesses(accesses);
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAllAccesses();
+  }, []);
+
+  // Actualizar el formulario cuando cambia initialData
   useEffect(() => {
     if (initialData) {
       setFormData(initialData);
     }
   }, [initialData]);
 
+  // Filtrar accesos según el texto de búsqueda
   useEffect(() => {
-    const searchAccesses = async () => {
-      if (query.length < 3) {
-        setAvailableAccesses([]);
-        return;
-      }
-
-      setIsSearching(true);
-      try {
-        const results = await accessService.searchAccesses(query);
-        const filteredResults = results.filter(access => 
-          !formData.accesses.some(selectedAccess => selectedAccess.id === access.id)
-        );
-        setAvailableAccesses(filteredResults);
-      } catch (error) {
-        if (error instanceof Error) {
-          toast.error(error.message);
-        }
-        setAvailableAccesses([]);
-      } finally {
-        setIsSearching(false);
-      }
-    };
-
-    const debounceTimer = setTimeout(searchAccesses, 300);
-    return () => clearTimeout(debounceTimer);
-  }, [query, formData.accesses]);
+    if (searchQuery.trim() === '') {
+      setFilteredAccesses(allAccesses);
+    } else {
+      const filtered = allAccesses.filter(access => 
+        access.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredAccesses(filtered);
+    }
+  }, [searchQuery, allAccesses]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -70,6 +75,15 @@ export default function RoleForm({ initialData, isEditing = false }: RoleFormPro
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+  };
+
+  const handleAddAccess = (access: Access) => {
+    if (!formData.accesses.some(a => a.id === access.id)) {
+      setFormData(prev => ({
+        ...prev,
+        accesses: [...prev.accesses, access]
+      }));
+    }
   };
 
   const handleRemoveAccess = (accessId: number) => {
@@ -113,6 +127,13 @@ export default function RoleForm({ initialData, isEditing = false }: RoleFormPro
     }
   };
 
+  // Obtener accesos que no han sido seleccionados aún
+  const getAvailableAccesses = () => {
+    return filteredAccesses.filter(access => 
+      !formData.accesses.some(selectedAccess => selectedAccess.id === access.id)
+    );
+  };
+
   return (
     <form onSubmit={handleSubmit} className="bg-customLightYellow rounded-lg shadow max-w-4xl mx-auto p-6">
       <Toaster position="top-center" />
@@ -135,76 +156,15 @@ export default function RoleForm({ initialData, isEditing = false }: RoleFormPro
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Privilegios
           </label>
-          <div className="space-y-4">
-            <Combobox value={null} onChange={(access: Access | null) => {
-              if (access && !formData.accesses.some(a => a.id === access.id)) {
-                setFormData(prev => ({
-                  ...prev,
-                  accesses: [...prev.accesses, access]
-                }));
-              }
-            }}>
-              <div className="relative">
-                <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border focus-within:border-orange-500">
-                  <Combobox.Input
-                    className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
-                    displayValue={() => ''}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => setQuery(event.target.value)}
-                    placeholder="Buscar acceso..."
-                  />
-                  <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-                    <ChevronUpDownIcon
-                      className="h-5 w-5 text-gray-400"
-                      aria-hidden="true"
-                    />
-                  </Combobox.Button>
-                </div>
-                <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-10">
-                  {isSearching ? (
-                    <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
-                      Buscando accesos...
-                    </div>
-                  ) : availableAccesses.length === 0 && query !== '' ? (
-                    <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
-                      {query.length < 3 ? 'Escriba al menos 3 caracteres para buscar' : 'No se encontraron accesos.'}
-                    </div>
-                  ) : (
-                    availableAccesses.map((access) => (
-                      <Combobox.Option
-                        key={access.id}
-                        value={access}
-                        className={({ active }) =>
-                          `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                            active ? 'bg-orange-100 text-orange-900' : 'text-gray-900'
-                          }`
-                        }
-                      >
-                        {({ selected, active }) => (
-                          <>
-                            <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
-                              {access.name}
-                            </span>
-                            {selected && (
-                              <span
-                                className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                                  active ? 'text-orange-600' : 'text-orange-600'
-                                }`}
-                              >
-                                <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </Combobox.Option>
-                    ))
-                  )}
-                </Combobox.Options>
-              </div>
-            </Combobox>
-
-            <div className="space-y-2">
-              <div className="flex flex-wrap gap-2">
-                {formData.accesses.map(access => (
+          
+          {/* Sección de privilegios seleccionados */}
+          <div className="mb-4">
+            <h3 className="text-sm font-medium text-gray-600 mb-2">Privilegios seleccionados:</h3>
+            <div className="flex flex-wrap gap-2">
+              {formData.accesses.length === 0 ? (
+                <p className="text-sm text-gray-500 italic">No se han seleccionado privilegios</p>
+              ) : (
+                formData.accesses.map(access => (
                   <div
                     key={access.id}
                     className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm"
@@ -218,9 +178,56 @@ export default function RoleForm({ initialData, isEditing = false }: RoleFormPro
                       <XMarkIcon className="h-4 w-4" />
                     </button>
                   </div>
-                ))}
-              </div>
+                ))
+              )}
             </div>
+          </div>
+
+          {/* Campo de búsqueda y lista de accesos disponibles */}
+          <div className="border rounded-lg bg-white p-4">
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Buscar privilegios..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full p-2 border rounded-lg"
+              />
+            </div>
+
+            {isLoading ? (
+              <div className="py-4 text-center text-gray-500">
+                Cargando privilegios...
+              </div>
+            ) : (
+              <div className="max-h-60 overflow-y-auto">
+                {getAvailableAccesses().length === 0 ? (
+                  <div className="py-4 text-center text-gray-500">
+                    {allAccesses.length === 0 
+                      ? "No hay privilegios disponibles" 
+                      : "No se encontraron privilegios que coincidan con la búsqueda"}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {getAvailableAccesses().map(access => (
+                      <div
+                        key={access.id}
+                        className="flex items-center justify-between p-2 hover:bg-orange-50 rounded cursor-pointer"
+                        onClick={() => handleAddAccess(access)}
+                      >
+                        <span className="text-sm">{access.name}</span>
+                        <button
+                          type="button"
+                          className="p-1 text-orange-600 hover:bg-orange-100 rounded-full"
+                        >
+                          <PlusIcon className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -251,14 +258,14 @@ export default function RoleForm({ initialData, isEditing = false }: RoleFormPro
   );
 }
 
-function CheckIcon(props: React.SVGProps<SVGSVGElement>) {
+function PlusIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 20 20" fill="currentColor" {...props}>
       <path
         fillRule="evenodd"
-        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
         clipRule="evenodd"
       />
     </svg>
   );
-} 
+}

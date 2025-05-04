@@ -1,10 +1,6 @@
 import api from '../api';
 import { Program } from '@/types/models/GeneralModels';
-import { AxiosError } from 'axios';
-
-interface ErrorResponse {
-  detail: string;
-}
+import { handleApiError } from '@/utils/errorHandler';
 
 export class ProgramServiceError extends Error {
   constructor(message: string) {
@@ -20,14 +16,23 @@ export const programService = {
       console.log(response)
       return response.data;
     } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      if (axiosError.response?.data?.detail) {
-        if(axiosError.response.data.detail === 'Token invalido' || axiosError.response.data.detail === 'Se ha terminado el tiempo de la sesion') {
-          sessionStorage.removeItem('access_token');
-        }
-        throw new ProgramServiceError(axiosError.response.data.detail);
-      }
-      throw new ProgramServiceError('Error al buscar programas. Por favor, intente nuevamente.');
+      return handleApiError(
+        error,
+        ProgramServiceError,
+        'Error al buscar programas. Por favor, intente nuevamente.'
+      );}
+  },
+  async fetchPrograms(name: string): Promise<Program[]> {
+    try {
+      const response = await api.get<Program[]>(`/programs/${name}?all=true`);
+      console.log(response)
+      return response.data;
+    } catch (error) {
+      return handleApiError(
+        error,
+        ProgramServiceError,
+        'Error al obtener programas. Por favor, intente nuevamente.'
+      );
     }
   }
 };

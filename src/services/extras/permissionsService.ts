@@ -19,7 +19,20 @@ export const permissionService = {
             return handleApiError(
                 error,
                 PermissionServiceError,
-                'Error al buscar roles. Por favor, intente nuevamente.'
+                'Error al buscar permisos. Por favor, intente nuevamente.'
+            );
+        }
+    },
+    async fetchPermissions(name: string): Promise<Permission[]> {
+        try {
+            const response = await api.get<Permission[]>(`/permissions/${name}?all=true`);
+            console.log(response);
+            return response.data;
+        } catch (error) {
+            return handleApiError(
+                error,
+                PermissionServiceError,
+                'Error al obtener permisos. Por favor, intente nuevamente.'
             );
         }
     }

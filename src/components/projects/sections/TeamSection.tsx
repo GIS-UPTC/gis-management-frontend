@@ -26,6 +26,7 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
   const [isLoading, setIsLoading] = useState(false);
   const [isResearchLineOpen, setIsResearchLineOpen] = useState(false);
   const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(false);
+  const [userSearchQuery, setUserSearchQuery] = useState('');
 
   const fetchResearchLines = async () => {
     try {
@@ -39,16 +40,24 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
     }
   };
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (query: string = '') => {
     try {
       setIsLoading(true);
-      const results = await userService.fetchUsers(' ');
+      let results: User[];
+      
+      if (query.trim() !== '') {
+        results = await userService.searchUsersByName(query);
+      } else {
+        // Si no hay texto de búsqueda, usar el método original
+        results = await userService.fetchUsers(' ');
+      }
+      
       // Filtrar para no mostrar usuarios que ya están en el equipo
       const filteredUsers = results.filter(user => 
         !formData.participations.some(p => p.user.id === user.id)
       );
       setUsers(filteredUsers);
-    } catch{
+    } catch {
       toast.error('Error al cargar usuarios');
     } finally {
       setIsLoading(false);
@@ -66,7 +75,10 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
     setIsResearchLineOpen(false);
   };
 
-  // No necesitamos el useEffect para el debounce de búsqueda de usuarios ya que ahora cargamos todos al abrir el dropdown
+  const handleUserSearchChange = (query: string) => {
+    setUserSearchQuery(query);
+    fetchUsers(query);
+  };
 
   const handleAddParticipation = () => {
     if (selectedUser && newParticipation.start_date && newParticipation.role && newParticipation.responsibility) {
@@ -88,6 +100,7 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
       // Reset form state
       setSelectedUser(null);
       setUsers([]);
+      setUserSearchQuery('');
       setNewParticipation({
         start_date: '',
         end_date: '',
@@ -183,7 +196,7 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
               <div className="flex justify-between items-start">
                 <div>
                   <p className="font-medium">
-                    {participation.user.first_name} {participation.user.surname}
+                    {participation.user.first_name} {participation.user.other_name} {participation.user.surname} {participation.user.other_surname}
                   </p>
                   <p className="text-sm text-gray-500">
                     Rol: {participation.role === 'IP' ? 'Investigador Principal' :
@@ -221,16 +234,24 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
               }}>
                 <div className="relative">
                   <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border focus-within:border-orange-500">
+                    <Combobox.Input
+                      className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
+                      placeholder="Buscar usuario por nombre..."
+                      displayValue={() => userSearchQuery}
+                      onChange={(e) => handleUserSearchChange(e.target.value)}
+                      onFocus={() => {
+                        setIsUsersDropdownOpen(true);
+                        console.log("atencion")
+                        if (!userSearchQuery) fetchUsers('');
+                      }}
+                    />
                     <Combobox.Button
-                      className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0 flex justify-between items-center"
+                      className="absolute inset-y-0 right-0 flex items-center pr-2"
                       onClick={() => {
                         setIsUsersDropdownOpen(true);
-                        fetchUsers();
+                        if (!userSearchQuery) fetchUsers('');
                       }}
                     >
-                      <span className="block truncate">
-                        Seleccionar un miembro para el equipo...
-                      </span>
                       <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                     </Combobox.Button>
                   </div>
@@ -243,7 +264,7 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
                         </div>
                       ) : users.length === 0 ? (
                         <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
-                          No hay usuarios disponibles para agregar
+                          {userSearchQuery ? `No se encontraron usuarios con "${userSearchQuery}"` : "No hay usuarios disponibles para agregar"}
                         </div>
                       ) : (
                         users.map((user) => {

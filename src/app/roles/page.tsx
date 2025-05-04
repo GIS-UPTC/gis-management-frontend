@@ -6,10 +6,12 @@ import Header from '@/components/layout/Header';
 import RoleTable from '@/components/roles/RolesTable';
 import { Role } from '@/types/models/GeneralModels';
 import { roleService, RoleServiceError } from '@/services/roleService';
+import SearchBar from '@/components/ui/SearchBar';
 import { toast, Toaster } from 'react-hot-toast';
 
 export default function RolesPage() {
-  const [roles, setRoles] = useState<Role[]>([]);
+  const [allRoles, setAllRoles] = useState<Role[]>([]);
+  const [filteredRoles, setFilteredRoles] = useState<Role[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -17,7 +19,8 @@ export default function RolesPage() {
     const loadRoles = async () => {
       try {
         const allRoles = await roleService.fetchRoles(' ');
-        setRoles(allRoles);
+        setAllRoles(allRoles);
+        setFilteredRoles(allRoles);
       } catch (error) {
         if (error instanceof RoleServiceError) {
           setError(error.message);
@@ -49,6 +52,21 @@ export default function RolesPage() {
             Agregar Rol...
           </Link>
         </div>
+        <div className="mb-6">
+          <SearchBar
+            onSearch={(query) => {
+              if (query.length === 0) {
+                setFilteredRoles(allRoles);
+              } else {
+                const filtered = allRoles.filter(role =>
+                  role.name.toLowerCase().includes(query.toLowerCase())
+                );
+                setFilteredRoles(filtered);
+              }
+            }}
+            placeholder="Buscar rol..."
+          />
+        </div>
 
         {error ? (
           <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
@@ -58,9 +76,9 @@ export default function RolesPage() {
           <div className="flex justify-center items-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
           </div>
-        ) : roles.length > 0 ? (
+        ) : filteredRoles.length > 0 ? (
           <div className="bg-white rounded-lg shadow">
-            <RoleTable roles={roles} />
+            <RoleTable roles={filteredRoles} />
           </div>
         ) : (
           <div className="text-center py-8 text-gray-500">

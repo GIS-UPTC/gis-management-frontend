@@ -5,11 +5,13 @@ import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import { ResearchLine } from '@/types/models/GeneralModels';
 import { researchLineService, ResearchLineServiceError } from '@/services/researchLineService';
+import SearchBar from '@/components/ui/SearchBar';
 import { toast, Toaster } from 'react-hot-toast';
 import ResearchLinesTable from '@/components/research-lines/ResearchLinesTable';
 
 export default function ResearchLinesPage() {
-  const [programs, setPrograms] = useState<ResearchLine[]>([]);
+  const [allLines, setAllLines] = useState<ResearchLine[]>([]);
+  const [filteredLines, setFilteredLines] = useState<ResearchLine[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -17,7 +19,8 @@ export default function ResearchLinesPage() {
     const loadResearchLines = async () => {
       try {
         const allLines = await researchLineService.fetchResearchLines(' ');
-        setPrograms(allLines);
+        setAllLines(allLines);
+        setFilteredLines(allLines);
       } catch (error) {
         if (error instanceof ResearchLineServiceError) {
           setError(error.message);
@@ -43,11 +46,26 @@ export default function ResearchLinesPage() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Listado de Líneas de Investigación</h1>
           <Link
-            href="/lineas/nuevo"
+            href="/lineas/nueva"
             className="bg-customDarkGreen hover:bg-green-200 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
           >
-            Agregar Línea...
+            Agregar Línea de Investigación...
           </Link>
+        </div>
+        <div className="mb-6">
+          <SearchBar
+            onSearch={(query) => {
+              if (query.length === 0) {
+                setFilteredLines(allLines);
+              } else {
+                const filtered = allLines.filter(line =>
+                  line.name.toLowerCase().includes(query.toLowerCase())
+                );
+                setFilteredLines(filtered);
+              }
+            }}
+            placeholder="Buscar línea de investigación..."
+          />
         </div>
 
         {error ? (
@@ -58,9 +76,9 @@ export default function ResearchLinesPage() {
           <div className="flex justify-center items-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
           </div>
-        ) : programs.length > 0 ? (
+        ) : filteredLines.length > 0 ? (
           <div className="bg-white rounded-lg shadow">
-            <ResearchLinesTable programs={programs} />
+            <ResearchLinesTable programs={filteredLines} />
           </div>
         ) : (
           <div className="text-center py-8 text-gray-500">

@@ -67,7 +67,7 @@ export default function ResponsabilitySelector({ selectedResponsabilities, onRes
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ingrese una responsabilidad y presione Enter para agregar..."
+          placeholder="Ingrese una responsabilidad..."
         />
       </div>
 

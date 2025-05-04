@@ -9,31 +9,38 @@ export class ProductServiceError extends ServiceError {
   }
 }
 
+const formattedProductData = (jsonData: Omit<Product, 'id'>) => ({
+  code: jsonData.code,
+  name: jsonData.name,
+  description: jsonData.description,
+  type: {
+    name: jsonData.type.name,
+
+    ...(jsonData.type.id? { id: jsonData.type.id } : {}),
+    ...(jsonData.type.subtype_id? { subtype_id: jsonData.type.subtype_id } : {}),
+    ...(jsonData.type.subtype_name? { subtype_name: jsonData.type.subtype_name } : {})
+  },
+  project_id: jsonData.project_id,
+
+  ...(jsonData.complementary_information ? { complementary_information: jsonData.complementary_information } : {})
+});
+
 export const productService = {
   async createProduct(file: File, jsonData: Omit<Product, 'id'>): Promise<Product> {
     try {
 
-      const formattedData = {
-        code: jsonData.code,
-        name: jsonData.name,
-        description: jsonData.description,
-        type: {
-          name: jsonData.type.name,
-
-          ...(jsonData.type.id? { id: jsonData.type.id } : {}),
-          ...(jsonData.type.subtype_id? { subtype_id: jsonData.type.subtype_id } : {}),
-          ...(jsonData.type.subtype_name? { subtype_name: jsonData.type.subtype_name } : {})
-        },
-        url: jsonData.url,
-        project_id: jsonData.project_id,
-
-        ...(jsonData.complementary_information ? { complementary_information: jsonData.complementary_information } : {})
-      }
+      const formattedData = formattedProductData(jsonData);
 
       console.log(formattedData)
 
       const formData = new FormData();
-      formData.append('file', file);
+
+      if (file) {
+        formData.append('file', file);
+      }else{
+        throw new Error('No se puede crear un producto sin seleccionar un archivo');
+      }
+
       formData.append('json_data', JSON.stringify(formattedData));
 
       const response = await api.post<Product>(`/products/`, formData, {
@@ -78,7 +85,8 @@ export const productService = {
 
   async updateProduct(code: string, productData: Product): Promise<Product> {
     try {
-      const response = await api.put<Product>(`/products/${code}`, productData);
+      const formattedData = formattedProductData(productData);
+      const response = await api.put<Product>(`/products/${code}`, formattedData);
       return response.data;
     } catch (error) {
       return handleApiError(

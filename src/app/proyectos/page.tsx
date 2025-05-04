@@ -7,9 +7,11 @@ import { toast, Toaster } from 'react-hot-toast';
 import { Project } from '@/types/models/project.models';
 import ProjectTable from '@/components/projects/ProjectTable';
 import { projectService } from '@/services/projectService';
+import SearchBar from '@/components/ui/SearchBar';
 
 export default function ProjectsPage() {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [allProjects, setAllProjects] = useState<Project[]>([]);
+  const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -17,7 +19,8 @@ export default function ProjectsPage() {
     const loadProjects = async () => {
       try {
         const allProjects = await projectService.fetchProjects(' ');
-        setProjects(allProjects);
+        setAllProjects(allProjects);
+        setFilteredProjects(allProjects);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Ocurrió un error al cargar los proyectos. Por favor, intente nuevamente.';
         setError(errorMessage);
@@ -44,6 +47,21 @@ export default function ProjectsPage() {
             Agregar Proyecto...
           </Link>
         </div>
+        <div className="mb-6">
+          <SearchBar
+            onSearch={(query) => {
+              if (query.length === 0) {
+                setFilteredProjects(allProjects);
+              } else {
+                const filtered = allProjects.filter(project =>
+                  project.title.toLowerCase().includes(query.toLowerCase())
+                );
+                setFilteredProjects(filtered);
+              }
+            }}
+            placeholder="Buscar proyecto..."
+          />
+        </div>
 
         {error ? (
           <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
@@ -53,9 +71,9 @@ export default function ProjectsPage() {
           <div className="flex justify-center items-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
           </div>
-        ) : projects.length > 0 ? (
+        ) : filteredProjects.length > 0 ? (
           <div className="bg-white rounded-lg shadow">
-            <ProjectTable projects={projects} />
+            <ProjectTable projects={filteredProjects} />
           </div>
         ) : (
           <div className="text-center py-8 text-gray-500">

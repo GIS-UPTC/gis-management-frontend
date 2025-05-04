@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa'; // Importa el ícono de búsqueda
 
 interface SearchBarProps {
@@ -17,8 +17,18 @@ export default function SearchBar({
   const handleSearch = () => {
     if (query.length >= 3) {
       onSearch(query);
+    } else if (query.length === 0) {
+      onSearch('');
     }
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      handleSearch();
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [query]);
 
   return (
     <div className="w-full max-w-4xl mx-auto">
@@ -30,15 +40,20 @@ export default function SearchBar({
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && query.length >= 3) {
+              handleSearch();
+            }
+          }}
           placeholder={placeholder}
           className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500" // Se añade pl-10 para dejar espacio al ícono
           disabled={isLoading}
         />
         <button
           type="button"
-          onClick={handleSearch}
+          onClick={() => handleSearch()}
           className="absolute right-2 top-1/2 transform -translate-y-1/2 px-4 py-1 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={isLoading || query.length < 3}
+          disabled={isLoading}
         >
           {isLoading ? (
             <div className="flex items-center">

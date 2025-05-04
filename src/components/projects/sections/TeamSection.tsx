@@ -134,8 +134,8 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
                     fetchResearchLines();
                   }}
                 >
-                  <span className="block truncate">
-                    {formData.research_line ? formData.research_line.name : "Seleccionar línea de investigación..."}
+                  <span className="text-gray-900">
+                  Seleccionar línea de investigación...
                   </span>
                   <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                 </Combobox.Button>
@@ -241,7 +241,6 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
                       onChange={(e) => handleUserSearchChange(e.target.value)}
                       onFocus={() => {
                         setIsUsersDropdownOpen(true);
-                        console.log("atencion")
                         if (!userSearchQuery) fetchUsers('');
                       }}
                     />

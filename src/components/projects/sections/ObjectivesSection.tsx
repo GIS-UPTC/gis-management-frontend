@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Project, Objective, ProjectKeyword } from '@/types/models/project.models';
 import { projectService } from '@/services/projectService';
 import { toast, Toaster } from 'react-hot-toast';
+import { Combobox } from '@headlessui/react';
+import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
 interface ObjectivesSectionProps {
   formData: Omit<Project, 'id'>;
@@ -13,6 +15,7 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
   const [searchKeyword, setSearchKeyword] = useState('');
   const [keywords, setKeywords] = useState<ProjectKeyword[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [tempIdCounter, setTempIdCounter] = useState(-1);
 
   const handleAddObjective = () => {
     if (newObjective.description.trim()) {
@@ -38,13 +41,36 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
     }));
   };
 
-  const handleAddKeyword = (keyword: ProjectKeyword) => {
-    if (!formData.project_keywords.some(k => k.id === keyword.id)) {
+  const handleAddKeyword = (keyword: ProjectKeyword | string | null) => {
+    if (keyword === null) return;
+    
+    // Si el keyword es un string, significa que es una nueva palabra clave
+    if (typeof keyword === 'string') {
+      // Crear una nueva palabra clave con ID temporal negativo
+      const newKeyword: ProjectKeyword = {
+        id: tempIdCounter,
+        name: searchKeyword.trim()
+      };
+      
+      // Actualizar el contador para el próximo ID temporal
+      setTempIdCounter(prev => prev - 1);
+      
+      // Añadir la nueva palabra clave
       setFormData(prev => ({
         ...prev,
-        project_keywords: [...prev.project_keywords, keyword]
+        project_keywords: [...prev.project_keywords, newKeyword]
       }));
+    } else {
+      // Es una palabra clave existente
+      if (!formData.project_keywords.find(k => k.id === keyword.id)) {
+        setFormData(prev => ({
+          ...prev,
+          project_keywords: [...prev.project_keywords, keyword]
+        }));
+      }
     }
+    
+    setSearchKeyword('');
   };
 
   const handleRemoveKeyword = (id: number) => {
@@ -55,12 +81,19 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
   };
 
   const searchKeywords = async (query: string) => {
-    if (query.length < 3) return;
+    if (query.length < 3) {
+      setKeywords([]);
+      return;
+    }
     
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const results = await projectService.searchKeywords(query);
-      setKeywords(results);
+      // Filtrar palabras clave que ya están seleccionadas
+      const filteredKeywords = results.filter(keyword => 
+        !formData.project_keywords.some(selected => selected.id === keyword.id)
+      );
+      setKeywords(filteredKeywords);
     } catch {
       toast.error('Error al buscar palabras clave');
     } finally {
@@ -135,18 +168,60 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
         <h3 className="text-lg font-semibold mb-4">Palabras Clave *</h3>
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-            <input
-              type="text"
-              value={searchKeyword}
-              onChange={(e) => setSearchKeyword(e.target.value)}
-              placeholder="Buscar palabras clave..."
-              className="flex-1 p-2 border rounded-lg"
-            />
-            {isLoading && (
-              <div className="flex items-center">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-500"></div>
+            <Combobox value={null} onChange={handleAddKeyword}>
+              <div className="relative">
+                <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border focus-within:border-orange-500">
+                  <Combobox.Input
+                    className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
+                    displayValue={() => searchKeyword}
+                    onChange={(event) => setSearchKeyword(event.target.value)}
+                    placeholder="Buscar palabras clave..."
+                  />
+                  <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+                    <ChevronUpDownIcon
+                      className="h-5 w-5 text-gray-400"
+                      aria-hidden="true"
+                    />
+                  </Combobox.Button>
+                </div>
+                {isLoading ? (
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-500"></div>
+                  </div>
+                ) : null}
+                
+                <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                  {keywords.length === 0 && searchKeyword.length >= 3 ? (
+                    <Combobox.Option
+                      value="add"
+                      className={({ active }) =>
+                        `relative cursor-default select-none py-2 pl-3 pr-9 ${
+                          active ? 'bg-orange-100 text-orange-900' : 'text-gray-900'
+                        }`
+                      }
+                    >
+                      <span className="flex items-center">
+                      <span className="ml-3 font-normal">Crear nueva palabra clave: &quot;{searchKeyword}&quot;</span>
+                      </span>
+                    </Combobox.Option>
+                  ) : keywords.map((keyword) => (
+                    <Combobox.Option
+                      key={keyword.id}
+                      value={keyword}
+                      className={({ active, selected }) =>
+                        `relative cursor-default select-none py-2 pl-3 pr-9 ${
+                          active ? 'bg-orange-100 text-orange-900' : 'text-gray-900'
+                        } ${selected ? 'font-semibold' : 'font-normal'}`
+                      }
+                    >
+                      <span className="flex items-center">
+                        <span className="ml-3">{keyword.name}</span>
+                      </span>
+                    </Combobox.Option>
+                  ))}
+                </Combobox.Options>
               </div>
-            )}
+            </Combobox>
           </div>
 
           {keywords.length > 0 && (

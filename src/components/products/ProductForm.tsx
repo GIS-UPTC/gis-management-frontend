@@ -340,21 +340,6 @@ export default function ProductForm({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            URL
-          </label>
-          <input
-            type="url"
-            name="url"
-            value={formData.url}
-            onChange={handleInputChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-            placeholder="https://ejemplo.com"
-            disabled={isEditing}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
             Información Complementaria
           </label>
           <textarea
@@ -414,9 +399,6 @@ export default function ProductForm({
               required={!isEditing}
               accept=".pdf"
             />
-            <p className="mt-1 text-sm text-gray-500">
-              Seleccione el archivo relacionado con el producto (PDF, DOC, ZIP, etc.)
-            </p>
           </div>
         )}
 

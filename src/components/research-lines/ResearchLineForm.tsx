@@ -20,15 +20,11 @@ const initialFormData: FormData = {
 interface ResearchLineFormProps {
   initialData?: ResearchLine | null;
   isEditing?: boolean;
-  withInactives: boolean;
-  handleWithInactivesChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function ResearchLineForm({
   initialData,
   isEditing = false,
-  withInactives,
-  handleWithInactivesChange
 }: ResearchLineFormProps) {
   const [formData, setFormData] = useState<FormData>(initialData || initialFormData);
   const [query, setQuery] = useState('');

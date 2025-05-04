@@ -195,8 +195,8 @@ export default function ProfilePage() {
                 {user.program && (
                   <>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Programa - {user.program.is_diurn? ('Diurno'): ('Nocturno')}</label>
-                      <p className="mt-1">{user.program.name}</p>
+                      <label className="block text-sm font-medium text-gray-700">Programa</label>
+                      <p className="mt-1">{user.program.name} - {user.program.is_diurn? ('Diurno'): ('Nocturno')}</p>
                     </div>
                     {user.program.faculty && (
                       <>

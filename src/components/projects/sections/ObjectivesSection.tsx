@@ -81,7 +81,7 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
   };
 
   const searchKeywords = async (query: string) => {
-    if (query.length < 3) {
+    if (query.length < 2) {
       setKeywords([]);
       return;
     }

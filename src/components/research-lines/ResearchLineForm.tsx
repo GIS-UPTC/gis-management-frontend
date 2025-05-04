@@ -135,33 +135,8 @@ export default function ResearchLineForm({
         </div>
 
         <div>
-          <label className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              name="is_active"
-              checked={formData.is_active}
-              onChange={handleInputChange}
-              className="form-checkbox h-4 w-4 text-orange-600"
-              disabled={isEditing}
-            />
-            <span>Línea de Investigación Activa</span>
-          </label>
-        </div>
-
-        <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Coordinador *
-          </label>
-
-          {/* Nuevo toggle para mostrar inactivos */}
-          <label className="flex items-center space-x-2 mb-3">
-            <input
-              type="checkbox"
-              checked={withInactives}
-              onChange={handleWithInactivesChange}
-              className="form-checkbox h-4 w-4 text-orange-600"
-            />
-            <span className="text-sm text-gray-700">Mostrar inactivos</span>
           </label>
 
           <div className="space-y-4">

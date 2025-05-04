@@ -301,7 +301,7 @@ export default function CooperationSection({ formData, setFormData }: Cooperatio
         
         {/* Subsección 2: Buscar usuario a cargo */}
         <div className="space-y-4">
-          <h4 className="font-medium">Buscar usuario a cargo</h4>
+          <h4 className="font-medium">Buscar persona a cargo</h4>
           <SearchBar 
             onSearch={searchInChargeUsers} 
             isLoading={isInChargeLoading} 
@@ -351,7 +351,7 @@ export default function CooperationSection({ formData, setFormData }: Cooperatio
         
         {/* Subsección 3: Agregar usuario a cargo */}
         <div className="space-y-4">
-          <h4 className="font-medium">Agregar nuevo usuario a cargo</h4>
+          <h4 className="font-medium">Agregar persona a cargo</h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

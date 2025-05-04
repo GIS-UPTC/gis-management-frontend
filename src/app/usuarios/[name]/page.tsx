@@ -85,7 +85,7 @@ export default function UserDetailsPage() {
 
   return (
     <>
-    <Toaster position="top-center" />
+      <Toaster position="top-center" />
       <Header moduleName="Usuarios" />
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="mb-6 flex justify-between items-center">
@@ -94,13 +94,13 @@ export default function UserDetailsPage() {
           </Link>
           <h1 className="text-2xl font-bold">Detalles del Usuario</h1>
           <button
-            onClick={() => window.location.href = `/usuarios/nuevo?edit=${encodeURIComponent(user.first_name + ' ' + user.surname)}`}
+            onClick={() => window.location.href = `/usuarios/nuevo?edit=${encodeURIComponent(`${user.first_name}${user.other_name ? ` ${user.other_name}` : ''} ${user.surname}${user.other_surname ? ` ${user.other_surname}` : ''}`)}`}
             className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors"
           >
             Editar Usuario
           </button>
         </div>
-  
+
         <div className="bg-white rounded-lg shadow p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Imagen del usuario y badges */}
@@ -133,7 +133,7 @@ export default function UserDetailsPage() {
                 </div>
               </div>
             </div>
-  
+
             <div>
               <h2 className="text-lg font-semibold mb-4">Información Personal</h2>
               <div className="space-y-4">
@@ -171,7 +171,7 @@ export default function UserDetailsPage() {
                 )}
               </div>
             </div>
-  
+
             <div>
               <h2 className="text-lg font-semibold mb-4">Información Académica</h2>
               <div className="space-y-4">
@@ -199,36 +199,36 @@ export default function UserDetailsPage() {
                 )}
               </div>
             </div>
-  
-             {/* Sección de intereses */}
-          <div className="md:col-span-2">
-            <h2 className="text-lg font-semibold mb-4">Temas de Interés</h2>
-            {user.interest_topics && user.interest_topics.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {user.interest_topics.map((interest, index) => (
-                  <span
-                    key={index}
-                    className="inline-block px-3 py-1 text-sm font-semibold text-gray-700 bg-blue-100 rounded-full"
-                  >
-                    {/* Verificamos si interest es un objeto o un string */}
-                    {typeof interest === 'object' ? 
-                      (interest.description || 'Tema sin nombre') : 
-                      interest}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500 italic">No se han especificado temas de interés</p>
-            )}
-          </div>
-  
+
+            {/* Sección de intereses */}
+            <div className="md:col-span-2">
+              <h2 className="text-lg font-semibold mb-4">Temas de Interés</h2>
+              {user.interest_topics && user.interest_topics.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {user.interest_topics.map((interest, index) => (
+                    <span
+                      key={index}
+                      className="inline-block px-3 py-1 text-sm font-semibold text-gray-700 bg-blue-100 rounded-full"
+                    >
+                      {/* Verificamos si interest es un objeto o un string */}
+                      {typeof interest === 'object' ?
+                        (interest.description || 'Tema sin nombre') :
+                        interest}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 italic">No se han especificado temas de interés</p>
+              )}
+            </div>
+
             {/* Enlaces o links */}
             {user.links && user.links.length > 0 && (
               <div className="md:col-span-2">
                 <h2 className="text-lg font-semibold mb-4">Enlaces</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {user.links.map((link, index) => (
-                    <a 
+                    <a
                       key={index}
                       href={link.link}
                       target="_blank"
@@ -241,7 +241,7 @@ export default function UserDetailsPage() {
                 </div>
               </div>
             )}
-  
+
             {/* Roles y permisos */}
             <div className="md:col-span-2">
               <h2 className="text-lg font-semibold mb-4">Roles y Permisos</h2>

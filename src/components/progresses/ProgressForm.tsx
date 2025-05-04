@@ -192,6 +192,12 @@ export default function ProgressForm({ onSuccess }: ProgressFormProps) {
       return;
     }
 
+    if (!fileInfo && !formData.description) {
+      setError('Debe seleccionar un archivo o descripción');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const progressData: Omit<Progress, 'id'> = {
         user: formData.user,
@@ -387,7 +393,7 @@ export default function ProgressForm({ onSuccess }: ProgressFormProps) {
         {/* Archivo */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Archivo del Avance <span className="text-red-500">*</span>
+            Archivo del Avance
           </label>
           <div className="mb-2">
             <input
@@ -396,13 +402,14 @@ export default function ProgressForm({ onSuccess }: ProgressFormProps) {
               className="hidden"
               ref={fileInputRef}
               id="file-upload"
+              accept=".pdf, .doc, .docx, .xls, .xlsx"
             />
             <label
               htmlFor="file-upload"
               className="cursor-pointer px-4 py-2 bg-orange-100 text-orange-800 hover:bg-orange-200 rounded-lg inline-flex items-center"
             >
               <DocumentIcon className="h-5 w-5 mr-2" />
-              Seleccionar archivo
+              Seleccionar archivo <span className="text-red-500">*pdf, doc, docx, xls, xlsx</span>
             </label>
           </div>
           

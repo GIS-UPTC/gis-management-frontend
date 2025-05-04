@@ -107,7 +107,7 @@ export default function BasicInfoSection({ formData, onInputChange, onCheckboxCh
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          URL del Cronograma
+          URL del Cronograma *
         </label>
         <input
           type="url"

@@ -317,7 +317,7 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
               </div>
               <div className="col-span-1 sm:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Foto de perfil
+                  Foto de perfil <span className="text-red-500">*png, jpg, jpeg</span>
                 </label>
                 <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
                   <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
@@ -334,7 +334,7 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
                   {!isEditing && (
                     <input
                       type="file"
-                      accept="image/*"
+                      accept=".png, .jpg, .jpeg"
                       onChange={handleFileSelect}
                       className="w-full sm:w-auto"
                     />

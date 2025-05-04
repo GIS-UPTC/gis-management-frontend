@@ -65,6 +65,9 @@ export const loginService = {
     sessionStorage.removeItem('access_token');
     sessionStorage.removeItem('user');
     setAuthToken(null);
+    if (typeof window !== 'undefined') {
+      window.location.href = '/auth/login';
+    }
   },
 
   getToken(): string | null {

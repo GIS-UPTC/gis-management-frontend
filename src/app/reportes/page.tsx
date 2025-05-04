@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Report, ResearchLine, User } from '@/types/models/GeneralModels';
 import { projectService } from '@/services/projectService';
 import { userService } from '@/services/userService';
@@ -12,8 +12,9 @@ import ResearchLineCombobox from '@/components/ui/ResearchLineComboBox';
 import SelectionCard from '@/components/progresses/components/SelectionCard';
 import { reportService } from '@/services/extras/reportService';
 import toast, { Toaster } from 'react-hot-toast';
-import { ArrowLeftIcon } from '@heroicons/react/16/solid';
+import { ArrowLeftIcon, DocumentTextIcon, ArrowDownTrayIcon, XMarkIcon } from '@heroicons/react/16/solid';
 import Link from 'next/link';
+import * as XLSX from 'xlsx';
 
 export default function GenerateReportPage() {
   // Report state
@@ -40,6 +41,16 @@ export default function GenerateReportPage() {
   const [isLoadingProjects, setIsLoadingProjects] = useState(false);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [isLoadingLines, setIsLoadingLines] = useState(false);
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+
+  // Report preview state
+  const [reportBlob, setReportBlob] = useState<Blob | null>(null);
+  const [reportUrl, setReportUrl] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
+  const [excelHtml, setExcelHtml] = useState<string | null>(null);
+
+  // Refs
+  const previewContainerRef = useRef<HTMLDivElement>(null);
 
   // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -57,6 +68,11 @@ export default function GenerateReportPage() {
       setProjects([]);
       setResearchers([]);
       setLines([]);
+    }
+
+    // Reset preview when format changes
+    if (name === 'format') {
+      closePreview();
     }
   };
 
@@ -145,13 +161,75 @@ export default function GenerateReportPage() {
   // Generate report
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsGeneratingReport(true);
     try {
-      const result = await reportService.generateReport(report)
-      console.log(result)
+      const result = await reportService.generateReport(report);
+      
+      // Convertir la respuesta a blob según el formato
+      const blob = new Blob(
+        [result], 
+        { type: report.format === 'PDF' ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+      );
+      
+      // Guardar el blob y crear URL
+      setReportBlob(blob);
+      if (reportUrl) URL.revokeObjectURL(reportUrl);
+      const newUrl = URL.createObjectURL(blob);
+      setReportUrl(newUrl);
+      
+      toast.success('Reporte generado con éxito');
     } catch (error) {
       toast.error('Error al generar el reporte');
-      console.log(error)
+      console.error(error);
+    } finally {
+      setIsGeneratingReport(false);
     }
+  };
+
+  // Preview report
+  const handleViewReport = async () => {
+    if (!reportBlob || !reportUrl) {
+      toast.error('No hay reporte para visualizar');
+      return;
+    }
+
+    if (report.format === 'PDF') {
+      setShowPreview(true);
+    } else if (report.format === 'XLSX') {
+      try {
+        const arrayBuffer = await reportBlob.arrayBuffer();
+        const data = new Uint8Array(arrayBuffer);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const html = XLSX.utils.sheet_to_html(sheet);
+        setExcelHtml(html);
+        setShowPreview(true);
+      } catch (error) {
+        toast.error('Error al procesar el archivo Excel');
+        console.error(error);
+      }
+    }
+  };
+
+  // Download report
+  const handleDownloadReport = () => {
+    if (!reportBlob || !reportUrl) {
+      toast.error('No hay reporte para descargar');
+      return;
+    }
+
+    const a = document.createElement('a');
+    a.href = reportUrl;
+    a.download = `reporte_${report.report_type}_${new Date().toISOString().slice(0, 10)}.${report.format.toLowerCase()}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  // Close preview
+  const closePreview = () => {
+    setShowPreview(false);
+    setExcelHtml(null);
   };
 
   // Determine which fields to show based on report type
@@ -170,6 +248,12 @@ export default function GenerateReportPage() {
     { value: 'AVU', label: 'Reportes de avances por usuario' },
     { value: 'APU', label: 'Reportes de avances por proyecto y usuario' }
   ];
+
+  // Get report type label
+  const getReportTypeLabel = (type: string) => {
+    const option = reportTypeOptions.find(opt => opt.value === type);
+    return option ? option.label : type;
+  };
 
   return (
     <>
@@ -341,17 +425,84 @@ export default function GenerateReportPage() {
               </div>
             )}
 
-            <div className="mt-6">
+            <div className="mt-6 flex flex-wrap gap-4">
               <button
                 type="submit"
-                className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-                disabled={!report.start_date || !report.end_date}
+                className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 flex items-center"
+                disabled={!report.start_date || !report.end_date || isGeneratingReport}
               >
-                Generar Reporte
+                {isGeneratingReport ? 'Generando...' : 'Generar Reporte'}
               </button>
+              
+              {reportUrl && (
+                <>
+                  <button
+                    type="button"
+                    onClick={handleViewReport}
+                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center"
+                  >
+                    <DocumentTextIcon className="h-5 w-5 mr-2" />
+                    Visualizar Reporte
+                  </button>
+                  
+                  <button
+                    type="button"
+                    onClick={handleDownloadReport}
+                    className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center"
+                  >
+                    <ArrowDownTrayIcon className="h-5 w-5 mr-2" />
+                    Descargar Reporte
+                  </button>
+                </>
+              )}
             </div>
           </form>
         </div>
+
+        {/* Modal para visualización de reportes */}
+        {showPreview && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-4 w-11/12 h-5/6 flex flex-col" ref={previewContainerRef}>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">
+                  {report.format === 'PDF' ? 'Vista previa del PDF' : 'Vista previa del Excel'} - {getReportTypeLabel(report.report_type)}
+                </h2>
+                <button 
+                  onClick={closePreview}
+                  className="p-1 rounded-full hover:bg-gray-200"
+                >
+                  <XMarkIcon className="h-6 w-6" />
+                </button>
+              </div>
+              
+              <div className="flex-1 overflow-auto border border-gray-300 rounded">
+                {report.format === 'PDF' && reportUrl && (
+                  <iframe 
+                    src={reportUrl} 
+                    className="w-full h-full" 
+                    title="PDF Preview"
+                  />
+                )}
+                
+                {report.format === 'XLSX' && excelHtml && (
+                  <div className="p-4 overflow-auto">
+                    <div dangerouslySetInnerHTML={{ __html: excelHtml }} />
+                  </div>
+                )}
+              </div>
+              
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={handleDownloadReport}
+                  className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center"
+                >
+                  <ArrowDownTrayIcon className="h-5 w-5 mr-2" />
+                  Descargar Reporte
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

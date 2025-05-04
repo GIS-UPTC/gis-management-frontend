@@ -197,7 +197,7 @@ export default function ProjectDetailsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Convocatoria</label>
-                  <p className="mt-1">{project.convocation}</p>
+                  <p className="mt-1">{project.convocation? project.convocation === '' ? 'No hay convocatoria' : project.convocation : 'No hay convocatoria'}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Financiamiento</label>

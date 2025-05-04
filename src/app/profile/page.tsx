@@ -135,12 +135,20 @@ export default function ProfilePage() {
                   </div>
                 </div>
               </div>
-              <button
-                onClick={() => setIsPasswordDialogOpen(true)}
-                className="mt-4 md:mt-0 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
-              >
-                Cambiar Contraseña
-              </button>
+              <div className="flex flex-col md:flex-row gap-3 mt-4 md:mt-0">
+                <button
+                  onClick={() => setIsPasswordDialogOpen(true)}
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  Cambiar Contraseña
+                </button>
+                <button
+                  onClick={() => loginService.logout()}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  Cerrar Sesión
+                </button>
+              </div>
             </div>
 
             <div>
@@ -187,7 +195,7 @@ export default function ProfilePage() {
                 {user.program && (
                   <>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Programa</label>
+                      <label className="block text-sm font-medium text-gray-700">Programa - {user.program.is_diurn? ('Diurno'): ('Nocturno')}</label>
                       <p className="mt-1">{user.program.name}</p>
                     </div>
                     {user.program.faculty && (
@@ -199,7 +207,7 @@ export default function ProfilePage() {
                         {user.program.faculty.university && (
                           <div>
                             <label className="block text-sm font-medium text-gray-700">Universidad</label>
-                            <p className="mt-1">{user.program.faculty.university.name}</p>
+                            <p className="mt-1">{user.program.faculty.university.name} - {user.program.faculty.place?.name}</p>
                           </div>
                         )}
                       </>
@@ -337,4 +345,4 @@ export default function ProfilePage() {
       </div>
     </>
   );
-} 
+}

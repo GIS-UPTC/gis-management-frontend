@@ -349,6 +349,7 @@ export default function ProductForm({
             onChange={handleInputChange}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
             placeholder="https://ejemplo.com"
+            disabled={isEditing}
           />
         </div>
 
@@ -401,20 +402,23 @@ export default function ProductForm({
           )}
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Archivo {!isEditing && '*'}
-          </label>
-          <input
-            type="file"
-            onChange={handleFileChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-            required={!isEditing}
-          />
-          <p className="mt-1 text-sm text-gray-500">
-            Seleccione el archivo relacionado con el producto (PDF, DOC, ZIP, etc.)
-          </p>
-        </div>
+        {!isEditing && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Seleccionar archivo <span className="text-red-500">*pdf</span>
+            </label>
+            <input
+              type="file"
+              onChange={handleFileChange}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              required={!isEditing}
+              accept=".pdf"
+            />
+            <p className="mt-1 text-sm text-gray-500">
+              Seleccione el archivo relacionado con el producto (PDF, DOC, ZIP, etc.)
+            </p>
+          </div>
+        )}
 
         {error && (
           <div className="p-4 bg-red-50 border border-red-200 rounded-lg">

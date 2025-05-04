@@ -132,21 +132,8 @@ export default function RoleForm({ initialData, isEditing = false }: RoleFormPro
         </div>
 
         <div>
-          <label className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              name="is_active"
-              checked={formData.is_active}
-              onChange={handleInputChange}
-              className="form-checkbox h-4 w-4 text-orange-600"
-            />
-            <span>Rol Activo</span>
-          </label>
-        </div>
-
-        <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Accesos
+            Privilegios
           </label>
           <div className="space-y-4">
             <Combobox value={null} onChange={(access: Access | null) => {

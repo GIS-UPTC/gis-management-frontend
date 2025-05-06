@@ -205,7 +205,7 @@ export default function GenerateReportPage() {
         setExcelHtml(html);
         setShowPreview(true);
       } catch (error) {
-        toast.error('Error al procesar el archivo Excel');
+        toast.error('Error al procesar el archivo XLSX');
         console.error(error);
       }
     }
@@ -276,7 +276,7 @@ export default function GenerateReportPage() {
                 className="w-full p-2 border rounded"
               >
                 <option value="PDF">PDF</option>
-                <option value="XLSX">Excel (XLSX)</option>
+                <option value="XLSX">XLSX</option>
               </select>
             </div>
 
@@ -436,14 +436,16 @@ export default function GenerateReportPage() {
               
               {reportUrl && (
                 <>
+                {report.format !== 'XLSX' && (
                   <button
-                    type="button"
-                    onClick={handleViewReport}
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center"
-                  >
-                    <DocumentTextIcon className="h-5 w-5 mr-2" />
-                    Visualizar Reporte
-                  </button>
+                  type="button"
+                  onClick={handleViewReport}
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center"
+                >
+                  <DocumentTextIcon className="h-5 w-5 mr-2" />
+                  Visualizar Reporte
+                </button>
+                )}
                   
                   <button
                     type="button"
@@ -482,12 +484,6 @@ export default function GenerateReportPage() {
                     className="w-full h-full" 
                     title="PDF Preview"
                   />
-                )}
-                
-                {report.format === 'XLSX' && excelHtml && (
-                  <div className="p-4 overflow-auto">
-                    <div dangerouslySetInnerHTML={{ __html: excelHtml }} />
-                  </div>
                 )}
               </div>
               

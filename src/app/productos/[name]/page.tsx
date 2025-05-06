@@ -8,6 +8,7 @@ import { productService, ProductServiceError } from '@/services/productsService'
 import { toast, Toaster } from 'react-hot-toast';
 import ArrowLeftIcon from '@heroicons/react/24/outline/ArrowLeftIcon';
 import Link from 'next/link';
+import { capitalizeFirstLetter } from '@/utils/stringUtils';
 
 export default function ProductDetailsPage() {
   const params = useParams();
@@ -98,15 +99,15 @@ export default function ProductDetailsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Nombre</label>
-                  <p className="mt-1">{product.name}</p>
+                  <p className="mt-1">{capitalizeFirstLetter(product.name)}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Descripción</label>
-                  <p className="mt-1">{product.description}</p>
+                  <p className="mt-1">{capitalizeFirstLetter(product.description)}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Tipo</label>
-                  <p className="mt-1">{product.type.name}</p>
+                  <p className="mt-1">{capitalizeFirstLetter(product.type.name)}</p>
                 </div>
                 {product.type.subtype_name && (
                   <div>
@@ -117,7 +118,7 @@ export default function ProductDetailsPage() {
                 {product.project && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Proyecto</label>
-                    <p className="mt-1">{product.project.title}</p>
+                    <p className="mt-1">{capitalizeFirstLetter(product.project.title)}</p>
                   </div>
                 )}
                 {product.url && (

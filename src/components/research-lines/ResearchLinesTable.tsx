@@ -2,6 +2,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { ResearchLine } from '@/types/models/GeneralModels';
 import { researchLineService } from '@/services/researchLineService';
+import { formatUserFullName, capitalizeFirstLetter } from '../../utils/stringUtils';
 
 interface ResearchLineTableProps {
   programs: ResearchLine[];
@@ -13,14 +14,6 @@ export default function ResearchLinesTable({ programs }: ResearchLineTableProps)
   const handleRowClick = (program: ResearchLine) => {
     const encodedName = encodeURIComponent(program.name);
     router.push(`/lineas/${encodedName}`);
-  };
-
-  const formatCoordinatorName = (coordinator: ResearchLine['coordinator']) => {
-    const firstName = coordinator.first_name;
-    const otherName = coordinator.other_name ? ` ${coordinator.other_name}` : '';
-    const surname = coordinator.surname;
-    const otherSurname = coordinator.other_surname ? ` ${coordinator.other_surname}` : '';
-    return `${firstName}${otherName} ${surname}${otherSurname}`;
   };
 
   const handleChangeStatus = async (program: ResearchLine, e: React.MouseEvent) => {
@@ -54,7 +47,9 @@ export default function ResearchLinesTable({ programs }: ResearchLineTableProps)
               onClick={() => handleRowClick(program)}
               className="cursor-pointer hover:bg-gray-50 transition-colors"
             >
-              <td className="px-6 py-4 text-sm text-gray-900">{program.name}</td>
+              <td className="px-6 py-4 text-sm text-gray-900">
+                {capitalizeFirstLetter(program.name)}
+              </td>
               <td className="px-6 py-4 text-sm">
                 <span
                   className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${
@@ -67,7 +62,7 @@ export default function ResearchLinesTable({ programs }: ResearchLineTableProps)
                 </span>
               </td>
               <td className="px-6 py-4 text-sm text-gray-900">
-                {formatCoordinatorName(program.coordinator)}
+                {formatUserFullName(program.coordinator)}
               </td>
               <td className="px-6 py-4 text-sm">
                 <button

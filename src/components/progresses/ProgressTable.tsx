@@ -4,6 +4,7 @@ import { Progress } from '@/types/models/GeneralModels';
 import { LinkIcon } from '@heroicons/react/24/outline';
 import { progressService } from '@/services/progressesService';
 import { FaTrash } from 'react-icons/fa';
+import { capitalizeFirstLetter, formatUserFullName } from '@/utils/stringUtils';
 
 interface ProgressTableProps {
     progresses: Progress[];
@@ -85,7 +86,7 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
                             className="cursor-pointer hover:bg-gray-50 transition-colors"
                         >
                             <td className="px-6 py-4 text-sm text-gray-900">
-                                {truncateText(progress.project.title, 30)}
+                                {capitalizeFirstLetter(truncateText(progress.project.title, 30))}
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-900">
                                 <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-200 text-green-800">
@@ -94,7 +95,7 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
 
                             </td>
                             <td className="px-6 py-4 text-sm">
-                                {progress.user.first_name} {progress.user.surname}
+                                {formatUserFullName(progress.user)}
 
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-900">

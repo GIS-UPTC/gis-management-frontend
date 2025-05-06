@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Role, Permission, RoleGranting } from '@/types/models/GeneralModels';
+import { capitalizeFirstLetter } from '@/utils/stringUtils';
 import { roleService, RoleServiceError } from '@/services/roleService';
 import { Combobox } from '@headlessui/react';
 import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
@@ -108,7 +109,7 @@ export default function RoleSelector({ selectedRoleGrantings, onRoleGrantingsCha
                       {({ selected }) => (
                         <>
                           <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
-                            {role.name}
+                            {capitalizeFirstLetter(role.name)}
                           </span>
                           {selected && (
                             <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-orange-600">
@@ -199,7 +200,7 @@ const RolePermissionsEditor = ({ roleGranting, onPermissionsChange, onRemove }: 
     <div className="border rounded-lg p-4">
       <Toaster position="top-center" />
       <div className="flex items-center justify-between mb-4">
-        <h5 className="font-medium">{roleGranting.role?.name || 'Rol sin nombre'}</h5>
+        <h5 className="font-medium">{roleGranting.role?.name ? capitalizeFirstLetter(roleGranting.role.name) : 'Rol sin nombre'}</h5>
         <button
           type="button"
           onClick={onRemove}
@@ -218,7 +219,7 @@ const RolePermissionsEditor = ({ roleGranting, onPermissionsChange, onRemove }: 
           ) : (
             roleGranting.permissions.map(permission => (
               <div key={permission.id} className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm">
-                <span>{permission.name}</span>
+                <span>{capitalizeFirstLetter(permission.name)}</span>
                 <button
                   type="button"
                   onClick={() => handleRemovePermission(permission.id)}
@@ -268,7 +269,7 @@ const RolePermissionsEditor = ({ roleGranting, onPermissionsChange, onRemove }: 
                     className="flex items-center justify-between p-2 hover:bg-orange-50 rounded cursor-pointer"
                     onClick={() => handleAddPermission(permission)}
                   >
-                    <span className="text-sm">{permission.name}</span>
+                    <span className="text-sm">{capitalizeFirstLetter(permission.name)}</span>
                     <button
                       type="button"
                       className="p-1 text-orange-600 hover:bg-orange-100 rounded-full"

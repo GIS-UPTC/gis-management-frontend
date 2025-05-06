@@ -8,6 +8,7 @@ import { roleService, RoleServiceError } from '@/services/roleService';
 import { toast, Toaster } from 'react-hot-toast';
 import ArrowLeftIcon from '@heroicons/react/24/outline/ArrowLeftIcon';
 import Link from 'next/link';
+import { capitalizeFirstLetter } from '@/utils/stringUtils';
 
 export default function RoleDetailsPage() {
   const params = useParams();
@@ -94,7 +95,7 @@ export default function RoleDetailsPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Nombre del Rol</label>
-                  <p className="mt-1">{role.name}</p>
+                  <p className="mt-1">{capitalizeFirstLetter(role.name)}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Estado</label>

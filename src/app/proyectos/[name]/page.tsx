@@ -6,6 +6,7 @@ import Header from '@/components/layout/Header';
 import { projectService, ProjectServiceError } from '@/services/projectService';
 import { toast, Toaster } from 'react-hot-toast';
 import { Project } from '@/types/models/project.models';
+import { capitalizeFirstLetter, formatUserFullName } from '@/utils/stringUtils';
 import ArrowLeftIcon from '@heroicons/react/24/outline/ArrowLeftIcon';
 import Link from 'next/link';
 
@@ -18,7 +19,7 @@ export default function ProjectDetailsPage() {
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const projectTitle = params.name as string;
+        const projectTitle = decodeURIComponent(params.name as string);
         const fetchedProject = await projectService.searchProjects(projectTitle);
         setProject(fetchedProject[0]);
       } catch (error) {
@@ -136,7 +137,7 @@ export default function ProjectDetailsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Título del Proyecto</label>
-                  <p className="mt-1 font-semibold">{project.title}</p>
+                  <p className="mt-1 font-semibold">{capitalizeFirstLetter(project.title)}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Código</label>
@@ -185,7 +186,7 @@ export default function ProjectDetailsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Línea de Investigación</label>
-                  <p className="mt-1">{project.research_line.name}</p>
+                  <p className="mt-1">{capitalizeFirstLetter(project.research_line.name)}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Fecha de Creación</label>
@@ -212,7 +213,7 @@ export default function ProjectDetailsPage() {
             {/* Descripción */}
             <div className="md:col-span-2">
               <h2 className="text-lg font-semibold mb-2">Descripción</h2>
-              <p className="text-gray-700">{project.description}</p>
+              <p className="text-gray-700">{capitalizeFirstLetter(project.description)}</p>
             </div>
 
             {/* Objetivos */}
@@ -271,7 +272,7 @@ export default function ProjectDetailsPage() {
                       {project.participations.map((participation) => (
                         <tr key={participation.id}>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {participation.user.first_name} {participation.user.other_name || ''} {participation.user.surname} {participation.user.other_surname || ''}
+                            {formatUserFullName(participation.user)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
@@ -279,7 +280,7 @@ export default function ProjectDetailsPage() {
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {participation.responsibility}
+                            {capitalizeFirstLetter(participation.responsibility)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             {new Date(participation.start_date).toLocaleDateString()} -

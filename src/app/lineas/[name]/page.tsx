@@ -8,6 +8,7 @@ import { researchLineService, ResearchLineServiceError } from '@/services/resear
 import { toast, Toaster } from 'react-hot-toast';
 import Link from 'next/link';
 import ArrowLeftIcon from '@heroicons/react/24/outline/ArrowLeftIcon';
+import { capitalizeFirstLetter, formatUserFullName } from '@/utils/stringUtils';
 
 export default function ResearchLineDetailsPage() {
   const params = useParams();
@@ -94,7 +95,7 @@ export default function ResearchLineDetailsPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Nombre de la Línea</label>
-                  <p className="mt-1">{researchLine.name}</p>
+                  <p className="mt-1">{capitalizeFirstLetter(researchLine.name)}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Estado</label>
@@ -107,7 +108,7 @@ export default function ResearchLineDetailsPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Coordinador</label>
                   <p className="mt-1">
-                    {researchLine.coordinator.first_name} {researchLine.coordinator.other_name} {researchLine.coordinator.surname} {researchLine.coordinator.other_surname}
+                    {formatUserFullName(researchLine.coordinator)}
                   </p>
                 </div>
               </div>

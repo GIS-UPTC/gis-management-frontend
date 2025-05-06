@@ -8,6 +8,7 @@ import { toast, Toaster } from 'react-hot-toast';
 import { userService } from '@/services/userService';
 import ArrowLeftIcon from '@heroicons/react/24/outline/ArrowLeftIcon';
 import Link from 'next/link';
+import { capitalizeFirstLetter, formatUserFullName } from '@/utils/stringUtils';
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
@@ -117,7 +118,7 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div className="flex flex-col items-center md:items-start">
-                  <h2 className="text-xl font-bold">{user.first_name} {user.surname}</h2>
+                  <h2 className="text-xl font-bold">{formatUserFullName(user)}</h2>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {user.is_group_leader && (
                       <span className="inline-block px-3 py-1 text-sm font-semibold text-blue-800 bg-blue-100 rounded-full">
@@ -156,11 +157,11 @@ export default function ProfilePage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Nombres</label>
-                  <p className="mt-1">{user.first_name} {user.other_name || ''}</p>
+                  <p className="mt-1">{capitalizeFirstLetter(user.first_name)} {capitalizeFirstLetter(user.other_name || '')}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Apellidos</label>
-                  <p className="mt-1">{user.surname} {user.other_surname || ''}</p>
+                  <p className="mt-1">{capitalizeFirstLetter(user.surname)} {capitalizeFirstLetter(user.other_surname || '')}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">DNI</label>
@@ -196,18 +197,18 @@ export default function ProfilePage() {
                   <>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Programa</label>
-                      <p className="mt-1">{user.program.name} - {user.program.is_diurn? ('Diurno'): ('Nocturno')}</p>
+                      <p className="mt-1">{capitalizeFirstLetter(user.program.name)} - {user.program.is_diurn? ('Diurno'): ('Nocturno')}</p>
                     </div>
                     {user.program.faculty && (
                       <>
                         <div>
                           <label className="block text-sm font-medium text-gray-700">Facultad</label>
-                          <p className="mt-1">{user.program.faculty.name}</p>
+                          <p className="mt-1">{capitalizeFirstLetter(user.program.faculty.name)}</p>
                         </div>
                         {user.program.faculty.university && (
                           <div>
                             <label className="block text-sm font-medium text-gray-700">Universidad</label>
-                            <p className="mt-1">{user.program.faculty.university.name} - {user.program.faculty.place?.name}</p>
+                            <p className="mt-1">{capitalizeFirstLetter(user.program.faculty.university.name)} - {user.program.faculty.place? capitalizeFirstLetter(user.program.faculty.place.name): ''}</p>
                           </div>
                         )}
                       </>

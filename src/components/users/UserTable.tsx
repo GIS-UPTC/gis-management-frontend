@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { capitalizeFirstLetter, formatUserFullName } from '../../utils/stringUtils';
 import { User } from '@/types/models/GeneralModels';
 
 interface UserTableProps {
@@ -16,13 +17,7 @@ export default function UserTable({ users }: UserTableProps) {
     router.push(`/usuarios/${encodedName}?dni=${encodedDni}`);
   };
 
-  const formatName = (user: User) => {
-    const firstName = user.first_name;
-    const otherName = user.other_name ? ` ${user.other_name}` : '';
-    const surname = user.surname;
-    const otherSurname = user.other_surname ? ` ${user.other_surname}` : '';
-    return `${firstName}${otherName} ${surname}${otherSurname}`;
-  };
+
 
   return (
     <div className="overflow-x-auto">
@@ -44,7 +39,7 @@ export default function UserTable({ users }: UserTableProps) {
               className="cursor-pointer hover:bg-gray-50 transition-colors"
             >
               <td className="px-6 py-4 text-sm text-gray-900">
-                {formatName(user)}
+                {formatUserFullName(user)}
               </td>
               <td className="px-6 py-4 text-sm text-gray-900">{user.email}</td>
               <td className="px-6 py-4 text-sm text-gray-900">{user.dni}</td>
@@ -54,9 +49,24 @@ export default function UserTable({ users }: UserTableProps) {
                     key={roleGrant.id}
                     className="inline-block px-2 py-1 mr-1 text-xs font-semibold text-gray-700 bg-yellow-100 rounded-full"
                   >
-                    {roleGrant.role.name}
+                    {capitalizeFirstLetter(roleGrant.role.name)}
                   </span>
                 ))}
+
+                {user.is_group_leader && (
+                  <span
+                  className="inline-block px-2 py-1 mr-1 text-xs font-semibold text-gray-700 bg-yellow-100 rounded-full"
+                >
+                  Líder de Grupo
+                </span>
+                )}
+                {user.is_main_researcher && (
+                  <span
+                  className="inline-block px-2 py-1 mr-1 text-xs font-semibold text-gray-700 bg-yellow-100 rounded-full"
+                >
+                  Investigador Principal
+                </span>
+                )}
               </td>
               <td className="px-6 py-4 text-sm">
                 <span

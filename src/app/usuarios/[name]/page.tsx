@@ -5,6 +5,7 @@ import { useParams, useSearchParams } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import { User } from '@/types/models/GeneralModels';
 import { userService, UserServiceError } from '@/services/userService';
+import { formatUserFullName, capitalizeFirstLetter } from '@/utils/stringUtils';
 import { toast, Toaster } from 'react-hot-toast';
 import Link from 'next/link';
 import ArrowLeftIcon from '@heroicons/react/24/outline/ArrowLeftIcon';
@@ -115,7 +116,7 @@ export default function UserDetailsPage() {
                 />
               </div>
               <div className="flex flex-col items-center md:items-start">
-                <h2 className="text-xl font-bold">{user.first_name} {user.surname}</h2>
+                <h2 className="text-xl font-bold">{formatUserFullName(user)}</h2>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {user.is_group_leader && (
                     <span className="inline-block px-3 py-1 text-sm font-semibold text-blue-800 bg-blue-100 rounded-full">
@@ -139,11 +140,11 @@ export default function UserDetailsPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Nombres</label>
-                  <p className="mt-1">{user.first_name} {user.other_name || ''}</p>
+                  <p className="mt-1">{capitalizeFirstLetter(user.first_name)} {user.other_name ? capitalizeFirstLetter(user.other_name) : ''}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Apellidos</label>
-                  <p className="mt-1">{user.surname} {user.other_surname || ''}</p>
+                  <p className="mt-1">{capitalizeFirstLetter(user.surname)} {user.other_surname ? capitalizeFirstLetter(user.other_surname) : ''}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">DNI</label>
@@ -179,18 +180,18 @@ export default function UserDetailsPage() {
                   <>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Programa</label>
-                      <p className="mt-1">{user.program.name}</p>
+                      <p className="mt-1">{capitalizeFirstLetter(user.program.name)}</p>
                     </div>
                     {user.program.faculty && (
                       <>
                         <div>
                           <label className="block text-sm font-medium text-gray-700">Facultad</label>
-                          <p className="mt-1">{user.program.faculty.name}</p>
+                          <p className="mt-1">{capitalizeFirstLetter(user.program.faculty.name)}</p>
                         </div>
                         {user.program.faculty.university && (
                           <div>
                             <label className="block text-sm font-medium text-gray-700">Universidad</label>
-                            <p className="mt-1">{user.program.faculty.university.name}</p>
+                            <p className="mt-1">{capitalizeFirstLetter(user.program.faculty.university.name)}</p>
                           </div>
                         )}
                       </>
@@ -235,7 +236,7 @@ export default function UserDetailsPage() {
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:underline flex items-center"
                     >
-                      {link.name || link.link}
+                      {capitalizeFirstLetter(link.name || link.link)}
                     </a>
                   ))}
                 </div>
@@ -249,7 +250,7 @@ export default function UserDetailsPage() {
                 <div className="space-y-4">
                   {user.role_granting_list.map((roleGrant) => (
                     <div key={roleGrant.id} className="bg-gray-50 p-4 rounded-lg">
-                      <h3 className="font-medium text-gray-900">{roleGrant.role?.name || 'Rol sin nombre'}</h3>
+                      <h3 className="font-medium text-gray-900">{roleGrant.role?.name ? capitalizeFirstLetter(roleGrant.role.name) : 'Rol sin nombre'}</h3>
                       <div className="mt-2">
                         <h4 className="text-sm font-medium text-gray-700">Permisos:</h4>
                         <div className="flex flex-wrap gap-2 mt-1">
@@ -258,7 +259,7 @@ export default function UserDetailsPage() {
                               key={permission.id}
                               className="inline-block px-2 py-1 text-xs font-semibold text-gray-700 bg-yellow-100 rounded-full"
                             >
-                              {permission.name}
+                              {capitalizeFirstLetter(permission.name)}
                             </span>
                           ))}
                         </div>

@@ -8,6 +8,7 @@ import { toast, Toaster } from 'react-hot-toast';
 import { ArrowLeftIcon, LinkIcon, UserIcon, CalendarIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { capitalizeFirstLetter, formatUserFullName } from '@/utils/stringUtils';
 
 interface PageProps {
   params: {
@@ -71,12 +72,19 @@ export default function ProgressDetailPage({ params }: PageProps) {
 
   const formatDate = (dateString: string | null): string => {
     if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-
-    return date.toLocaleString('es-ES', {
-      dateStyle: 'short',
-      timeStyle: 'short'
+    const fechaLocal = new Date(dateString);
+  
+    const formatoColombia = new Intl.DateTimeFormat("es-CO", {
+      timeZone: "America/Bogota",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
     });
+  
+    return formatoColombia.format(fechaLocal);
   };
 
   return (
@@ -106,9 +114,9 @@ export default function ProgressDetailPage({ params }: PageProps) {
               <h2 className="text-xl font-semibold mb-3">Información del Proyecto</h2>
               <div className="bg-white rounded-lg p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-white rounded-lg p-4">
-                  <h3 className="font-bold text-lg">{progress.project.title}</h3>
+                  <h3 className="font-bold text-lg">{capitalizeFirstLetter(progress.project.title)}</h3>
                   {progress.project.description && (
-                    <p className="text-gray-700 mt-2">{progress.project.description}</p>
+                    <p className="text-gray-700 mt-2">{capitalizeFirstLetter(progress.project.description)}</p>
                   )}
                 </div>
                 <div className="flex items-center">
@@ -127,7 +135,7 @@ export default function ProgressDetailPage({ params }: PageProps) {
                 <UserIcon className="h-10 w-10 text-orange-500 mr-3" />
                 <div>
                   <p className="font-semibold">
-                    {progress.user.first_name} {progress.user.other_name || ''} {progress.user.surname} {progress.user.other_surname || ''}
+                    {formatUserFullName(progress.user)}
                   </p>
                   {progress.user.email && (
                     <p className="text-gray-600">{progress.user.email}</p>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Access, Role } from '@/types/models/GeneralModels';
+import { capitalizeFirstLetter } from '@/utils/stringUtils';
 
 interface RoleTableProps {
   roles: Role[];
@@ -40,7 +41,7 @@ export default function RoleTable({ roles }: RoleTableProps) {
               onClick={() => handleRowClick(role)}
               className="cursor-pointer hover:bg-gray-50 transition-colors"
             >
-              <td className="px-6 py-4 text-sm text-gray-900">{role.name}</td>
+              <td className="px-6 py-4 text-sm text-gray-900">{capitalizeFirstLetter(role.name)}</td>
               <td className="px-6 py-4 text-sm">
                 <span
                   className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${

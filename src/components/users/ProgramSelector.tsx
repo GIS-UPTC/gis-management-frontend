@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Program } from '@/types/models/GeneralModels';
+import { capitalizeFirstLetter } from '@/utils/stringUtils';
 import { Combobox } from '@headlessui/react';
 import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { programService, ProgramServiceError } from '@/services/extras/programService';
@@ -58,7 +59,7 @@ export default function ProgramSelector({ selectedProgram, onProgramChange }: Pr
           <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border focus-within:border-orange-500">
             <Combobox.Input
               className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
-              displayValue={(program: Program | null) => program?.name || ''}
+              displayValue={(program: Program | null) => capitalizeFirstLetter(program?.name || '')}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => setQuery(event.target.value)}
               placeholder="Buscar programa..."
             />
@@ -93,12 +94,12 @@ export default function ProgramSelector({ selectedProgram, onProgramChange }: Pr
                     <>
                       <div className="flex flex-col">
                         <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
-                          {program.name}
+                          {capitalizeFirstLetter(program.name)}
                         </span>
                         <span className={`block truncate text-sm ${
                           active ? 'text-orange-700' : 'text-gray-500'
                         }`}>
-                          {program.faculty.name} - {program.faculty.university.name}
+                          {capitalizeFirstLetter(program.faculty.name)} - {capitalizeFirstLetter(program.faculty.university.name)}
                         </span>
                       </div>
                       {selected && (
@@ -122,9 +123,9 @@ export default function ProgramSelector({ selectedProgram, onProgramChange }: Pr
       {selectedProgram && selectedProgram.id && (
         <div className="mt-4 p-3 bg-gray-50 rounded-lg">
           <h4 className="text-sm font-medium text-gray-700 mb-2">Programa seleccionado:</h4>
-          <div className="font-medium">{selectedProgram.name}</div>
+          <div className="font-medium">{capitalizeFirstLetter(selectedProgram.name)}</div>
           <div className="text-sm text-gray-600">
-            {selectedProgram.faculty.name} - {selectedProgram.faculty.university.name}
+            {capitalizeFirstLetter(selectedProgram.faculty.name)} - {capitalizeFirstLetter(selectedProgram.faculty.university.name)}
           </div>
         </div>
       )}

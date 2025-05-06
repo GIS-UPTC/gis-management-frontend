@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Project } from '@/types/models/project.models';
+import { capitalizeFirstLetter } from '@/utils/stringUtils';
 
 
 interface ProjectTableProps {
@@ -55,7 +56,7 @@ export default function ProjectTable({ projects }: ProjectTableProps) {
               onClick={() => handleRowClick(project)}
               className="cursor-pointer hover:bg-gray-50 transition-colors"
             >
-              <td className="px-6 py-4 text-sm text-gray-900">{project.title}</td>
+              <td className="px-6 py-4 text-sm text-gray-900">{capitalizeFirstLetter(project.title)}</td>
               <td className="px-6 py-4 text-sm text-gray-900">{project.code}</td>
               <td className="px-6 py-4 text-sm text-gray-900">{formatDate(project.creation_date)}</td>
               <td className="px-6 py-4 text-sm text-gray-900">{project.duration_days}</td>

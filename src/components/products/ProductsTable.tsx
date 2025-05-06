@@ -2,6 +2,7 @@ import React from 'react';
 import { Product } from '@/types/models/GeneralModels';
 import { FaTrash } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
+import { capitalizeFirstLetter } from '@/utils/stringUtils';
 
 interface ProductsTableProps {
   products: Product[];
@@ -40,16 +41,16 @@ export default function ProductsTable({ products, onDelete }: ProductsTableProps
                 {product.code}
               </td>
               <td className="px-6 py-4 text-sm text-gray-900">
-                {product.name}
+                {capitalizeFirstLetter(product.name)}
               </td>
               <td className="px-6 py-4 text-sm text-gray-900">
-                {product.type.name}
+                {capitalizeFirstLetter(product.type.name)}
               </td>
               <td className="px-6 py-4 text-sm text-gray-900">
                 {product.type.subtype_name || 'N/A'}
               </td>
               <td className="px-6 py-4 text-sm text-gray-900">
-                {product.project?.title || 'N/A'}
+                {capitalizeFirstLetter(product.project?.title || 'N/A')}
               </td>
               <td className="px-6 py-4 text-sm">
                 {onDelete && (

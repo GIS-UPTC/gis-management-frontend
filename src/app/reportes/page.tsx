@@ -14,7 +14,6 @@ import { reportService } from '@/services/extras/reportService';
 import toast, { Toaster } from 'react-hot-toast';
 import { ArrowLeftIcon, DocumentTextIcon, ArrowDownTrayIcon, XMarkIcon } from '@heroicons/react/16/solid';
 import Link from 'next/link';
-import * as XLSX from 'xlsx';
 
 export default function GenerateReportPage() {
   // Report state
@@ -47,7 +46,6 @@ export default function GenerateReportPage() {
   const [reportBlob, setReportBlob] = useState<Blob | null>(null);
   const [reportUrl, setReportUrl] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
-  const [excelHtml, setExcelHtml] = useState<string | null>(null);
 
   // Refs
   const previewContainerRef = useRef<HTMLDivElement>(null);
@@ -195,19 +193,6 @@ export default function GenerateReportPage() {
 
     if (report.format === 'PDF') {
       setShowPreview(true);
-    } else if (report.format === 'XLSX') {
-      try {
-        const arrayBuffer = await reportBlob.arrayBuffer();
-        const data = new Uint8Array(arrayBuffer);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const html = XLSX.utils.sheet_to_html(sheet);
-        setExcelHtml(html);
-        setShowPreview(true);
-      } catch (error) {
-        toast.error('Error al procesar el archivo XLSX');
-        console.error(error);
-      }
     }
   };
 
@@ -229,7 +214,6 @@ export default function GenerateReportPage() {
   // Close preview
   const closePreview = () => {
     setShowPreview(false);
-    setExcelHtml(null);
   };
 
   // Determine which fields to show based on report type

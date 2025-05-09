@@ -73,7 +73,24 @@ export default function ProjectsPage() {
           </div>
         ) : filteredProjects.length > 0 ? (
           <div className="bg-white rounded-lg shadow">
-            <ProjectTable projects={filteredProjects} />
+            <ProjectTable 
+              projects={filteredProjects} 
+              onStatusChange={() => {
+                // Recargar los proyectos cuando se cambie el estado
+                const loadProjects = async () => {
+                  try {
+                    const allProjects = await projectService.fetchProjects(' ');
+                    setAllProjects(allProjects);
+                    setFilteredProjects(allProjects);
+                  } catch (error) {
+                    const errorMessage = error instanceof Error ? error.message : 'Ocurrió un error al cargar los proyectos. Por favor, intente nuevamente.';
+                    setError(errorMessage);
+                    toast.error(errorMessage);
+                  }
+                };
+                loadProjects();
+              }}
+            />
           </div>
         ) : (
           <div className="text-center py-8 text-gray-500">

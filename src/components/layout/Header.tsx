@@ -31,18 +31,18 @@ const Header: React.FC<HeaderProps> = ({ moduleName}) => {
   return (
     <header className="bg-[#F9E27D] shadow-md">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-30">
           <div className="flex items-center space-x-1">
             <Link href="/" title='Inicio'>
               <Image
                 src="/images/logo-gis.png"
                 alt="GIS Logo"
-                width={135}
-                height={135}
+                width={160}
+                height={160}
                 className="object-contain cursor-pointer"
               />
             </Link>
-            <h1 className="text-xl font-semibold text-gray-800 hidden sm:block">{moduleName}</h1>
+            <h1 className="text-2xl font-semibold text-gray-800 hidden sm:block">{moduleName}</h1>
           </div>
 
           {/* Menú hamburguesa para móviles */}
@@ -61,7 +61,7 @@ const Header: React.FC<HeaderProps> = ({ moduleName}) => {
                 <li key={item.path}>
                   <Link
                     href={item.path}
-                    className={`text-base font-medium transition-colors hover:text-primary-600 ${
+                    className={`text-lg transition-colors hover:text-primary-600 ${
                       pathname === item.path
                         ? 'text-primary-600 border-b-2 border-primary-600'
                         : 'text-black'
@@ -75,7 +75,7 @@ const Header: React.FC<HeaderProps> = ({ moduleName}) => {
               {/* Menú desplegable "Gestión Grupo" (antes "Más opciones") */}
               <li className="relative group">
                 <button 
-                  className={`text-base font-medium flex items-center transition-colors hover:text-primary-600 ${
+                  className={`text-lg flex items-center transition-colors hover:text-primary-600 ${
                     dropdownItems.some(item => pathname === item.path)
                       ? 'text-primary-600 border-b-2 border-primary-600'
                       : 'text-black'
@@ -95,7 +95,7 @@ const Header: React.FC<HeaderProps> = ({ moduleName}) => {
                       <Link
                         key={item.path}
                         href={item.path}
-                        className={`block px-4 py-2 text-sm hover:bg-gray-100 ${
+                        className={`block px-4 py-2 text-lg hover:bg-gray-100 ${
                           pathname === item.path ? 'bg-gray-50 text-primary-600' : 'text-black'
                         }`}
                       >
@@ -167,9 +167,9 @@ const Header: React.FC<HeaderProps> = ({ moduleName}) => {
                 <Link
                   href={`/profile`}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`flex items-center py-2 px-4 rounded-lg transition-colors text-gray-600 hover:bg-gray-50`}
+                  className={`flex items-center rounded-lg transition-colors text-gray-600 hover:bg-gray-50`}
                 >
-                  <FaUser className="mr-2" size={18} />
+                  <FaUser size={25} />
                   <span>Perfil</span>
                 </Link>
               </li>

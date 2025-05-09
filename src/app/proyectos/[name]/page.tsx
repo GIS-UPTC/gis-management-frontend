@@ -14,7 +14,7 @@ export default function ProjectDetailsPage() {
   const params = useParams();
   const [project, setProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
+  // Estado del proyecto ahora es solo de visualización
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -100,16 +100,7 @@ export default function ProjectDetailsPage() {
     return type === 'EX' ? 'Externa' : 'Interna';
   };
 
-  const handleStatusChange = async (newStatus: string) => {
-    try {
-      await projectService.changeProjectStatus(project.id, newStatus);
-      
-      setIsStatusDropdownOpen(false);
-      window.location.reload(); 
-    } catch {
-      toast.error('Error al actualizar el estado');
-    }
-  };
+  // La función de cambio de estado se ha movido a la página de listado de proyectos
 
   return (
     <>
@@ -145,43 +136,10 @@ export default function ProjectDetailsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Estado</label>
-                  <div className="relative mt-1">
-                    <button
-                      type="button"
-                      onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
-                      className={`inline-flex items-center px-3 py-1 text-sm font-semibold rounded-full ${getStatusClass(project.status)}`}
-                    >
+                  <div className="mt-1">
+                    <span className={`inline-flex items-center px-3 py-1 text-sm font-semibold rounded-full ${getStatusClass(project.status)}`}>
                       {getStatusLabel(project.status)}
-                      <svg
-                        className="w-4 h-4 ml-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </button>
-
-                    {isStatusDropdownOpen && (
-                      <div className="absolute z-10 mt-1 w-40 bg-white rounded-lg shadow-lg border">
-                        <div className="py-1">
-                          {['AC', 'IN', 'EJ', 'CN', 'FN'].map((status) => (
-                            <button
-                              key={status}
-                              onClick={() => handleStatusChange(status)}
-                              className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${getStatusClass(status)}`}
-                            >
-                              {getStatusLabel(status)}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                    </span>
                   </div>
                 </div>
                 <div>
@@ -312,19 +270,19 @@ export default function ProjectDetailsPage() {
                         </span>
                       </div>
 
-                      {cooperation.type === 'EX' && cooperation.in_charge && (
+                      {cooperation.in_charge && (
                         <div className="mt-2">
-                          <p className="text-sm font-medium text-gray-700">Responsable Externo:</p>
-                          <p>{cooperation.in_charge.first_name} {cooperation.in_charge.last_name}</p>
+                          <p className="text-sm font-medium text-gray-700">{cooperation.type === 'EX'? 'Cooperación Externa:': 'Cooperación Interna:'}</p>
+                          <p>{capitalizeFirstLetter(cooperation.in_charge.first_name)} {capitalizeFirstLetter(cooperation.in_charge.last_name)}</p>
                           <p className="text-sm text-gray-600">DNI: {cooperation.in_charge.dni}</p>
                           <p className="text-sm text-gray-600">Entidad: {cooperation.in_charge.group_or_entity}</p>
                         </div>
                       )}
 
-                      {cooperation.type === 'IN' && cooperation.cooperator && (
+                      {cooperation.cooperator && (
                         <div className="mt-2">
-                          <p className="text-sm font-medium text-gray-700">Cooperador Interno:</p>
-                          <p>{cooperation.cooperator.first_name} {cooperation.cooperator.other_name || ''} {cooperation.cooperator.surname} {cooperation.cooperator.other_surname || ''}</p>
+                          <p className="text-sm font-medium text-gray-700">{cooperation.type === 'EX'? 'Cooperación Externa:': 'Cooperación Interna:'}</p>
+                          <p>{formatUserFullName(cooperation.cooperator)}</p>
                           <p className="text-sm text-gray-600">Email: {cooperation.cooperator.email}</p>
                         </div>
                       )}

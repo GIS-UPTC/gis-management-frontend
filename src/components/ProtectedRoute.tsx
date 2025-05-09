@@ -51,6 +51,12 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     
     const userStr = sessionStorage.getItem('user');
     
+    // Permitir acceso a las rutas públicas sin autenticación
+    if (pathname.startsWith('/publico')) {
+      setHasAccess(true);
+      return;
+    }
+    
     if (!accessToken && pathname !== '/auth/login') {
       router.push('/auth/login');
       return;

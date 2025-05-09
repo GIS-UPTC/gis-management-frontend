@@ -240,184 +240,181 @@ export default function CooperationSection({ formData, setFormData }: Cooperatio
         ))}
       </div>
       
-      {/* Sección de agregar nueva cooperación */}
-      <div className="space-y-6 p-4 bg-orange-100 rounded-lg">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Tipo de Cooperación
-          </label>
-          <select
-            value={cooperationType}
-            onChange={(e) => setCooperationType(e.target.value as "IN" | "EX")}
-            className="w-full p-2 border rounded-lg"
-            required
-          >
-            <option value="IN">Cooperación Interna</option>
-            <option value="EX">Cooperación Externa</option>
-          </select>
-        </div>
-        
-        {/* Subsección 1: Buscar usuario del GIS */}
-        <div className="space-y-4">
-          <h4 className="font-medium">Buscar usuario del GIS</h4>
-          <SearchBar 
-            onSearch={searchGisUsers} 
-            isLoading={isGisLoading} 
-            placeholder="Buscar usuario del GIS..."
-          />
-          
-          {gisUsers.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {gisUsers.map(user => {
-                const isAlreadyAdded = formData.cooperation_list.some(
-                  cooperation => cooperation.cooperator?.id === user.id
-                );
+      {/* Tipo de cooperación */}
+      <div className="p-4 bg-gray-50 rounded-lg mb-6">
+        <h3 className="text-md font-medium mb-3">Tipo de Cooperación</h3>
+        <select
+          value={cooperationType}
+          onChange={(e) => setCooperationType(e.target.value as "IN" | "EX")}
+          className="w-full p-2 border rounded-lg"
+        >
+          <option value="IN">Cooperación Interna</option>
+          <option value="EX">Cooperación Externa</option>
+        </select>
+      </div>
 
-                return (
-                  <div
-                    key={user.id}
-                    className={`flex items-center justify-between p-2 rounded-lg ${
-                      isAlreadyAdded ? 'bg-gray-100 text-gray-400' : 'bg-gray-50'
-                    }`}
-                  >
-                    <span>{user.first_name} {user.surname}</span>
-                    {!isAlreadyAdded ? (
-                      <button
-                        type="button"
-                        onClick={() => handleGisUserSelect(user)}
-                        className="text-green-600 hover:text-green-800"
-                      >
-                        Seleccionar
-                      </button>
-                    ) : (
-                      <span className="text-gray-400">Ya seleccionado</span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+      {/* Sección de opciones para agregar cooperación */}
+      <h3 className="text-md font-medium mb-3">Seleccione una opción para agregar cooperación:</h3>
+      
+      {/* OPCIÓN 1: Buscar usuario del GIS */}
+      <div className="p-4 bg-blue-50 rounded-lg mb-4 border-l-4 border-blue-400">
+        <h4 className="font-medium text-blue-800 mb-3">Opción 1: Buscar usuario del GIS</h4>
+        <p className="text-sm text-gray-600 mb-3">Busque y seleccione un usuario ya registrado en el sistema GIS.</p>
+        <SearchBar 
+          onSearch={searchGisUsers} 
+          isLoading={isGisLoading} 
+          placeholder="Buscar usuario del GIS..."
+        />
         
-        {/* Subsección 2: Buscar usuario a cargo */}
-        <div className="space-y-4">
-          <h4 className="font-medium">Buscar persona a cargo</h4>
-          <SearchBar 
-            onSearch={searchInChargeUsers} 
-            isLoading={isInChargeLoading} 
-            placeholder="Buscar usuario a cargo..."
-          />
-          
-          {inChargeUsers.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {inChargeUsers.map(inCharge => {
-                const isAlreadyAdded = formData.cooperation_list.some(
-                  cooperation => 
-                    (cooperation.in_charge && 
-                     cooperation.in_charge.first_name === inCharge.first_name && 
-                     cooperation.in_charge.last_name === inCharge.last_name)
-                );
-                
-                return (
-                  <div
-                    key={inCharge.id}
-                    className={`flex items-center justify-between p-2 rounded-lg ${
-                      isAlreadyAdded ? 'bg-gray-100 text-gray-400' : 'bg-gray-50'
-                    }`}
-                  >
-                    <div>
-                      <span className="block">{inCharge.first_name} {inCharge.last_name}</span>
-                      <span className="block text-xs text-gray-500">
-                        {inCharge.group_or_entity} - DNI: {inCharge.dni}
-                      </span>
-                    </div>
-                    {!isAlreadyAdded ? (
-                      <button
-                        type="button"
-                        onClick={() => handleInChargeUserSelect(inCharge)}
-                        className="text-green-600 hover:text-green-800"
-                      >
-                        Seleccionar
-                      </button>
-                    ) : (
-                      <span className="text-gray-400">Ya seleccionado</span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-        
-        {/* Subsección 3: Agregar usuario a cargo */}
-        <div className="space-y-4">
-          <h4 className="font-medium">Agregar persona a cargo</h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nombre *
-              </label>
-              <input
-                type="text"
-                name="first_name"
-                value={newInCharge.first_name || ''}
-                onChange={handleInChargeChange}
-                className="w-full p-2 border rounded-lg"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Apellido *
-              </label>
-              <input
-                type="text"
-                name="last_name"
-                value={newInCharge.last_name || ''}
-                onChange={handleInChargeChange}
-                className="w-full p-2 border rounded-lg"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                DNI *
-              </label>
-              <input
-                type="text"
-                name="dni"
-                value={newInCharge.dni || ''}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (/^\d*$/.test(value)) {
-                    handleInChargeChange(e);
-                  }
-                }}
-                className="w-full p-2 border rounded-lg"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Entidad/Grupo *
-              </label>
-              <input
-                type="text"
-                name="group_or_entity"
-                value={newInCharge.group_or_entity || ''}
-                onChange={handleInChargeChange}
-                className="w-full p-2 border rounded-lg"
-                required
-              />
-            </div>
-            <button
-              type="button"
-              onClick={handleAddNewInCharge}
-              className="px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200"
-            >
-              Agregar Usuario a Cargo
-            </button>
+        {gisUsers.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
+            {gisUsers.map(user => {
+              const isAlreadyAdded = formData.cooperation_list.some(
+                cooperation => cooperation.cooperator?.id === user.id
+              );
+
+              return (
+                <div
+                  key={user.id}
+                  className={`flex items-center justify-between p-2 rounded-lg ${
+                    isAlreadyAdded ? 'bg-gray-100 text-gray-400' : 'bg-white border border-gray-200'
+                  }`}
+                >
+                  <span>{user.first_name} {user.surname}</span>
+                  {!isAlreadyAdded ? (
+                    <button
+                      type="button"
+                      onClick={() => handleGisUserSelect(user)}
+                      className="text-blue-600 hover:text-blue-800 font-medium"
+                    >
+                      Seleccionar
+                    </button>
+                  ) : (
+                    <span className="text-gray-400">Ya seleccionado</span>
+                  )}
+                </div>
+              );
+            })}
           </div>
+        )}
+      </div>
+      
+      {/* OPCIÓN 2: Buscar persona a cargo */}
+      <div className="p-4 bg-green-50 rounded-lg mb-4 border-l-4 border-green-400">
+        <h4 className="font-medium text-green-800 mb-3">Opción 2: Buscar persona a cargo</h4>
+        <p className="text-sm text-gray-600 mb-3">Busque una persona a cargo que ya ha sido registrada previamente.</p>
+        <SearchBar 
+          onSearch={searchInChargeUsers} 
+          isLoading={isInChargeLoading} 
+          placeholder="Buscar persona a cargo..."
+        />
+        
+        {inChargeUsers.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
+            {inChargeUsers.map(inCharge => {
+              const isAlreadyAdded = formData.cooperation_list.some(
+                cooperation => 
+                  (cooperation.in_charge && 
+                   cooperation.in_charge.first_name === inCharge.first_name && 
+                   cooperation.in_charge.last_name === inCharge.last_name)
+              );
+              
+              return (
+                <div
+                  key={inCharge.id}
+                  className={`flex items-center justify-between p-2 rounded-lg ${
+                    isAlreadyAdded ? 'bg-gray-100 text-gray-400' : 'bg-white border border-gray-200'
+                  }`}
+                >
+                  <div>
+                    <span className="block">{inCharge.first_name} {inCharge.last_name}</span>
+                    <span className="block text-xs text-gray-500">
+                      {inCharge.group_or_entity} - DNI: {inCharge.dni}
+                    </span>
+                  </div>
+                  {!isAlreadyAdded ? (
+                    <button
+                      type="button"
+                      onClick={() => handleInChargeUserSelect(inCharge)}
+                      className="text-green-600 hover:text-green-800 font-medium"
+                    >
+                      Seleccionar
+                    </button>
+                  ) : (
+                    <span className="text-gray-400">Ya seleccionado</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+      
+      {/* OPCIÓN 3: Agregar nueva persona a cargo */}
+      <div className="p-4 bg-purple-50 rounded-lg mb-4 border-l-4 border-purple-400">
+        <h4 className="font-medium text-purple-800 mb-3">Opción 3: Agregar nueva persona a cargo</h4>
+        <p className="text-sm text-gray-600 mb-3">Registre manualmente los datos de una nueva persona a cargo.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Nombre *
+            </label>
+            <input
+              type="text"
+              name="first_name"
+              value={newInCharge.first_name || ''}
+              onChange={handleInChargeChange}
+              className="w-full p-2 border rounded-lg"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Apellido *
+            </label>
+            <input
+              type="text"
+              name="last_name"
+              value={newInCharge.last_name || ''}
+              onChange={handleInChargeChange}
+              className="w-full p-2 border rounded-lg"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              DNI *
+            </label>
+            <input
+              type="text"
+              name="dni"
+              value={newInCharge.dni || ''}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d*$/.test(value)) {
+                  handleInChargeChange(e);
+                }
+              }}
+              className="w-full p-2 border rounded-lg"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Entidad/Grupo *
+            </label>
+            <input
+              type="text"
+              name="group_or_entity"
+              value={newInCharge.group_or_entity || ''}
+              onChange={handleInChargeChange}
+              className="w-full p-2 border rounded-lg"
+            />
+          </div>
+          <button
+            type="button"
+            onClick={handleAddNewInCharge}
+            className="px-4 py-2 bg-purple-100 text-purple-800 rounded-lg hover:bg-purple-200 font-medium"
+          >
+            Agregar Usuario a Cargo
+          </button>
         </div>
       </div>
     </div>

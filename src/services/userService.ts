@@ -10,6 +10,33 @@ export class UserServiceError extends Error {
   }
 }
 
+// Tipo para la función de transformación de la lista de roles
+type TransformRoleGrantingListFn = (roleGrantingList: RoleGranting[]) => Array<{ role_id: number; permissions_ids: number[] }>;
+
+// Función para formatear los datos del usuario
+const formatUserData = (userData: Omit<User, 'id'>, transformRoleGrantingList: TransformRoleGrantingListFn) => ({
+  dni:             userData.dni,
+  first_name:      userData.first_name,
+  surname:         userData.surname,
+  email:           userData.email,
+  birthdate:       userData.birthdate,
+  photo_url:       userData.photo_url,
+  entry_date:      userData.entry_date,
+  links:           userData.links,
+  is_Active:       userData.is_Active,
+  deparure_date:   userData.deparure_date === "" ? null : userData.deparure_date,
+  interest_topics: userData.interest_topics,
+  participations:  userData.participations,
+  role_granting_list:  transformRoleGrantingList(userData.role_granting_list),
+  responsibilities:     userData.responsabilities,
+  program:              userData.program,
+  is_group_leader:      userData.is_group_leader,
+  is_main_researcher:   userData.is_main_researcher,
+
+  ...(userData.other_name    ? { other_name:    userData.other_name    } : {}),
+  ...(userData.other_surname ? { other_surname: userData.other_surname } : {})
+});
+
 export const userService = {
   async createUser(userData: Omit<User, 'id'>, file?: File): Promise<User> {
     try {
@@ -20,28 +47,7 @@ export const userService = {
         }));
       };
 
-      const formattedData = {
-        dni:             userData.dni,
-        first_name:      userData.first_name,
-        surname:         userData.surname,
-        email:           userData.email,
-        birthdate:       userData.birthdate,
-        photo_url:       userData.photo_url,
-        entry_date:      userData.entry_date,
-        links:           userData.links,
-        is_Active:       userData.is_Active,
-        deparure_date:   userData.deparure_date === "" ? null : userData.deparure_date,
-        interest_topics: userData.interest_topics,
-        participations:  userData.participations,
-        role_granting_list:  transformRoleGrantingList(userData.role_granting_list),
-        responsibilities:     userData.responsabilities,
-        program:              userData.program,
-        is_group_leader:      userData.is_group_leader,
-        is_main_researcher:   userData.is_main_researcher,
-      
-        ...(userData.other_name    ? { other_name:    userData.other_name    } : {}),
-        ...(userData.other_surname ? { other_surname: userData.other_surname } : {})
-      };
+      const formattedData = formatUserData(userData, transformRoleGrantingList);
 
       const formData = new FormData();
 
@@ -71,9 +77,18 @@ export const userService = {
     }
   },
 
-  async updateUser(id: number, userData: Partial<User>): Promise<User> {
+  async updateUser(id: number, userData: Omit<User, 'id'>): Promise<User> {
     try {
-      const response = await api.put<User>(`/users/${id}`, userData);
+      const transformRoleGrantingList = (roleGrantingList: RoleGranting[]) => {
+        return roleGrantingList.map(item => ({
+          role_id: item.role.id,
+          permissions_ids: item.permissions.map(p => p.id)
+        }));
+      };
+
+      const formattedData = formatUserData(userData, transformRoleGrantingList);
+      
+      const response = await api.put<User>(`/users/${id}`, formattedData);
       return response.data;
     } catch (error) {
       console.log(error)

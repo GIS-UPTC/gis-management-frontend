@@ -199,7 +199,7 @@ const Header: React.FC<HeaderProps> = ({ moduleName}) => {
             /* Botón de Acceder */
             <Link 
               href="/auth/login"
-              className="mr-4 bg-primary-600 hover:bg-primary-700 hover:shadow-md text-white px-6 py-2 rounded-lg transition-all hover:translate-y-[-2px]"
+              className="mr-4 bg-orange-500 text-white rounded-lg hover:bg-orange-600 hover:bg-orange-700 hover:shadow-md text-lg px-6 py-2 rounded-lg transition-all hover:translate-y-[-2px]"
             >
               Acceder
             </Link>

@@ -44,7 +44,7 @@ export default function ProjectsPage() {
             href="/proyectos/nuevo"
             className="bg-customDarkGreen hover:bg-green-200 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
           >
-            Agregar Proyecto...
+            Agregar Proyecto
           </Link>
         </div>
         <div className="mb-6">

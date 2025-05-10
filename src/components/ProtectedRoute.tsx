@@ -57,8 +57,14 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
       return;
     }
     
-    if (!accessToken && pathname !== '/auth/login') {
-      router.push('/auth/login');
+    if (!accessToken) {
+      // Si el usuario no está autenticado y está en la ruta raíz, redirigir a /publico
+      // Para otras rutas protegidas, redirigir a /auth/login
+      if (pathname === '/') {
+        router.push('/publico');
+      } else if (pathname !== '/auth/login') {
+        router.push('/auth/login');
+      }
       return;
     }
 

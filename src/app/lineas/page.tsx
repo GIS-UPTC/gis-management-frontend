@@ -49,7 +49,7 @@ export default function ResearchLinesPage() {
             href="/lineas/nueva"
             className="bg-customDarkGreen hover:bg-green-200 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
           >
-            Agregar Línea de Investigación...
+            Agregar Línea de Investigación
           </Link>
         </div>
         <div className="mb-6">

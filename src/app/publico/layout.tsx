@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-// No necesitamos importar Image de Next.js
 import { usePathname } from 'next/navigation';
-import { HiMenu, HiX } from 'react-icons/hi';
+import { HiMenu, HiX, HiHome, HiDocumentText, HiUserGroup } from 'react-icons/hi';
+import Header from '@/components/layout/Header';
 
 export default function PublicoLayout({
   children,
@@ -15,116 +15,142 @@ export default function PublicoLayout({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header similar al principal */}
-      <header className="bg-[#F9E27D] shadow-md">
+    <div className="min-h-screen bg-customBackground">
+      {/* Usar el componente Header principal */}
+      <Header moduleName="Información Pública" isPublicSection={true} />
+      
+      {/* Menú de navegación mejorado debajo del header */}
+      <div className="bg-white shadow-md border-b border-gray-200">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-30">
-            <div className="flex items-center space-x-1">
-              <Link href="/" title='Inicio'>
-                <img
-                  src="/images/logo-gis.png"
-                  alt="GIS Logo"
-                  width={160}
-                  height={160}
-                  className="object-contain cursor-pointer"
-                />
-              </Link>
-              <h1 className="text-2xl font-semibold text-gray-800 hidden sm:block">Información Pública</h1>
-            </div>
+          {/* Navegación para desktop - más alta y con iconos */}
+          <nav className="hidden md:block">
+            <ul className="flex space-x-8 py-4">
+              <li>
+                <Link
+                  href="/publico/inicio"
+                  className={`flex items-center text-lg transition-colors hover:text-primary-600 group ${
+                    pathname === '/publico/inicio'
+                      ? 'text-primary-600 font-medium'
+                      : 'text-gray-700'
+                  }`}
+                >
+                  <HiHome className={`mr-2 ${
+                    pathname === '/publico/inicio'
+                      ? 'text-primary-600'
+                      : 'text-gray-500 group-hover:text-primary-500'
+                  }`} size={20} />
+                  <span>Inicio</span>
+                  {pathname === '/publico/inicio' && (
+                    <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-500 rounded-t-md transform translate-y-4"></div>
+                  )}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/publico/publicaciones"
+                  className={`flex items-center text-lg transition-colors hover:text-primary-600 group ${
+                    pathname === '/publico/publicaciones'
+                      ? 'text-primary-600 font-medium'
+                      : 'text-gray-700'
+                  }`}
+                >
+                  <HiDocumentText className={`mr-2 ${
+                    pathname === '/publico/publicaciones'
+                      ? 'text-primary-600'
+                      : 'text-gray-500 group-hover:text-primary-500'
+                  }`} size={20} />
+                  <span>Publicaciones</span>
+                  {pathname === '/publico/publicaciones' && (
+                    <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-500 rounded-t-md transform translate-y-4"></div>
+                  )}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/publico/colaboradores"
+                  className={`flex items-center text-lg transition-colors hover:text-primary-600 group ${
+                    pathname === '/publico/colaboradores'
+                      ? 'text-primary-600 font-medium'
+                      : 'text-gray-700'
+                  }`}
+                >
+                  <HiUserGroup className={`mr-2 ${
+                    pathname === '/publico/colaboradores'
+                      ? 'text-primary-600'
+                      : 'text-gray-500 group-hover:text-primary-500'
+                  }`} size={20} />
+                  <span>Colaboradores</span>
+                  {pathname === '/publico/colaboradores' && (
+                    <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-500 rounded-t-md transform translate-y-4"></div>
+                  )}
+                </Link>
+              </li>
+            </ul>
+          </nav>
 
-            {/* Menú hamburguesa para móviles */}
+          {/* Botón de menú para móviles - mejorado */}
+          <div className="md:hidden py-3 flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 text-gray-600 hover:text-gray-900"
+              className="p-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 flex items-center transition-colors duration-200"
               aria-label="Toggle menu"
             >
               {isMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
+              <span className="ml-2 font-medium">Menú</span>
             </button>
-
-            {/* Navegación para desktop */}
-            <nav className="hidden md:block">
-              <ul className="flex space-x-6 items-center">
-                <li>
-                  <Link
-                    href="/publico/publicaciones"
-                    className={`text-lg transition-colors hover:text-primary-600 ${
-                      pathname === '/publico/publicaciones'
-                        ? 'text-primary-600 border-b-2 border-primary-600'
-                        : 'text-black'
-                    }`}
-                  >
-                    Publicaciones
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/publico/colaboradores"
-                    className={`text-lg transition-colors hover:text-primary-600 ${
-                      pathname === '/publico/colaboradores'
-                        ? 'text-primary-600 border-b-2 border-primary-600'
-                        : 'text-black'
-                    }`}
-                  >
-                    Colaboradores
-                  </Link>
-                </li>
-                <li className="ml-auto">
-                  <Link
-                    href="/auth/login"
-                    className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors"
-                  >
-                    Acceder
-                  </Link>
-                </li>
-              </ul>
-            </nav>
           </div>
 
-          {/* Menú móvil */}
+          {/* Menú móvil - mejorado */}
           {isMenuOpen && (
-            <nav className="md:hidden pb-4">
-              <ul className="space-y-2">
+            <nav className="md:hidden pb-3">
+              <ul className="space-y-2 border rounded-lg overflow-hidden bg-white shadow-sm">
+                <li>
+                  <Link
+                    href="/publico/inicio"
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`flex items-center py-3 px-4 transition-colors ${
+                      pathname === '/publico/inicio'
+                        ? 'bg-primary-50 text-primary-700 border-l-4 border-primary-500'
+                        : 'text-gray-700 hover:bg-gray-50 border-l-4 border-transparent'
+                    }`}
+                  >
+                    <HiHome size={20} className="mr-3" />
+                    <span>Inicio</span>
+                  </Link>
+                </li>
                 <li>
                   <Link
                     href="/publico/publicaciones"
                     onClick={() => setIsMenuOpen(false)}
-                    className={`block py-2 px-4 rounded-lg transition-colors ${
+                    className={`flex items-center py-3 px-4 transition-colors ${
                       pathname === '/publico/publicaciones'
-                        ? 'bg-primary-50 text-primary-600'
-                        : 'text-gray-600 hover:bg-gray-50'
+                        ? 'bg-primary-50 text-primary-700 border-l-4 border-primary-500'
+                        : 'text-gray-700 hover:bg-gray-50 border-l-4 border-transparent'
                     }`}
                   >
-                    Publicaciones
+                    <HiDocumentText size={20} className="mr-3" />
+                    <span>Publicaciones</span>
                   </Link>
                 </li>
                 <li>
                   <Link
                     href="/publico/colaboradores"
                     onClick={() => setIsMenuOpen(false)}
-                    className={`block py-2 px-4 rounded-lg transition-colors ${
+                    className={`flex items-center py-3 px-4 transition-colors ${
                       pathname === '/publico/colaboradores'
-                        ? 'bg-primary-50 text-primary-600'
-                        : 'text-gray-600 hover:bg-gray-50'
+                        ? 'bg-primary-50 text-primary-700 border-l-4 border-primary-500'
+                        : 'text-gray-700 hover:bg-gray-50 border-l-4 border-transparent'
                     }`}
                   >
-                    Colaboradores
-                  </Link>
-                </li>
-                <li className="border-t border-gray-200 mt-2 pt-2">
-                  <Link
-                    href="/auth/login"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="block py-2 px-4 bg-primary-600 text-white rounded-lg transition-colors hover:bg-primary-700"
-                  >
-                    Acceder
+                    <HiUserGroup size={20} className="mr-3" />
+                    <span>Colaboradores</span>
                   </Link>
                 </li>
               </ul>
             </nav>
           )}
         </div>
-      </header>
+      </div>
 
       <main className="container mx-auto px-4 py-6">
         {children}

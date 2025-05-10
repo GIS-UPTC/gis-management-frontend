@@ -7,8 +7,8 @@ export default function PublicoPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirigir a la página de publicaciones por defecto
-    router.push('/publico/publicaciones');
+    // Redirigir a la página de inicio por defecto
+    router.push('/publico/inicio');
   }, [router]);
 
   return (

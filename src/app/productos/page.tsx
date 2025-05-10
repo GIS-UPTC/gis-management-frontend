@@ -71,7 +71,7 @@ export default function ProductosPage() {
             href="/productos/nuevo"
             className="bg-customDarkGreen hover:bg-green-200 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
           >
-            Agregar Producto...
+            Agregar Producto
           </Link>
         </div>
 

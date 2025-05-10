@@ -144,8 +144,9 @@ export default function ProfilePage() {
                   Cambiar Contraseña
                 </button>
                 <button
+                  type="button"
+                  className="px-4 py-2 bg-red-100 text-red-800 rounded-lg hover:bg-red-200"
                   onClick={() => loginService.logout()}
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors"
                 >
                   Cerrar Sesión
                 </button>
@@ -197,7 +198,7 @@ export default function ProfilePage() {
                   <>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Programa</label>
-                      <p className="mt-1">{capitalizeFirstLetter(user.program.name)} - {user.program.is_diurn? ('Diurno'): ('Nocturno')}</p>
+                      <p className="mt-1">{capitalizeFirstLetter(user.program.name)} - {user.program.is_diurn ? ('Diurno') : ('Nocturno')}</p>
                     </div>
                     {user.program.faculty && (
                       <>
@@ -208,7 +209,7 @@ export default function ProfilePage() {
                         {user.program.faculty.university && (
                           <div>
                             <label className="block text-sm font-medium text-gray-700">Universidad</label>
-                            <p className="mt-1">{capitalizeFirstLetter(user.program.faculty.university.name)} - {user.program.faculty.place? capitalizeFirstLetter(user.program.faculty.place.name): ''}</p>
+                            <p className="mt-1">{capitalizeFirstLetter(user.program.faculty.university.name)} - {user.program.faculty.place ? capitalizeFirstLetter(user.program.faculty.place.name) : ''}</p>
                           </div>
                         )}
                       </>

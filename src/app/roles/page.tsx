@@ -49,7 +49,7 @@ export default function RolesPage() {
             href="/roles/nuevo"
             className="bg-customDarkGreen hover:bg-green-200 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
           >
-            Agregar Rol...
+            Agregar Rol
           </Link>
         </div>
         <div className="mb-6">

@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="es">
       <body className={inter.className} suppressHydrationWarning>
         <ProtectedRoute>
-          <main className="min-h-screen bg-gray-50">
+          <main className="min-h-screen bg-customBackground">
             {children}
           </main>
         </ProtectedRoute>

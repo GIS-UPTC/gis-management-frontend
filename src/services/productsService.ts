@@ -31,8 +31,6 @@ export const productService = {
 
       const formattedData = formattedProductData(jsonData);
 
-      console.log(formattedData)
-
       const formData = new FormData();
 
       if (file) {

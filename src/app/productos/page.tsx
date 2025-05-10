@@ -97,7 +97,7 @@ export default function ProductosPage() {
           </div>
         ) : (
           <div className="text-center py-8 text-gray-500">
-            No hay productos registrados
+            Utilice el buscador para buscar productos
           </div>
         )}
       </div>

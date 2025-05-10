@@ -1,10 +1,6 @@
 import api from '@/services/api';
 import { Organization } from '@/types/models/GeneralModels';
-import { AxiosError } from 'axios';
-
-interface ErrorResponse {
-  detail: string;
-}
+import { handleApiError } from '@/utils/errorHandler';
 
 export class GroupInformationServiceError extends Error {
   constructor(message: string) {
@@ -19,15 +15,11 @@ export const groupInformationService = {
       const response = await api.get<Organization>('/group_information/');
       return response.data;
     } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      if (axiosError.response?.data?.detail) {
-        if(axiosError.response.data.detail === 'Token invalido' || axiosError.response.data.detail === 'Se ha terminado el tiempo de la sesion') {
-          sessionStorage.removeItem('access_token');
-        }
-        throw new GroupInformationServiceError(axiosError.response.data.detail);
-      }
-      throw new GroupInformationServiceError(
-        'Error al obtener la información del grupo. Por favor, intente nuevamente.'
+      console.log(error);
+      return handleApiError(
+        error,
+        GroupInformationServiceError,
+        'Error al obtener la informacion del grupo. Por favor, intente nuevamente.'
       );
     }
   },

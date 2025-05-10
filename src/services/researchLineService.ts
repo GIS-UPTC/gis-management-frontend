@@ -19,7 +19,6 @@ export const researchLineService = {
   async fetchResearchLines(name: string): Promise<ResearchLine[]> {
     try {
       const response = await api.get<ResearchLine[]>(`/research_lines/${name}?with_inactives=false&all=true`);
-      console.log(response.data)
       return response.data;
     } catch (error) {
       return handleApiError(
@@ -32,9 +31,7 @@ export const researchLineService = {
 
   async searchResearchLine(name: string, withInactives: boolean = true): Promise<ResearchLine[]> {
     try {
-      console.log(withInactives)
       const response = await api.get<ResearchLine[]>(`/research_lines/${name}?with_inactives=${withInactives}`);
-      console.log(response)
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -61,7 +58,6 @@ export const researchLineService = {
         is_active: data.is_active,
         coordinator_id: data.coordinator.id
       };
-      console.log(formattedData)
       const response = await api.post<ResearchLine>('/research_lines', formattedData);
       return response.data;
     } catch (error) {
@@ -83,7 +79,6 @@ export const researchLineService = {
         is_active: data.is_active,
         coordinator_id: data.coordinator.id
       };
-      console.log(formattedData)
       const response = await api.put<ResearchLine>(`/research_lines/${id}`, formattedData);
       return response.data;
     } catch (error) {
@@ -100,7 +95,6 @@ export const researchLineService = {
 
   async updateStatusResearchLine(id: number): Promise<string> {
     try {
-      console.log(id)
       await api.patch<ResearchLine>(`/research_lines/${id}`);
       return "Linea de investigacion actualizada exitosamente";
     } catch (error) {

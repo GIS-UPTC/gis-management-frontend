@@ -28,16 +28,12 @@ export const loginService = {
     const encryptedPassword = encryptPassword(credentials.password);
     formData.append('password', encryptedPassword);
 
-    console.log(formData);
-
     try {
-      console.log("Iniciando solicitud de login");
       const response = await api.post('/auth', formData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       });
-      console.log(response.data);
 
       const { access_token, user } = response.data;
       
@@ -46,14 +42,12 @@ export const loginService = {
       sessionStorage.setItem('access_token', access_token);
       sessionStorage.setItem('user', JSON.stringify(user));
 
-      console.log("Usuario autenticado:", user);
 
       return response.data;
     } catch (error) {
       console.log(error);
       const axiosError = error as AxiosError<ErrorResponse>;
       if (axiosError.response?.data?.detail) {
-        console.log(axiosError.response.data.detail);
         throw new Error(axiosError.response.data.detail);
       }
       console.log('Error en la autenticación');

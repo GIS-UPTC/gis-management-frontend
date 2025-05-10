@@ -15,7 +15,6 @@ export const roleService = {
   async fetchRoles(name: string): Promise<Role[]> {
     try {
       const response = await api.get<Role[]>(`/roles/${name}?with_inactives=false&all=true`);
-      console.log(response.data)
       return response.data;
     } catch (error) {
       return handleApiError(
@@ -29,7 +28,6 @@ export const roleService = {
   async searchRoles(name: string): Promise<Role[]> {
     try {
       const response = await api.get<Role[]>(`/roles/${name}?with_inactives=false`);
-      console.log(response.data)
       return response.data;
     } catch (error) {
       return handleApiError(
@@ -51,8 +49,6 @@ export const roleService = {
         })),
         accesses_ids: roleData.accesses.map(access => access.id)
       };
-
-      console.log(formattedData)
 
       const response = await api.post<Role>(`/roles`, formattedData);
       return response.data;

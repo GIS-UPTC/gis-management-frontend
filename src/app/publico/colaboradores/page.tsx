@@ -7,15 +7,6 @@ import { User } from '@/types/models/GeneralModels';
 import { FaEnvelope, FaLink } from 'react-icons/fa';
 import { formatUserFullName } from '@/utils/stringUtils';
 
-// Descripciones ficticias para los colaboradores
-const descriptionTemplates = [
-  "Investigador con experiencia en biomecánica, control, instrumentación y BCIs. Especialista en sistemas de rehabilitación robótica y análisis de señales biomédicas.",
-  "Experto en desarrollo de tecnologías asistivas y dispositivos médicos. Enfocado en mejorar la calidad de vida de personas con discapacidad a través de soluciones tecnológicas innovadoras.",
-  "Especialista en procesamiento de señales e inteligencia artificial aplicada a la medicina. Desarrolla algoritmos para diagnóstico temprano y monitoreo de pacientes.",
-  "Investigador en el área de interfaces cerebro-computadora y sistemas de control adaptativo. Trabaja en el desarrollo de tecnologías para asistencia en movilidad reducida.",
-  "Experto en diseño y desarrollo de prótesis biónicas controladas por señales mioeléctricas. Enfocado en mejorar la funcionalidad y experiencia de usuario en dispositivos protésicos."
-];
-
 export default function ColaboradoresPage() {
   const [colaboradores, setColaboradores] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,12 +41,6 @@ export default function ColaboradoresPage() {
     fetchColaboradores();
   }, []);
 
-  // Función para asignar una descripción aleatoria a cada colaborador
-  const getRandomDescription = () => {
-    const randomIndex = Math.floor(Math.random() * descriptionTemplates.length);
-    return descriptionTemplates[randomIndex];
-  };
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -78,8 +63,6 @@ export default function ColaboradoresPage() {
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {colaboradores && colaboradores.length > 0 ? colaboradores.map((colaborador) => {
-          // Asignar una descripción aleatoria a cada colaborador
-          const description = getRandomDescription();
           
           return (
             <div key={colaborador.id} className="flex flex-col md:flex-row gap-6 border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
@@ -121,11 +104,6 @@ export default function ColaboradoresPage() {
                     </span>
                   ))}
                 </div>
-                
-                {/* Descripción */}
-                <p className="text-gray-700 mb-4 text-sm">
-                  {description}
-                </p>
                 
                 {/* Contacto y enlaces */}
                 <div className="flex flex-col space-y-2">

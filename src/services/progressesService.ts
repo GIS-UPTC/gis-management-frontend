@@ -15,7 +15,6 @@ export const progressService = {
     async searchProgresses(name: string): Promise<Progress[]> {
         try {
             const response = await api.get<Progress[]>(`/progresses/${name}`);
-            console.log(response.data);
             return response.data;
         } catch (error) {
             return handleApiError(
@@ -46,9 +45,7 @@ export const progressService = {
                 formData.append('file', file);
             }else{
                 throw new Error('No se puede crear un avance sin un archivo anexado');
-            }
-
-            console.log(formattedData)        
+            }   
 
             formData.append('json_data', JSON.stringify(formattedData));
 
@@ -57,9 +54,6 @@ export const progressService = {
                   'Content-Type': 'multipart/form-data',
                 },
               });
-
-              console.log("Respuesta creacion de progreso")
-            console.log(response.data)
 
             return response.data;
         } catch (error) {

@@ -65,7 +65,6 @@ export const projectService = {
   async fetchProjects(name: string): Promise<Project[]> {
     try {
       const response = await api.get<Project[]>(`/projects/${name}?only_actives=false&all=true`);
-      console.log(response.data)
       return response.data;
     } catch (error) {
       return handleApiError(
@@ -79,7 +78,6 @@ export const projectService = {
   async searchProjects(name: string): Promise<Project[]> {
     try {
       const response = await api.get<Project[]>(`/projects/${name}?only_actives=false`);
-      console.log(response.data)
       return response.data;
     } catch (error) {
       return handleApiError(
@@ -93,7 +91,6 @@ export const projectService = {
   async createProject(projectData: Omit<Project, 'id'>): Promise<Project> {
     try {
       const formattedData = formatProjectData(projectData);
-      console.log(formattedData)
       const response = await api.post<Project>('/projects', formattedData);
       return response.data;
     } catch (error) {
@@ -108,7 +105,6 @@ export const projectService = {
   async updateProject(id: number, projectData: Omit<Project, 'id'>): Promise<Project> {
     try {
       const formattedData = formatProjectData(projectData);
-      console.log(formattedData)
       const response = await api.put<Project>(`/projects/${id}`, formattedData);
       return response.data;
     } catch (error) {
@@ -129,7 +125,6 @@ export const projectService = {
         throw new Error("El estado debe ser alguno de: AC|IN|EJ|CN|FN")
       }
 
-      console.log("ChangeProjectStatus, no se si funciona. Estados posibles: AC|IN|EJ|CN|FN")
       const response = await api.patch<string>(`/projects/${id}?state=${status}`);
       return response.data;
     } catch (error) {

@@ -13,9 +13,9 @@ export const accessService = {
   async searchAccesses(name: string): Promise<Access[]> {
     try {
       const response = await api.get<Role[]>(`/accesses/${name}`);
-      console.log(response);
       return response.data;
     } catch (error) {
+      console.log(error);
       return handleApiError(
         error,
         AccessServiceError,
@@ -27,9 +27,9 @@ export const accessService = {
   async fetchAccesses(name: string): Promise<Access[]> {
     try {
       const response = await api.get<Role[]>(`/accesses/${name}?all=true`);
-      console.log(response);
       return response.data;
     } catch (error) {
+      console.log(error);
       return handleApiError(
         error,
         AccessServiceError,

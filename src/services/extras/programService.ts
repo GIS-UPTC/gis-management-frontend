@@ -13,9 +13,9 @@ export const programService = {
   async searchPrograms(name: string): Promise<Program[]> {
     try {
       const response = await api.get<Program[]>(`/programs/${name}`);
-      console.log(response)
       return response.data;
     } catch (error) {
+      console.log(error)
       return handleApiError(
         error,
         ProgramServiceError,
@@ -25,9 +25,9 @@ export const programService = {
   async fetchPrograms(name: string): Promise<Program[]> {
     try {
       const response = await api.get<Program[]>(`/programs/${name}?all=true`);
-      console.log(response)
       return response.data;
     } catch (error) {
+      console.log(error)
       return handleApiError(
         error,
         ProgramServiceError,

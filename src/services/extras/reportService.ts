@@ -26,11 +26,10 @@ export const reportService = {
         ...(reportData.project_id ? { project_id: reportData.project_id} : {})
       }
 
-        console.log(formattedData);
       const response = await api.post<string>('/reports/', formattedData);
-      console.log(response);
       return response.data;
     } catch (error) {
+      console.log(error)
       return handleApiError(
         error,
         ReportServiceError,

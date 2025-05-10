@@ -57,8 +57,6 @@ export const userService = {
         throw new Error('No se puede crear un usuario sin una foto');
       }
 
-      console.log(formattedData)
-
       formData.append('json_data', JSON.stringify(formattedData));
 
       const response = await api.post<User>('/users', formData, {
@@ -103,7 +101,6 @@ export const userService = {
   async searchUsersByName(name: string): Promise<User[]> {
     try {
       const response = await api.get<User[]>(`/users/${name}?with_inactives=false`);
-      console.log(response)
       return response.data;
     } catch (error) {
       console.log(error)
@@ -118,7 +115,6 @@ export const userService = {
   async fetchUsers(name: string): Promise<User[]> {
     try {
       const response = await api.get<User[]>(`/users/${name}?with_inactives=false&all=true`);
-      console.log(response)
       return response.data;
     } catch (error) {
       console.log(error)
@@ -139,11 +135,7 @@ export const userService = {
         new_password: encryptedPassword,
       };
 
-      console.log(formattedData)
-
-      const response = await api.patch('/users/password/change_password', formattedData);
-  
-      console.log('Respuesta del servidor:', response.data);
+      await api.patch('/users/password/change_password', formattedData);
   
       return 'Contraseña actualizada correctamente';
     } catch (error) {

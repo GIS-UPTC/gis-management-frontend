@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { loginService } from '@/services/loginService';
 // Importamos los iconos necesarios
-import { AtSign, Lock, Eye, EyeOff } from 'lucide-react';
+import { AtSign, Lock, Eye, EyeOff, Home } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -46,8 +46,24 @@ export default function LoginPage() {
     setShowPassword(!showPassword);
   };
 
+  // Función para navegar a inicio
+  const navigateToHome = () => {
+    router.push('/publico/inicio');
+  };
+
   return (
-    <div className="min-h-screen bg-customBackground flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-customBackground flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
+      {/* Botón Volver a inicio en la parte superior derecha */}
+      <div className="absolute top-4 right-4 sm:top-8 sm:right-8">
+        <button
+          onClick={navigateToHome}
+          className="flex items-center gap-2 py-2 px-4 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+        >
+          <Home className="h-5 w-5" />
+          <span>Volver a inicio</span>
+        </button>
+      </div>
+      
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
           <Image

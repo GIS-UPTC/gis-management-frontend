@@ -182,9 +182,7 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
       window.location.href = '/usuarios';
     } catch (error) {
       console.error('Error saving user:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Error al guardar el usuario';
-      setError(errorMessage);
-      toast.error(errorMessage);
+      toast.error(error instanceof Error ? error.message : 'Error al guardar el usuario');
     } finally {
       setIsSubmitting(false);
     }

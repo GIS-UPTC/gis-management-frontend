@@ -30,8 +30,8 @@ export default function RoleTable({ roles }: RoleTableProps) {
         <thead className="bg-yellow-200">
           <tr>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Nombre</th>
-            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Estado</th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Privilegios</th>
+            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Estado</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
@@ -42,6 +42,9 @@ export default function RoleTable({ roles }: RoleTableProps) {
               className="cursor-pointer hover:bg-gray-50 transition-colors"
             >
               <td className="px-6 py-4 text-sm text-gray-900">{capitalizeFirstLetter(role.name)}</td>
+              <td className="px-6 py-4 text-sm text-gray-900">
+                {formatAccesses(role.accesses)}
+              </td>
               <td className="px-6 py-4 text-sm">
                 <span
                   className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${
@@ -52,9 +55,6 @@ export default function RoleTable({ roles }: RoleTableProps) {
                 >
                   {role.is_active ? 'Activo' : 'Inactivo'}
                 </span>
-              </td>
-              <td className="px-6 py-4 text-sm text-gray-900">
-                {formatAccesses(role.accesses)}
               </td>
             </tr>
           ))}

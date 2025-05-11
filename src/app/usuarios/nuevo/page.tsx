@@ -13,7 +13,7 @@ import Link from 'next/link';
 export default function NewUserPage() {
   const searchParams = useSearchParams();
   const [isEditing, setIsEditing] = useState(false);
-  const [userData, setUserData] = useState<User | null>(null);
+  const [userData, setUserData] = useState<User | null>(null);  
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {

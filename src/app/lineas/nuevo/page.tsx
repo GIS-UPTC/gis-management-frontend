@@ -13,7 +13,6 @@ import Link from 'next/link';
 export default function NewResearchLinePage() {
   const searchParams = useSearchParams();
   const [isEditing, setIsEditing] = useState(false);
-  const [withInactives, setWithInactives] = useState(false);
   const [researchLineData, setResearchLineData] = useState<ResearchLine | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -25,14 +24,10 @@ export default function NewResearchLinePage() {
     }
   }, [searchParams]);
 
-  const handleWithInactivesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setWithInactives(e.target.checked);
-  };
-
   const fetchResearchLineData = async (researchLineName: string) => {
     setIsLoading(true);
     try {
-      const searchResults = await researchLineService.searchResearchLine(researchLineName, withInactives);
+      const searchResults = await researchLineService.searchResearchLine(researchLineName);
       if (searchResults.length > 0) {
         setResearchLineData(searchResults[0]);
       } else {
@@ -67,7 +62,7 @@ export default function NewResearchLinePage() {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
           </div>
         ) : (
-          <ResearchLineForm initialData={researchLineData} isEditing={isEditing} withInactives={withInactives} handleWithInactivesChange={handleWithInactivesChange} />
+          <ResearchLineForm initialData={researchLineData} isEditing={isEditing} />
         )}
       </div>
     </>

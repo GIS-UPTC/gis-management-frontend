@@ -46,7 +46,7 @@ export default function ResearchLinesPage() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Listado de Líneas de Investigación</h1>
           <Link
-            href="/lineas/nueva"
+            href="/lineas/nuevo"
             className="bg-customDarkGreen hover:bg-green-200 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
           >
             Agregar Línea de Investigación

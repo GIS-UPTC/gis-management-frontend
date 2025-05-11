@@ -99,7 +99,7 @@ export default function ProgramSelector({ selectedProgram, onProgramChange }: Pr
                         <span className={`block truncate text-sm ${
                           active ? 'text-orange-700' : 'text-gray-500'
                         }`}>
-                          {capitalizeFirstLetter(program.faculty.name)} - {capitalizeFirstLetter(program.faculty.university.name)}
+                          {program.faculty.place?.name ? capitalizeFirstLetter(program.faculty.place.name) : ""} - {capitalizeFirstLetter(program.faculty.name)} - {capitalizeFirstLetter(program.faculty.university.name)}
                         </span>
                       </div>
                       {selected && (
@@ -119,16 +119,6 @@ export default function ProgramSelector({ selectedProgram, onProgramChange }: Pr
           </Combobox.Options>
         </div>
       </Combobox>
-
-      {selectedProgram && selectedProgram.id && (
-        <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-          <h4 className="text-sm font-medium text-gray-700 mb-2">Programa seleccionado:</h4>
-          <div className="font-medium">{capitalizeFirstLetter(selectedProgram.name)}</div>
-          <div className="text-sm text-gray-600">
-            {capitalizeFirstLetter(selectedProgram.faculty.name)} - {capitalizeFirstLetter(selectedProgram.faculty.university.name)}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

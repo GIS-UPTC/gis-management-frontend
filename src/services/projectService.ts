@@ -39,7 +39,7 @@ const formatProjectData = (projectData: Omit<Project, 'id'>) => ({
     role: p.role,
     responsibility: p.responsibility,
 
-    ...(p.end_date ? { end_date: p.end_date } : {})
+    ...(p.end_date && p.end_date !== "" ? { end_date: p.end_date } : {})
   })),
 
   cooperation_list: projectData.cooperation_list.map(c => ({

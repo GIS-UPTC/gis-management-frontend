@@ -7,6 +7,7 @@ import RoleSelector from './RoleSelector';
 import { toast, Toaster } from 'react-hot-toast';
 import ResponsabilitiesSelector from './ResponsabilitiesSelector';
 import DialogAddProgram from './DialogAddProgramProps';
+import { capitalizeFirstLetter } from '@/utils/stringUtils';
 
 interface FormData extends Omit<User, 'id'> {
   id?: number;
@@ -71,7 +72,17 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
         ...prev,
         [name]: numValue
       }));
-    }else{
+    } else if (name === 'deparure_date' && value) {
+      // Validate that deparure_date is not earlier than entry_date
+      if (formData.entry_date && new Date(value) < new Date(formData.entry_date)) {
+        toast.error('La Fecha de Salida no puede ser menor a la Fecha de Ingreso');
+        return;
+      }
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    } else {
       setFormData(prev => ({
         ...prev,
         [name]: value
@@ -179,7 +190,9 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
         await userService.createUser(userData, selectedFile || undefined);
         toast.success('Usuario creado exitosamente');
       }
-      window.location.href = '/usuarios';
+      setTimeout(() => {
+        window.location.href = '/usuarios';
+      }, 1000);
     } catch (error) {
       console.error('Error saving user:', error);
       toast.error(error instanceof Error ? error.message : 'Error al guardar el usuario');
@@ -190,7 +203,7 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
 
   return (
     <>
-    <Toaster position="top-center" />
+      <Toaster position="top-center" />
       <form onSubmit={activeTab === 'personal' ? handlePersonalNext : handleSubmit} className="bg-customLightYellow rounded-lg shadow max-w-4xl mx-auto">
         <div className="flex flex-col sm:flex-row border-b">
           <button
@@ -377,24 +390,6 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
                   })()}
                 />
               </div>
-              <div className="col-span-1 sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Estado
-                </label>
-                <div className="flex items-center">
-                  <label className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      checked={formData.is_Active}
-                      onChange={(e) =>
-                        setFormData(prev => ({ ...prev, is_Active: e.target.checked }))
-                      }
-                      className="form-checkbox h-4 w-4 text-orange-600"
-                    />
-                    <span>Activo</span>
-                  </label>
-                </div>
-              </div>
 
               {/* Enlaces */}
               <div className="col-span-1 sm:col-span-2">
@@ -452,7 +447,7 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
               <div className="col-span-1 sm:col-span-2 flex items-center">
                 <div className="space-y-4 flex-1">
                   <div className="flex items-center">
-                    <label className="block text-sm font-medium text-gray-700 mb-2 mr-2">
+                    <label className="block text-sm font-medium text-gray-700 mr-2">
                       Programa
                     </label>
                     <button
@@ -463,10 +458,21 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
                       <span className="text-xl font-bold">+</span>
                     </button>
                   </div>
+
                   <ProgramSelector
                     selectedProgram={formData.program}
                     onProgramChange={handleProgramChange}
                   />
+
+                  {formData.program && formData.program.name && (
+                          <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                            <h4 className="text-sm font-medium text-gray-700 mb-2">Programa seleccionado:</h4>
+                            <div className="font-medium">{capitalizeFirstLetter(formData.program.name)}</div>
+                            <div className="text-sm text-gray-600">
+                              {capitalizeFirstLetter(formData.program.faculty.name)} - {capitalizeFirstLetter(formData.program.faculty.university.name)}
+                            </div>
+                          </div>
+                        )}
                 </div>
               </div>
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { capitalizeFirstLetter, formatUserFullName } from '../../utils/stringUtils';
 import { User } from '@/types/models/GeneralModels';
+import { userService } from '@/services/userService';
 
 interface UserTableProps {
   users: User[];
@@ -17,6 +18,18 @@ export default function UserTable({ users }: UserTableProps) {
     router.push(`/usuarios/${encodedName}?dni=${encodedDni}`);
   };
 
+  const handleChangeStatus = async (user: User, e: React.MouseEvent) => {
+    e.stopPropagation(); // Evita que se active el click de la fila
+    
+    try {
+      await userService.changeIsActiveUser(user.id);
+      window.location.reload();
+      
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al cambiar el estado');
+    }
+  };
 
 
   return (
@@ -29,6 +42,7 @@ export default function UserTable({ users }: UserTableProps) {
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">DNI</th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Roles</th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Estado</th>
+            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Cambiar Estado</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
@@ -77,6 +91,18 @@ export default function UserTable({ users }: UserTableProps) {
                 >
                   {user.is_Active ? 'Activo' : 'Inactivo'}
                 </span>
+              </td>
+              <td className="px-6 py-4 text-sm">
+                <button
+                  onClick={(e) => handleChangeStatus(user, e)}
+                  className={`px-3 py-1 rounded-md text-sm font-medium ${
+                    user.is_Active
+                      ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                      : 'bg-green-100 text-green-700 hover:bg-green-200'
+                  }`}
+                >
+                  {user.is_Active ? 'Desactivar' : 'Activar'}
+                </button>
               </td>
             </tr>
           ))}

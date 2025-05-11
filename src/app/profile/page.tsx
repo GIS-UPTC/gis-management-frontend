@@ -9,6 +9,7 @@ import { userService } from '@/services/userService';
 import ArrowLeftIcon from '@heroicons/react/24/outline/ArrowLeftIcon';
 import Link from 'next/link';
 import { capitalizeFirstLetter, formatUserFullName } from '@/utils/stringUtils';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
@@ -17,6 +18,7 @@ export default function ProfilePage() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const loadUser = () => {
@@ -38,7 +40,12 @@ export default function ProfilePage() {
     loadUser();
   }, []);
 
-  const handleChangePassword = async () => {
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (newPassword !== confirmPassword) {
       toast.error('Las contraseñas no coinciden');
       return;
@@ -58,12 +65,18 @@ export default function ProfilePage() {
       setIsPasswordDialogOpen(false);
       setNewPassword('');
       setConfirmPassword('');
-    } catch {
+      
+      // Cerrar sesión y redirigir al login
+      setTimeout(() => {
+        loginService.logout();
+      }, 500);
+    } catch(error) {
+      console.log(error)
       toast.error('Error al cambiar la contraseña');
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }
 
   if (isLoading) {
     return (
@@ -301,25 +314,55 @@ export default function ProfilePage() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Nueva Contraseña
                   </label>
-                  <input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Ingrese su nueva contraseña"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Ingrese su nueva contraseña"
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                      <button
+                        type="button"
+                        onClick={togglePasswordVisibility}
+                        className="text-gray-400 hover:text-gray-500 focus:outline-none"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Confirmar Contraseña
                   </label>
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Confirme su nueva contraseña"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Confirme su nueva contraseña"
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                      <button
+                        type="button"
+                        onClick={togglePasswordVisibility}
+                        className="text-gray-400 hover:text-gray-500 focus:outline-none"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="mt-6 flex justify-end space-x-3">

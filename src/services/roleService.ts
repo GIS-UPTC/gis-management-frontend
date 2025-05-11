@@ -14,7 +14,7 @@ export const roleService = {
 
   async fetchRoles(name: string): Promise<Role[]> {
     try {
-      const response = await api.get<Role[]>(`/roles/${name}?with_inactives=false&all=true`);
+      const response = await api.get<Role[]>(`/roles/${name}?with_inactives=true&all=true`);
       return response.data;
     } catch (error) {
       return handleApiError(
@@ -27,7 +27,7 @@ export const roleService = {
 
   async searchRoles(name: string): Promise<Role[]> {
     try {
-      const response = await api.get<Role[]>(`/roles/${name}?with_inactives=false`);
+      const response = await api.get<Role[]>(`/roles/${name}?with_inactives=true`);
       return response.data;
     } catch (error) {
       return handleApiError(

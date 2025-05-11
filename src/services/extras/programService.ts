@@ -12,7 +12,7 @@ export class ProgramServiceError extends Error {
 export const programService = {
   async searchPrograms(name: string): Promise<Program[]> {
     try {
-      const response = await api.get<Program[]>(`/programs/${name}`);
+      const response = await api.get<Program[]>(`/programs/${name}/`);
       return response.data;
     } catch (error) {
       console.log(error)
@@ -24,7 +24,7 @@ export const programService = {
   },
   async fetchPrograms(name: string): Promise<Program[]> {
     try {
-      const response = await api.get<Program[]>(`/programs/${name}?all=true`);
+      const response = await api.get<Program[]>(`/programs/${name}?all=true/`);
       return response.data;
     } catch (error) {
       console.log(error)

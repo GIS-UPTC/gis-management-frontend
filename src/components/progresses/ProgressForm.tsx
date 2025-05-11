@@ -224,6 +224,9 @@ export default function ProgressForm({ onSuccess }: ProgressFormProps) {
       if (onSuccess) {
         onSuccess();
       }
+      setTimeout(() => {
+        window.location.href = '/avances';
+      }, 1000);
     } catch (error) {
       console.error('Error saving progress:', error);
       const errorMessage = error instanceof Error ? error.message : 'Error al guardar el avance';

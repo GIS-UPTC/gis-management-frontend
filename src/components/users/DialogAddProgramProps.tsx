@@ -50,13 +50,14 @@ export default function DialogAddProgram({
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-2xl shadow-lg w-full max-w-lg max-h-[90vh] flex flex-col">
+            <div className="bg-white rounded-2xl shadow-lg w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden">
                 <div className="p-5 border-b">
                     <h2 className="text-xl font-semibold">Añadir Programa Académico</h2>
                 </div>
 
-                <form onSubmit={handleSave} className="flex flex-col flex-grow">
-                    <div className="overflow-y-auto p-5 flex-grow">
+                <form onSubmit={handleSave} className="flex flex-col h-full">
+                    {/* Scrollable content area - Ajustado para garantizar scroll */}
+                    <div className="overflow-y-auto flex-grow p-5 max-h-[calc(90vh-140px)]">
                         <div className="space-y-4">
                             {/* Información del Programa */}
                             <div className="mb-6">
@@ -212,7 +213,8 @@ export default function DialogAddProgram({
                         </div>
                     </div>
 
-                    <div className="p-4 border-t flex justify-end space-x-3">
+                    {/* Fixed footer with buttons - always visible */}
+                    <div className="p-4 border-t flex justify-end space-x-3 bg-white sticky bottom-0">
                         <button
                             type="button"
                             onClick={onClose}

@@ -23,8 +23,6 @@ const formatUserData = (userData: Omit<User, 'id'>, transformRoleGrantingList: T
   photo_url:       userData.photo_url,
   entry_date:      userData.entry_date,
   links:           userData.links,
-  is_Active:       userData.is_Active,
-  deparure_date:   userData.deparure_date === "" ? null : userData.deparure_date,
   interest_topics: userData.interest_topics,
   participations:  userData.participations,
   role_granting_list:  transformRoleGrantingList(userData.role_granting_list),
@@ -34,7 +32,8 @@ const formatUserData = (userData: Omit<User, 'id'>, transformRoleGrantingList: T
   is_main_researcher:   userData.is_main_researcher,
 
   ...(userData.other_name    ? { other_name:    userData.other_name    } : {}),
-  ...(userData.other_surname ? { other_surname: userData.other_surname } : {})
+  ...(userData.other_surname ? { other_surname: userData.other_surname } : {}),
+  ...(userData.deparure_date ? { deparure_date: userData.deparure_date } : {})
 });
 
 export const userService = {
@@ -100,7 +99,7 @@ export const userService = {
 
   async searchUsersByName(name: string): Promise<User[]> {
     try {
-      const response = await api.get<User[]>(`/users/${name}?with_inactives=false`);
+      const response = await api.get<User[]>(`/users/${name}?with_inactives=true`);
       return response.data;
     } catch (error) {
       console.log(error)
@@ -114,7 +113,7 @@ export const userService = {
 
   async fetchUsers(name: string): Promise<User[]> {
     try {
-      const response = await api.get<User[]>(`/users/${name}?with_inactives=false&all=true`);
+      const response = await api.get<User[]>(`/users/${name}?with_inactives=true&all=true`);
       return response.data;
     } catch (error) {
       console.log(error)
@@ -146,7 +145,19 @@ export const userService = {
         'Error al cambiar la contraseña. Por favor, intente nuevamente.'
       );
     }
+  },
+  
+  async changeIsActiveUser(id: number): Promise<string> {
+    try {
+      await api.patch(`/users/${id}/`);
+      return 'Estado cambiado correctamente';
+    } catch (error) {
+      console.log(error)
+      return handleApiError(
+        error,
+        UserServiceError,
+        'Error al cambiar el estado. Por favor, intente nuevamente.'
+      );
+    }
   }
-  
-  
 }; 

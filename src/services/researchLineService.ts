@@ -18,7 +18,7 @@ export const researchLineService = {
 
   async fetchResearchLines(name: string): Promise<ResearchLine[]> {
     try {
-      const response = await api.get<ResearchLine[]>(`/research_lines/${name}?with_inactives=false&all=true`);
+      const response = await api.get<ResearchLine[]>(`/research_lines/${name}?with_inactives=true&all=true`);
       return response.data;
     } catch (error) {
       return handleApiError(

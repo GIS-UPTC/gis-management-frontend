@@ -25,7 +25,7 @@ export const permissionService = {
   },
   async fetchPermissions(name: string): Promise<Permission[]> {
     try {
-      const response = await api.get<Permission[]>(`/permissions/${name}?all=true/`);
+      const response = await api.get<Permission[]>(`/permissions/${name}?all=true`);
       return response.data;
     } catch (error) {
       console.log(error)

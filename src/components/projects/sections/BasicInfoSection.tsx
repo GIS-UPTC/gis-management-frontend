@@ -26,20 +26,6 @@ export default function BasicInfoSection({ formData, onInputChange, onCheckboxCh
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Código *
-        </label>
-        <input
-          type="text"
-          name="code"
-          value={formData.code}
-          onChange={onInputChange}
-          className="w-full p-2 border rounded-lg"
-          required
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
           Convocatoria
         </label>
         <input
@@ -71,19 +57,37 @@ export default function BasicInfoSection({ formData, onInputChange, onCheckboxCh
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Duración (días) *
-        </label>
-        <input
-          type="number"
-          name="duration_days"
-          value={formData.duration_days}
-          onChange={onInputChange}
-          className="w-full p-2 border rounded-lg"
-          required
-          min="1"
-        />
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Duración *
+          </label>
+          <input
+            type="number"
+            name="duration"
+            value={formData.duration}
+            onChange={onInputChange}
+            className="w-full p-2 border rounded-lg"
+            required
+            min="1"
+          />
+        </div>
+        <div className="flex-1">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Tipo de duración *
+          </label>
+          <select
+            name="duration_type"
+            value={formData.duration_type}
+            onChange={onInputChange}
+            className="w-full p-2 border rounded-lg"
+            required
+          >
+            <option value="DD">Días</option>
+            <option value="MM">Meses</option>
+            <option value="AA">Años</option>
+          </select>
+        </div>
       </div>
 
       <div>
@@ -102,10 +106,11 @@ export default function BasicInfoSection({ formData, onInputChange, onCheckboxCh
           <option value="EJ">En Ejecución</option>
           <option value="CN">Cancelado</option>
           <option value="FN">Finalizado</option>
+          <option value="EM">En Mora</option>
         </select>
       </div>
 
-      <div>
+      <div  className="col-span-1 sm:col-span-2">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           URL del Cronograma *
         </label>

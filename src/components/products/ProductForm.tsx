@@ -156,9 +156,24 @@ export default function ProductForm({
 
   useEffect(() => {
     if (initialData) {
+      console.log(initialData)
       setFormData(initialData);
+      
+      // Si estamos editando y hay un proyecto, establecemos el proyecto seleccionado
+      // Nota: Verificamos la existencia del objeto project en lugar de depender de project_id
+      if (isEditing && initialData.project) {
+        setProjectSelected(initialData.project);
+        
+        // Aseguramos que project_id esté correctamente establecido
+        if (initialData.project.id && (!initialData.project_id || initialData.project_id === 0)) {
+          setFormData(prev => ({
+            ...prev,
+            project_id: initialData.project!.id
+          }));
+        }
+      }
     }
-  }, [initialData]);
+  }, [initialData, isEditing]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -242,12 +257,6 @@ export default function ProductForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validaciones
-    if (!formData.code.trim()) {
-      toast.error('El código del producto es obligatorio');
-      return;
-    }
-
     if (!formData.name.trim()) {
       toast.error('El nombre del producto es obligatorio');
       return;
@@ -310,20 +319,6 @@ export default function ProductForm({
       <Toaster position="top-center" />
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Código del Producto *
-            </label>
-            <input
-              type="text"
-              name="code"
-              value={formData.code}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-              required
-              disabled={isEditing}
-            />
-          </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -502,7 +497,7 @@ export default function ProductForm({
               </div>
 
               {projectResults.length > 0 && (
-                <div className="absolute mt-1 w-full z-10 bg-white border rounded-md shadow-lg max-h-60 overflow-auto" onClick={(e) => e.stopPropagation()}>
+                <div className="absolute bottom-full mb-1 w-full z-10 bg-white border rounded-md shadow-lg max-h-60 overflow-auto" onClick={(e) => e.stopPropagation()}>
                   {projectResults.map((project) => (
                     <div
                       key={project.id}

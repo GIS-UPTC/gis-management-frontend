@@ -39,7 +39,7 @@ export default function UserTable({ users }: UserTableProps) {
           <tr>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Nombre Completo</th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Correo</th>
-            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">DNI</th>
+            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Documento</th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Roles</th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Estado</th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Cambiar Estado</th>
@@ -56,7 +56,7 @@ export default function UserTable({ users }: UserTableProps) {
                 {formatUserFullName(user)}
               </td>
               <td className="px-6 py-4 text-sm text-gray-900">{user.email}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{user.dni}</td>
+              <td className="px-6 py-4 text-sm text-gray-900">{user.dni_type || 'CC'} - {user.dni}</td>
               <td className="px-6 py-4 text-sm">
                 {user.role_granting_list.map((roleGrant) => (
                   <span

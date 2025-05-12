@@ -10,7 +10,6 @@ export class ProductServiceError extends ServiceError {
 }
 
 const formattedProductData = (jsonData: Omit<Product, 'id'>) => ({
-  code: jsonData.code,
   name: jsonData.name,
   description: jsonData.description,
   type: {
@@ -30,8 +29,6 @@ export const productService = {
     try {
 
       const formattedData = formattedProductData(jsonData);
-
-      console.log(formattedData)
 
       const formData = new FormData();
 

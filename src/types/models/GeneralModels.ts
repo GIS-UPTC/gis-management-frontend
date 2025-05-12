@@ -176,6 +176,7 @@ export interface RoleGranting {
  */
 export interface User {
   id: number;
+  dni_type: "CC" | "TI" | "CE" | "PA" | "DE" | "OT";
   dni: string;
   first_name: string;
   email: string;

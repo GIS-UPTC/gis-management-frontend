@@ -147,8 +147,20 @@ export default function UserDetailsPage() {
                   <p className="mt-1">{capitalizeFirstLetter(user.surname)} {user.other_surname ? capitalizeFirstLetter(user.other_surname) : ''}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">DNI</label>
-                  <p className="mt-1">{user.dni}</p>
+                  <label className="block text-sm font-medium text-gray-700">Documento de Identidad</label>
+                  <p className="mt-1">
+                    {(() => {
+                      const dniTypeMap = {
+                        'CC': 'Cédula de Ciudadanía',
+                        'TI': 'Tarjeta de Identidad',
+                        'CE': 'Cédula de Extranjería',
+                        'PA': 'Pasaporte',
+                        'DE': 'Documento de Extranjería',
+                        'OT': 'Otro'
+                      };
+                      return `${user.dni_type || 'CC'} - ${dniTypeMap[user.dni_type as keyof typeof dniTypeMap] || 'Cédula de Ciudadanía'}: ${user.dni}`;
+                    })()}
+                  </p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Correo Electrónico</label>

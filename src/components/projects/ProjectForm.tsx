@@ -18,7 +18,8 @@ const initialFormData: Omit<Project, 'id'> = {
   code: '',
   description: '',
   creation_date: '',
-  duration_days: 0,
+  duration_type: 'DD',
+  duration: 0,
   schedule_url: '',
   convocation: '',
   status: 'EJ',
@@ -29,6 +30,7 @@ const initialFormData: Omit<Project, 'id'> = {
     is_active: true,
     coordinator: {
       id: 0,
+      dni_type: 'CC',
       dni: '',
       first_name: '',
       surname: '',

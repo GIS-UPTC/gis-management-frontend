@@ -16,6 +16,7 @@ interface FormData extends Omit<User, 'id'> {
 
 const initialFormData: FormData = {
   dni: '',
+  dni_type: 'CC',
   document_type: '',
   first_name: '',
   surname: '',
@@ -63,7 +64,7 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
     }
   }, [initialData]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
     if (name === 'dni') {
@@ -163,6 +164,7 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
     try {
       const userData: Omit<User, 'id'> = {
         dni: formData.dni,
+        dni_type: formData.dni_type,
         first_name: formData.first_name,
         surname: formData.surname,
         other_name: formData.other_name,
@@ -231,19 +233,41 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
         <div className="p-4 sm:p-6">
           {activeTab === 'personal' ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-              <div className="col-span-1 sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Número de documento *
-                </label>
-                <input
-                  type="text"
-                  name="dni"
-                  value={formData.dni}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded-lg"
-                  required
-                  disabled={isEditing}
-                />
+              <div className="col-span-1 sm:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Tipo de documento *
+                  </label>
+                  <select
+                    name="dni_type"
+                    value={formData.dni_type}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border rounded-lg"
+                    required
+                    disabled={isEditing}
+                  >
+                    <option value="CC">CC - Cédula de Ciudadanía</option>
+                    <option value="TI">TI - Tarjeta de Identidad</option>
+                    <option value="CE">CE - Cédula de Extranjería</option>
+                    <option value="PA">PA - Pasaporte</option>
+                    <option value="DE">DE - Documento de Extranjería</option>
+                    <option value="OT">OT - Otro</option>
+                  </select>
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Número de documento *
+                  </label>
+                  <input
+                    type="text"
+                    name="dni"
+                    value={formData.dni}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border rounded-lg"
+                    required
+                    disabled={isEditing}
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">

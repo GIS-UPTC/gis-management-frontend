@@ -55,12 +55,20 @@ export const loginService = {
     }
   },
 
-  logout() {
-    sessionStorage.removeItem('access_token');
-    sessionStorage.removeItem('user');
-    setAuthToken(null);
-    if (typeof window !== 'undefined') {
-      window.location.href = '/auth/login';
+  async logout() {
+    try {
+      // Llamar al endpoint de logout en el backend
+      await api.post('/auth/logout');
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    } finally {
+      // Limpiar datos de sesión localmente
+      sessionStorage.removeItem('access_token');
+      sessionStorage.removeItem('user');
+      setAuthToken(null);
+      if (typeof window !== 'undefined') {
+        window.location.href = '/auth/login';
+      }
     }
   },
 

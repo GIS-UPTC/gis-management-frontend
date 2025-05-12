@@ -12,33 +12,82 @@ interface ObjectivesSectionProps {
 
 export default function ObjectivesSection({ formData, setFormData }: ObjectivesSectionProps) {
   const [newObjective, setNewObjective] = useState({ description: '', type: 'GN' });
+  const [newSpecificObjective, setNewSpecificObjective] = useState({ description: '', parentId: 0 });
   const [searchKeyword, setSearchKeyword] = useState('');
   const [keywords, setKeywords] = useState<ProjectKeyword[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [tempIdCounter, setTempIdCounter] = useState(-1);
 
-  const handleAddObjective = () => {
+  // Agregar objetivo general (solo puede haber uno)
+  const handleAddGeneralObjective = () => {
     if (newObjective.description.trim()) {
       const objective: Objective = {
         id: Date.now(),
         description: newObjective.description.trim(),
-        type: newObjective.type as "GN" | "ES"
+        type: "GN",
+        objetives: [] // Lista vacía de objetivos específicos
       };
 
       setFormData(prev => ({
         ...prev,
-        objectives: [...prev.objectives, objective]
+        objective: objective
       }));
 
       setNewObjective({ description: '', type: 'GN' });
     }
   };
 
-  const handleRemoveObjective = (id: number) => {
+  // Agregar objetivo específico al objetivo general
+  const handleAddSpecificObjective = () => {
+    if (newSpecificObjective.description.trim() && formData.objective) {
+      const specificObjective: Objective = {
+        id: Date.now(),
+        description: newSpecificObjective.description.trim(),
+        type: "ES",
+        objetives: [] // Los objetivos específicos también pueden tener sub-objetivos
+      };
+
+      // Crear una copia profunda del objetivo general con sus objetivos específicos
+      const updatedObjective = {
+        ...formData.objective,
+        objetives: [...(formData.objective.objetives || []), specificObjective]
+      };
+
+      setFormData(prev => ({
+        ...prev,
+        objective: updatedObjective
+      }));
+
+      setNewSpecificObjective({ description: '', parentId: 0 });
+    }
+  };
+
+  // Eliminar el objetivo general
+  const handleRemoveGeneralObjective = () => {
     setFormData(prev => ({
       ...prev,
-      objectives: prev.objectives.filter(obj => obj.id !== id)
+      objective: {
+        id: 0,
+        description: '',
+        type: 'GN',
+        objetives: []
+      }
     }));
+  };
+
+  // Eliminar un objetivo específico
+  const handleRemoveSpecificObjective = (id: number) => {
+    if (formData.objective) {
+      const updatedObjective = {
+        ...formData.objective,
+        objetives: formData.objective.objetives.filter(obj => obj.id !== id)
+      };
+
+      setFormData(prev => ({
+        ...prev,
+        objective: updatedObjective
+      }));
+    }
   };
 
   const handleAddKeyword = (keyword: ProjectKeyword | string | null) => {
@@ -114,54 +163,89 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
   return (
     <div className="space-y-6">
       <Toaster position="top-center" />
-      {/* Objectives Section */}
+      {/* General Objective Section */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">Objetivos *</h3>
+        <h3 className="text-lg font-semibold mb-4">Objetivo General *</h3>
         <div className="space-y-4">
-          {formData.objectives.map(objective => (
-            <div key={objective.id} className="flex justify-between items-start p-4 bg-gray-50 rounded-lg">
+          {formData.objective ? (
+            <div className="flex justify-between items-start p-4 bg-gray-50 rounded-lg">
               <div>
-                <p>{objective.description}</p>
-                <p className="text-sm text-gray-500">
-                  Tipo: {objective.type === 'GN' ? 'General' : 'Específico'}
-                </p>
+                <p>{formData.objective.description}</p>
+                <p className="text-sm text-gray-500">Tipo: General</p>
               </div>
               <button
                 type="button"
-                onClick={() => handleRemoveObjective(objective.id)}
+                onClick={handleRemoveGeneralObjective}
                 className="text-red-600 hover:text-red-800"
               >
                 Eliminar
               </button>
             </div>
-          ))}
-
-          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-            <input
-              type="text"
-              value={newObjective.description}
-              onChange={(e) => setNewObjective(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Descripción del objetivo"
-              className="flex-1 p-2 border rounded-lg"
-            />
-            <select
-              value={newObjective.type}
-              onChange={(e) => setNewObjective(prev => ({ ...prev, type: e.target.value }))}
-              className="p-2 border rounded-lg"
-            >
-              <option value="GN">General</option>
-              <option value="ES">Específico</option>
-            </select>
-            <button
-              type="button"
-              onClick={handleAddObjective}
-              className="px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200"
-            >
-              Agregar
-            </button>
-          </div>
+          ) : (
+            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+              <input
+                type="text"
+                value={newObjective.description}
+                onChange={(e) => setNewObjective(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="Descripción del objetivo general"
+                className="flex-1 p-2 border rounded-lg"
+              />
+              <button
+                type="button"
+                onClick={handleAddGeneralObjective}
+                className="px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200"
+              >
+                Agregar
+              </button>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Specific Objectives Section */}
+      {formData.objective && (
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Objetivos Específicos</h3>
+          <div className="space-y-4">
+            {formData.objective.objetives && formData.objective.objetives.length > 0 && (
+              <div className="space-y-2">
+                {formData.objective.objetives.map(specificObjective => (
+                  <div key={specificObjective.id} className="flex justify-between items-start p-4 bg-gray-50 rounded-lg">
+                    <div>
+                      <p>{specificObjective.description}</p>
+                      <p className="text-sm text-gray-500">Tipo: Específico</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSpecificObjective(specificObjective.id)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+              <input
+                type="text"
+                value={newSpecificObjective.description}
+                onChange={(e) => setNewSpecificObjective(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="Descripción del objetivo específico"
+                className="flex-1 p-2 border rounded-lg"
+              />
+              <button
+                type="button"
+                onClick={handleAddSpecificObjective}
+                className="px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200"
+              >
+                Agregar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Keywords Section */}
       <div>

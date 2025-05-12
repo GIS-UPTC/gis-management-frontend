@@ -12,20 +12,29 @@ export class ProjectServiceError extends ServiceError {
 const formatProjectData = (projectData: Omit<Project, 'id'>) => ({
   title: projectData.title,
   description: projectData.description,
-  code: projectData.code,
   creation_date: projectData.creation_date,
-  duration_days: projectData.duration_days,
+  duration_type: projectData.duration_type,
+  duration: projectData.duration,
   schedule_url: projectData.schedule_url,
   status: projectData.status,
   has_financing: projectData.has_financing,
   convocation: projectData.convocation,
   research_line_id: projectData.research_line_id,
 
-  objectives: projectData.objectives.map(obj => ({
-    ...(obj.id && { id: obj.id }),
-    description: obj.description,
-    type: obj.type
-  })),
+  // Procesar el objetivo general y sus objetivos específicos anidados
+  ...(projectData.objective ? {
+    objective: {
+      ...(projectData.objective.id && { id: projectData.objective.id }),
+      description: projectData.objective.description,
+      type: projectData.objective.type,
+      objetives: (projectData.objective.objetives || []).map(specificObj => ({
+        ...(specificObj.id && { id: specificObj.id }),
+        description: specificObj.description,
+        type: specificObj.type,
+        objetives: [] // Por ahora no soportamos más niveles de anidación
+      }))
+    }
+  } : {}),
 
   project_keywords: projectData.project_keywords.map(kw => ({
     ...(kw.id && { id: kw.id }),

@@ -1,17 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Organization, ResearchLine, User } from '@/types/models/GeneralModels';
+import { GroupInformation } from '@/types/models/groupInformation.models';
 import { groupInformationService, GroupInformationServiceError } from '@/services/extras/groupInformationService';
 import toast from 'react-hot-toast';
-import { researchLineService } from '@/services/researchLineService';
-import { userService } from '@/services/userService';
-import { capitalizeFirstLetter, formatUserFullName } from '@/utils/stringUtils';
+import { capitalizeFirstLetter } from '@/utils/stringUtils';
 
 export default function InicioPage() {
-  const [organization, setOrganization] = useState<Organization | null>(null);
-  const [researchLines, setResearchLines] = useState<ResearchLine[] | null>(null);
-  const [members, setMembers] = useState<User[] | null>(null);
+  const [organization, setOrganization] = useState<GroupInformation | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,10 +15,6 @@ export default function InicioPage() {
     const fetchOrganizationData = async () => {
       try {
         const groupInformation = await groupInformationService.getGroupInformation();
-        const researchLines = await researchLineService.fetchResearchLines(' ');
-        const members = await userService.fetchUsers(' ');
-        setResearchLines(researchLines);
-        setMembers(members);
         setOrganization(groupInformation);
       } catch (error) {
         if (error instanceof GroupInformationServiceError) {
@@ -33,7 +25,6 @@ export default function InicioPage() {
           setError(errorMessage);
           toast.error(errorMessage);
         }
-
       } finally {
         setLoading(false);
       }
@@ -97,31 +88,39 @@ export default function InicioPage() {
           <p>{organization.vision}</p>
         </div>
 
-        <div className="bg-customLightYellow p-6 rounded-lg shadow">
-          <h2 className="text-xl font-semibold mb-2">Líneas de investigación</h2>
-          {researchLines && researchLines.length > 0 ? (
-            <ul className="list-disc list-inside">
-              {researchLines.map((line, index) => (
-                <li key={index}>{capitalizeFirstLetter(line.name)}</li>
+        <div className="bg-customLightYellow p-6 rounded-lg shadow col-span-1 sm:col-span-2">
+          <h2 className="text-xl font-semibold mb-2">Clasificaciones</h2>
+          {organization.clasiffications && organization.clasiffications.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {organization.clasiffications.map((classification, index) => (
+                <span key={index} className="bg-primary-100 text-primary-800 text-sm font-medium px-3 py-1 rounded-full">
+                  {capitalizeFirstLetter(classification.classification)} ({classification.year})
+                </span>
               ))}
-            </ul>
+            </div>
           ) : (
-            <p className="text-gray-600">No hay líneas de investigación aún.</p>
+            <p className="text-gray-600">No hay clasificaciones disponibles.</p>
           )}
         </div>
 
-        <div className="bg-customLightYellow p-6 rounded-lg shadow">
-          <h2 className="text-xl font-semibold mb-2">Miembros</h2>
-          {members && members.length > 0? (
-            <ul className="list-disc list-inside">
-              {members.map((member, index) => (
-                <li key={index}>{formatUserFullName(member)}</li>
+        {organization.links && organization.links.length > 0 && (
+          <div className="bg-customLightYellow p-6 rounded-lg shadow col-span-1 sm:col-span-2">
+            <h2 className="text-xl font-semibold mb-2">Enlaces de interés</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              {organization.links.map((link, index) => (
+                <a
+                  key={index}
+                  href={link.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center p-3 bg-white rounded-md shadow-sm hover:shadow transition-shadow"
+                >
+                  <span className="text-primary-600 font-medium">{link.name}</span>
+                </a>
               ))}
-            </ul>
-          ) : (
-            <p className="text-gray-600">No hay miembros aún.</p>
-          )}
-        </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

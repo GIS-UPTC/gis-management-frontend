@@ -159,5 +159,21 @@ export const userService = {
         'Error al cambiar el estado. Por favor, intente nuevamente.'
       );
     }
+  },
+
+  async resetPassword(email: string, verificationValue: string): Promise<string>{
+    try {
+
+      await api.patch(`/users/password/reset_password/${email}/${verificationValue}`);
+
+      return 'Contraseña reseteada correctamente';
+    } catch (error) {
+      console.log(error)
+      return handleApiError(
+        error,
+        UserServiceError,
+        'Error al resetear contraseña. Por favor, intente nuevamente.'
+      );
+    }
   }
 }; 

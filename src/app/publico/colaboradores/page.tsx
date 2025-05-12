@@ -1,38 +1,29 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-// import Image from 'next/image'; // No necesitamos este import ya que usaremos la etiqueta img nativa
-import { userService } from '@/services/userService';
-import { User } from '@/types/models/GeneralModels';
-import { FaEnvelope, FaLink } from 'react-icons/fa';
+import { groupInformationService, GroupInformationServiceError } from '@/services/extras/groupInformationService';
+import { GroupMember } from '@/types/models/groupInformation.models';
+import { FaEnvelope, FaLink, FaGraduationCap, FaUniversity } from 'react-icons/fa';
 import { formatUserFullName } from '@/utils/stringUtils';
 
 export default function ColaboradoresPage() {
-  const [colaboradores, setColaboradores] = useState<User[]>([]);
+  const [colaboradores, setColaboradores] = useState<GroupMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchColaboradores = async () => {
       try {
-        // Usar el servicio para obtener todos los usuarios
-        const users = await userService.fetchUsers(' ');
-        
-        // Verificar que los usuarios tengan todas las propiedades necesarias
-        const validUsers = users.map(user => ({
-          ...user,
-          // Asegurar que todas las propiedades existan
-          responsabilities: user.responsabilities || [],
-          links: user.links || [],
-          program: user.program || { name: 'Programa no especificado' },
-          is_group_leader: !!user.is_group_leader,
-          is_main_researcher: !!user.is_main_researcher
-        }));
-        
-        setColaboradores(validUsers);
+        // Usar el servicio para obtener los miembros del grupo
+        const members = await groupInformationService.getGroupMember();
+        setColaboradores(members);
       } catch (err) {
         console.error('Error al cargar colaboradores:', err);
-        setError('No se pudieron cargar los colaboradores. Por favor, intente nuevamente más tarde.');
+        if (err instanceof GroupInformationServiceError) {
+          setError(err.message);
+        } else {
+          setError('No se pudieron cargar los colaboradores. Por favor, intente nuevamente más tarde.');
+        }
       } finally {
         setLoading(false);
       }
@@ -62,16 +53,23 @@ export default function ColaboradoresPage() {
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Colaboradores</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {colaboradores && colaboradores.length > 0 ? colaboradores.map((colaborador) => {
+        {colaboradores && colaboradores.length > 0 ? colaboradores.map((colaborador, index) => {
+          // Adaptamos el objeto para que sea compatible con formatUserFullName
+          const userForFormat = {
+            first_name: colaborador.first_name,
+            surname: colaborador.surname,
+            other_name: colaborador.other_name || undefined,
+            other_surname: colaborador.other_surname || undefined
+          };
           
           return (
-            <div key={colaborador.id} className="flex flex-col md:flex-row gap-6 border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
-              {/* Foto del colaborador */}
+            <div key={index} className="flex flex-col md:flex-row gap-6 border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+              {/* Foto del colaborador (usamos una imagen por defecto) */}
               <div className="w-full md:w-1/3 flex justify-center">
                 <div className="w-40 h-40 overflow-hidden rounded-lg border-2 border-gray-200">
                   <img 
-                    src={colaborador.photo_url || '/images/default-user.png'} 
-                    alt={formatUserFullName(colaborador)}
+                    src={'/images/default-user.png'} 
+                    alt={formatUserFullName(userForFormat)}
                     className="object-cover w-full h-full"
                   />
                 </div>
@@ -79,34 +77,57 @@ export default function ColaboradoresPage() {
               
               {/* Información del colaborador */}
               <div className="w-full md:w-2/3">
-                <h2 className="text-xl font-bold text-gray-800 mb-2">{formatUserFullName(colaborador)}</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-2">{formatUserFullName(userForFormat)}</h2>
                 
                 {/* Programa académico */}
-                <p className="text-gray-600 mb-1 italic">
-                  {colaborador.program?.name || 'Programa no especificado'}
-                </p>
-                
-                {/* Roles/Responsabilidades */}
-                <div className="mb-3">
-                  {colaborador.is_group_leader && (
-                    <span className="bg-primary-100 text-primary-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">
-                      Líder de Grupo
-                    </span>
-                  )}
-                  {colaborador.is_main_researcher && (
-                    <span className="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">
-                      Investigador Principal
-                    </span>
-                  )}
-                  {colaborador.responsabilities && colaborador.responsabilities.length > 0 && colaborador.responsabilities.map(resp => (
-                    <span key={resp.id} className="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">
-                      {resp.description}
-                    </span>
-                  ))}
+                <div className="flex items-center mb-1">
+                  <FaGraduationCap className="text-gray-500 mr-2" />
+                  <span className="text-gray-600 italic">
+                    {colaborador.program_name} {colaborador.is_diurn_program ? '(Diurno)' : '(Nocturno)'}
+                  </span>
                 </div>
                 
+                {/* Universidad y Facultad */}
+                <div className="flex items-center mb-3">
+                  <FaUniversity className="text-gray-500 mr-2" />
+                  <span className="text-gray-600">
+                    {colaborador.university_name}, {colaborador.faculty_name}
+                  </span>
+                </div>
+                
+                {/* Fecha de ingreso */}
+                <p className="text-gray-600 mb-3">
+                  <span className="font-medium">Fecha de ingreso:</span> {new Date(colaborador.entry_date).toLocaleDateString()}
+                </p>
+                
+                {/* Temas de interés */}
+                {colaborador.interest_topics && colaborador.interest_topics.length > 0 && (
+                  <div className="mb-3">
+                    <p className="font-medium mb-1">Temas de interés:</p>
+                    <div className="flex flex-wrap gap-1">
+                      {colaborador.interest_topics.map((topic, idx) => (
+                        <span key={idx} className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                          {topic}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Proyectos */}
+                {colaborador.projects && colaborador.projects.length > 0 && (
+                  <div className="mb-3">
+                    <p className="font-medium mb-1">Proyectos:</p>
+                    <ul className="list-disc list-inside text-sm text-gray-600">
+                      {colaborador.projects.map((project, idx) => (
+                        <li key={idx}>{project}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                
                 {/* Contacto y enlaces */}
-                <div className="flex flex-col space-y-2">
+                <div className="flex flex-col space-y-2 mt-3">
                   <div className="flex items-center">
                     <FaEnvelope className="text-gray-500 mr-2" />
                     <a href={`mailto:${colaborador.email}`} className="text-primary-600 hover:underline">
@@ -116,9 +137,9 @@ export default function ColaboradoresPage() {
                   
                   {colaborador.links && colaborador.links.length > 0 && (
                     <div className="flex flex-wrap gap-2">
-                      {colaborador.links.map((link, index) => (
+                      {colaborador.links.map((link, idx) => (
                         <a 
-                          key={index} 
+                          key={idx} 
                           href={link.link} 
                           target="_blank" 
                           rel="noopener noreferrer"

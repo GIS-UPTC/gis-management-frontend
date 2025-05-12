@@ -45,6 +45,9 @@ export default function ProductForm({
   const [projectResults, setProjectResults] = useState<Project[]>([]);
   const [productTypes, setProductTypes] = useState<Type[]>([]);
   const [subtypes, setSubtypes] = useState<Type[]>([]);
+  const [searchTypeQuery, setSearchTypeQuery] = useState<string>('');
+  const [searchSubtypeQuery, setSearchSubtypeQuery] = useState<string>('');
+  const [isSearchingSubtype, setIsSearchingSubtype] = useState(false);
 
   const [projectSelected, setProjectSelected] = useState<Project | null>(null);
 
@@ -54,6 +57,7 @@ export default function ProductForm({
   const searchProductTypes = async (query: string) => {
     if (query.length < 3) return;
 
+    setSearchTypeQuery(query);
     setIsSearchingProductType(true);
     try {
       const typeData = await productService.fetchProductTypes(query);
@@ -83,6 +87,73 @@ export default function ProductForm({
     }
   };
 
+  // Buscar subtipos de productos
+  const searchSubtypes = async (query: string) => {
+    if (query.length < 3) return;
+
+    setSearchSubtypeQuery(query);
+    setIsSearchingSubtype(true);
+    try {
+      const subtypeData = await productService.fetchProductSubtypes(query);
+      // Si la respuesta es un solo subtipo, lo convertimos en un array
+      const subtypeArray = Array.isArray(subtypeData) ? subtypeData : [subtypeData];
+
+      const subtypesFiltered = subtypeArray.filter(subtypes => subtypes.subtype_id !== null)
+
+      setSubtypes(subtypesFiltered);
+    } catch (error) {
+      console.error('Error buscando subtipos de productos:', error);
+      toast.error('Error al buscar subtipos de productos');
+    } finally {
+      setIsSearchingSubtype(false);
+    }
+  };
+
+  // Función para seleccionar un tipo personalizado (que no existe en la base de datos)
+  const handleCustomTypeSelection = () => {
+    if (!searchTypeQuery.trim()) return;
+    
+    const customType: Type = {
+      id: null, // ID nulo indica que es un tipo personalizado
+      name: searchTypeQuery.trim(),
+      subtype_id: null,
+      subtype_name: null
+    };
+    
+    setFormData(prev => ({
+      ...prev,
+      type: customType
+    }));
+    
+    toast.success(`Tipo personalizado "${customType.name}" seleccionado`);
+    setSearchTypeQuery('');
+  };
+
+  // Función para seleccionar un subtipo personalizado (que no existe en la base de datos)
+  const handleCustomSubtypeSelection = () => {
+    if (!searchSubtypeQuery.trim()) return;
+    
+    // Para seleccionar un subtipo personalizado, el tipo debe estar definido
+    if (!formData.type.name) {
+      toast.error('Debe seleccionar o crear un tipo de producto primero');
+      return;
+    }
+    
+    const updatedType = {
+      ...formData.type,
+      subtype_id: null, // ID nulo indica que es un subtipo personalizado
+      subtype_name: searchSubtypeQuery.trim()
+    };
+    
+    setFormData(prev => ({
+      ...prev,
+      type: updatedType
+    }));
+    
+    toast.success(`Subtipo personalizado "${updatedType.subtype_name}" seleccionado`);
+    setSearchSubtypeQuery('');
+  };
+
   useEffect(() => {
     if (initialData) {
       setFormData(initialData);
@@ -98,20 +169,32 @@ export default function ProductForm({
   };
 
 
-  const handleSubtypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const subtypeId = parseInt(e.target.value);
-    const selectedSubtype = subtypes.find(subtype => subtype.id === subtypeId);
-
-    if (selectedSubtype) {
+  const handleSubtypeSelect = (subtype: Type) => {
+    // Si el subtipo tiene un tipo asociado, seleccionamos ambos
+    if (subtype.subtype_id) {
+      setFormData(prev => ({
+        ...prev,
+        type: {
+          id: subtype.subtype_id,
+          name: subtype.subtype_name || '',
+          subtype_id: subtype.id,
+          subtype_name: subtype.name
+        }
+      }));
+      toast.success(`Subtipo "${subtype.name}" con tipo "${subtype.subtype_name}" seleccionado`);
+    } else {
+      // Si no tiene tipo asociado, solo actualizamos el subtipo
       setFormData(prev => ({
         ...prev,
         type: {
           ...prev.type,
-          subtype_id: selectedSubtype.id,
-          subtype_name: selectedSubtype.name
+          subtype_id: subtype.id,
+          subtype_name: subtype.name
         }
       }));
+      toast.success(`Subtipo "${subtype.name}" seleccionado`);
     }
+    setSearchSubtypeQuery('');
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -209,8 +292,9 @@ export default function ProductForm({
           toast.success('Producto creado exitosamente');
         }
       }
-
-      window.location.href = '/productos';
+      setTimeout(() => {
+        window.location.href = '/productos';
+      }, 1000);
     } catch (error) {
       console.error('Error guardando producto:', error);
       const errorMessage = error instanceof Error ? error.message : 'Error al guardar el producto';
@@ -220,11 +304,6 @@ export default function ProductForm({
       setIsSubmitting(false);
     }
   };
-
-  // Filtrar subtipos basados en el tipo seleccionado
-  const filteredSubtypes = subtypes.filter(
-    subtype => formData.type.id && subtype.subtype_id === formData.type.id
-  );
 
   return (
     <form onSubmit={handleSubmit} className="bg-customLightYellow rounded-lg shadow max-w-4xl mx-auto p-6">
@@ -287,32 +366,61 @@ export default function ProductForm({
                 placeholder="Buscar tipo de producto..."
               />
             </div>
-            {productTypes.length > 0 && (
-              <div className="mt-2 border rounded-lg divide-y">
-                <p className="p-2 bg-gray-50 text-sm font-medium">Seleccione un tipo de producto:</p>
-                {productTypes.map(type => (
-                  <div
-                    key={type.id}
-                    className={`p-3 cursor-pointer transition-colors ${formData.type.id === type.id ? 'bg-orange-100 border-l-4 border-orange-500' : 'hover:bg-orange-50'}`}
-                    onClick={() => {
-                      setFormData(prev => ({
-                        ...prev,
-                        type: type
-                      }));
-                      toast.success(`Tipo "${type.name}" seleccionado`);
-                    }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <p className="font-medium">{type.name}</p>
-                      {formData.type.id === type.id && (
-                        <span className="text-orange-500 font-medium text-sm">Seleccionado</span>
+            <div className="mt-2 border rounded-lg divide-y">
+              {productTypes.length > 0 ? (
+                <>
+                  <p className="p-2 bg-gray-50 text-sm font-medium">Seleccione un tipo de producto:</p>
+                  {productTypes.map(type => (
+                    <div
+                      key={`type-${type.id}-${type.name}`}
+                      className={`p-3 cursor-pointer transition-colors ${formData.type.id === type.id ? 'bg-orange-100 border-l-4 border-orange-500' : 'hover:bg-orange-50'}`}
+                      onClick={() => {
+                        setFormData(prev => ({
+                          ...prev,
+                          type: {
+                            id: type.id,
+                            name: type.name,
+                            subtype_id: null,
+                            subtype_name: null
+                          }
+                        }));
+                        toast.success(`Tipo "${type.name}" seleccionado`);
+                      }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <p className="font-medium">{type.name}</p>
+                        {formData.type.id === type.id && formData.type.name === type.name && (
+                          <span className="text-orange-500 font-medium text-sm">Seleccionado</span>
+                        )}
+                      </div>
+                      {type.subtype_name && (
+                        <p className="text-xs text-gray-500 mt-1">Subtipo disponible: {type.subtype_name}</p>
                       )}
                     </div>
-                    {type.subtype_name && (
-                      <p className="text-xs text-gray-500 mt-1">Subtipo disponible: {type.subtype_name}</p>
-                    )}
+                  ))}
+                </>
+              ) : searchTypeQuery.length >= 3 && (
+                <>
+                  <p className="p-2 bg-gray-50 text-sm font-medium">No se encontraron resultados</p>
+                  <div
+                    className="p-3 cursor-pointer transition-colors hover:bg-orange-50"
+                    onClick={handleCustomTypeSelection}
+                  >
+                    <div className="flex items-center">
+                      <p className="font-medium text-orange-600">Agregar &quot;{searchTypeQuery}&quot;</p>
+                    </div>
                   </div>
-                ))}
+                </>
+              )}
+            </div>
+            {formData.type.name && (
+              <div className="mt-2 p-2 bg-orange-50 border border-orange-200 rounded-lg">
+                <p className="text-sm">
+                  <span className="font-medium">Tipo seleccionado:</span> {formData.type.name}
+                  {formData.type.subtype_name && (
+                    <span> (Subtipo: {formData.type.subtype_name})</span>
+                  )}
+                </p>
               </div>
             )}
           </div>
@@ -321,20 +429,50 @@ export default function ProductForm({
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Subtipo
             </label>
-            <select
-              name="subtype"
-              value={formData.type.subtype_id || ''}
-              onChange={handleSubtypeChange}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-              disabled={!formData.type.id}
-            >
-              <option value="">Seleccione un subtipo</option>
-              {filteredSubtypes.map(subtype => (
-                <option key={subtype.id} value={subtype.id || ''}>
-                  {subtype.name}
-                </option>
-              ))}
-            </select>
+            <div className="mb-2">
+              <SearchBar
+                onSearch={searchSubtypes}
+                isLoading={isSearchingSubtype}
+                placeholder="Buscar subtipo de producto..."
+                disabled={!formData.type.name}
+              />
+            </div>
+            <div className="mt-2 border rounded-lg divide-y">
+              {subtypes.length > 0 ? (
+                <>
+                  <p className="p-2 bg-gray-50 text-sm font-medium">Seleccione un subtipo:</p>
+                  {subtypes.map(subtype => (
+                    <div
+                      key={`subtype-${subtype.id}-${subtype.name}`}
+                      className={`p-3 cursor-pointer transition-colors ${formData.type.subtype_id === subtype.id && formData.type.subtype_name === subtype.name ? 'bg-orange-100 border-l-4 border-orange-500' : 'hover:bg-orange-50'}`}
+                      onClick={() => handleSubtypeSelect(subtype)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <p className="font-medium">{subtype.name}</p>
+                        {formData.type.subtype_id === subtype.id && formData.type.subtype_name === subtype.name && (
+                          <span className="text-orange-500 font-medium text-sm">Seleccionado</span>
+                        )}
+                      </div>
+                      {subtype.subtype_name && (
+                        <p className="text-xs text-gray-500 mt-1">Tipo asociado: {subtype.subtype_name}</p>
+                      )}
+                    </div>
+                  ))}
+                </>
+              ) : searchSubtypeQuery.length >= 3 && formData.type.name && (
+                <>
+                  <p className="p-2 bg-gray-50 text-sm font-medium">No se encontraron resultados</p>
+                  <div
+                    className="p-3 cursor-pointer transition-colors hover:bg-orange-50"
+                    onClick={handleCustomSubtypeSelection}
+                  >
+                    <div className="flex items-center">
+                      <p className="font-medium text-orange-600">Agregar &quot;{searchSubtypeQuery}&quot;</p>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
 

@@ -31,6 +31,8 @@ export const productService = {
 
       const formattedData = formattedProductData(jsonData);
 
+      console.log(formattedData)
+
       const formData = new FormData();
 
       if (file) {
@@ -98,12 +100,27 @@ export const productService = {
   async fetchProductTypes(name: string): Promise<Type[]> {
     try {
       const response = await api.get<Type[]>(`/product_types/${name}`);
+      console.log(response)
       return response.data;
     } catch (error) {
       return handleApiError(
         error,
         ProductServiceError,
         'Error al buscar tipos de producto. Por favor, intente nuevamente.'
+      );
+    }
+  },
+
+  async fetchProductSubtypes(name: string): Promise<Type[]> {
+    try {
+      // Utilizamos el mismo endpoint pero filtramos por subtipos
+      const response = await api.get<Type[]>(`/product_types/${name}/`);
+      return response.data;
+    } catch (error) {
+      return handleApiError(
+        error,
+        ProductServiceError,
+        'Error al buscar subtipos de producto. Por favor, intente nuevamente.'
       );
     }
   },

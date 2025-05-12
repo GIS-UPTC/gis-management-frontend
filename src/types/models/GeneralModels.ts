@@ -261,20 +261,6 @@ export interface SearchParams {
   page_size?: number;
 }
 
-export interface Organization {
-  id: number;
-  name: string;
-  image_url: string;
-  organization_image_url: string;
-  slogan: string;
-  code: string;
-  clasiffications: Classification[];
-  acronym: string;
-  mission: string;
-  vision: string;
-  links: Link[];
-}
-
 export interface Classification {
   classification: string;
   year: number;

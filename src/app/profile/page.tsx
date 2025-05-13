@@ -8,7 +8,7 @@ import { toast, Toaster } from 'react-hot-toast';
 import { userService } from '@/services/userService';
 import ArrowLeftIcon from '@heroicons/react/24/outline/ArrowLeftIcon';
 import Link from 'next/link';
-import { capitalizeFirstLetter, formatUserFullName } from '@/utils/stringUtils';
+import { capitalizeFirstLetter, formatUserFullName, validatePassword } from '@/utils/stringUtils';
 import { Eye, EyeOff } from 'lucide-react';
 
 export default function ProfilePage() {
@@ -51,10 +51,12 @@ export default function ProfilePage() {
       return;
     }
 
-    /*if (newPassword.length < 6) {
-      toast.error('La contraseña debe tener al menos 6 caracteres');
+    // Validar la contraseña con los nuevos requisitos
+    const passwordValidation = validatePassword(newPassword);
+    if (!passwordValidation.isValid) {
+      toast.error(passwordValidation.message || 'La contraseña no cumple con los requisitos de seguridad');
       return;
-    }*/
+    }
 
     if (!user) return;
 
@@ -335,6 +337,18 @@ export default function ProfilePage() {
                         )}
                       </button>
                     </div>
+                  </div>
+                  <div className="mt-2 text-xs text-gray-600">
+                    <p className="font-medium mb-1">La contraseña debe contener:</p>
+                    <ul className="list-disc pl-5 space-y-1">
+                    <li>Al menos 8 caracteres</li>
+                      <li>Al menos una letra mayúscula</li>
+                      <li>Al menos una letra minúscula</li>
+                      <li>Al menos un número</li>
+                      <li>Al menos un símbolo</li>
+                      <li>No más de 3 números consecutivos</li>
+                      <li>No contener las palabras: gis, uptc, grupo</li>
+                    </ul>
                   </div>
                 </div>
                 <div>

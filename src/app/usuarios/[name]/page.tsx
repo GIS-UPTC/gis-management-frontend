@@ -9,12 +9,14 @@ import { formatUserFullName, capitalizeFirstLetter } from '@/utils/stringUtils';
 import { toast, Toaster } from 'react-hot-toast';
 import Link from 'next/link';
 import ArrowLeftIcon from '@heroicons/react/24/outline/ArrowLeftIcon';
+import { checkUserPermission, AVAILABLE_PERMISSIONS } from '@/utils/permissionChecker';
 
 export default function UserDetailsPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [canEditUser, setCanEditUser] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -42,6 +44,10 @@ export default function UserDetailsPage() {
         }
 
         setUser(foundUser);
+        
+        // Verificar si el usuario tiene permiso para editar usuarios
+        const hasEditPermission = checkUserPermission(AVAILABLE_PERMISSIONS.EDIT);
+        setCanEditUser(hasEditPermission);
 
       } catch (error) {
         if (error instanceof UserServiceError) {
@@ -94,12 +100,14 @@ export default function UserDetailsPage() {
             <ArrowLeftIcon className="h-8 w-8 text-black hover:text-orange-600" />
           </Link>
           <h1 className="text-2xl font-bold">Detalles del Usuario</h1>
-          <button
-            onClick={() => window.location.href = `/usuarios/nuevo?edit=${encodeURIComponent(`${user.first_name}${user.other_name ? ` ${user.other_name}` : ''} ${user.surname}${user.other_surname ? ` ${user.other_surname}` : ''}`)}`}
-            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors"
-          >
-            Editar Usuario
-          </button>
+          {canEditUser && (
+            <button
+              onClick={() => window.location.href = `/usuarios/nuevo?edit=${encodeURIComponent(`${user.first_name}${user.other_name ? ` ${user.other_name}` : ''} ${user.surname}${user.other_surname ? ` ${user.other_surname}` : ''}`)}`}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              Editar Usuario
+            </button>
+          )}
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">

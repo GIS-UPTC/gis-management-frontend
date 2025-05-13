@@ -16,6 +16,7 @@ type TransformRoleGrantingListFn = (roleGrantingList: RoleGranting[]) => Array<{
 // Función para formatear los datos del usuario
 const formatUserData = (userData: Omit<User, 'id'>, transformRoleGrantingList: TransformRoleGrantingListFn) => ({
   dni:             userData.dni,
+  dni_type:        userData.dni_type,
   first_name:      userData.first_name,
   surname:         userData.surname,
   email:           userData.email,

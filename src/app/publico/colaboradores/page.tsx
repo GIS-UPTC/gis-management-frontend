@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { groupInformationService, GroupInformationServiceError } from '@/services/extras/groupInformationService';
 import { GroupMember } from '@/types/models/groupInformation.models';
 import { FaEnvelope, FaLink, FaGraduationCap, FaUniversity } from 'react-icons/fa';
-import { formatUserFullName } from '@/utils/stringUtils';
+import { capitalizeFirstLetter, formatUserFullName } from '@/utils/stringUtils';
 
 export default function ColaboradoresPage() {
   const [colaboradores, setColaboradores] = useState<GroupMember[]>([]);
@@ -83,7 +83,7 @@ export default function ColaboradoresPage() {
                 <div className="flex items-center mb-1">
                   <FaGraduationCap className="text-gray-500 mr-2" />
                   <span className="text-gray-600 italic">
-                    {colaborador.program_name} {colaborador.is_diurn_program ? '(Diurno)' : '(Nocturno)'}
+                    {capitalizeFirstLetter(colaborador.program_name)} {colaborador.is_diurn_program ? '(Diurno)' : '(Nocturno)'}
                   </span>
                 </div>
                 
@@ -91,7 +91,7 @@ export default function ColaboradoresPage() {
                 <div className="flex items-center mb-3">
                   <FaUniversity className="text-gray-500 mr-2" />
                   <span className="text-gray-600">
-                    {colaborador.university_name}, {colaborador.faculty_name}
+                    {capitalizeFirstLetter(colaborador.university_name)}, {capitalizeFirstLetter(colaborador.faculty_name)}
                   </span>
                 </div>
                 
@@ -120,7 +120,7 @@ export default function ColaboradoresPage() {
                     <p className="font-medium mb-1">Proyectos:</p>
                     <ul className="list-disc list-inside text-sm text-gray-600">
                       {colaborador.projects.map((project, idx) => (
-                        <li key={idx}>{project}</li>
+                        <li key={idx}>{capitalizeFirstLetter(project)}</li>
                       ))}
                     </ul>
                   </div>

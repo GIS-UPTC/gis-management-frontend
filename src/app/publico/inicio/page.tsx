@@ -63,7 +63,7 @@ export default function InicioPage() {
             {organization.name} {organization.acronym && `(${organization.acronym})`}
           </h1>
           {organization.slogan && (
-            <p className="text-gray-600 text-lg">{organization.slogan}</p>
+            <p className="text-gray-600 text-lg">{capitalizeFirstLetter(organization.slogan)}</p>
           )}
         </div>
         <div className="mr-0 mb-4 md:mb-0 md:mr-4">
@@ -80,12 +80,12 @@ export default function InicioPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
         <div className="bg-customLightYellow p-6 rounded-lg mb-4 shadow">
           <h2 className="text-xl font-semibold mb-2">Misión</h2>
-          <p>{organization.mission}</p>
+          <p>{capitalizeFirstLetter(organization.mission)}</p>
         </div>
 
         <div className="bg-customLightYellow p-6 rounded-lg shadow">
           <h2 className="text-xl font-semibold mb-2">Visión</h2>
-          <p>{organization.vision}</p>
+          <p>{capitalizeFirstLetter(organization.vision)}</p>
         </div>
 
         <div className="bg-customLightYellow p-6 rounded-lg shadow col-span-1 sm:col-span-2">

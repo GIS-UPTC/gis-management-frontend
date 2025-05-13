@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { groupInformationService, GroupInformationServiceError } from '@/services/extras/groupInformationService';
 import { GroupProduct } from '@/types/models/groupInformation.models';
+import { capitalizeFirstLetter } from '@/utils/stringUtils';
 
 export default function PublicacionesPage() {
   const [products, setProducts] = useState<GroupProduct[]>([]);
@@ -100,7 +101,7 @@ export default function PublicacionesPage() {
             <div key={index} className="border-b border-gray-200 pb-6 last:border-0">
               <div className="flex justify-between items-start mb-2">
                 <h2 className="text-xl font-semibold text-primary-600">
-                  {product.name}
+                  {capitalizeFirstLetter(product.name)}
                 </h2>
                 <div className="flex gap-2">
                   <span className="bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-sm font-medium">
@@ -115,12 +116,12 @@ export default function PublicacionesPage() {
               </div>
               
               <p className="text-sm text-gray-600 mb-3">
-                <span className="font-medium">Proyecto:</span> {product.project}
+                <span className="font-medium">Proyecto:</span> {capitalizeFirstLetter(product.project)}
               </p>
               
               <div className="bg-gray-50 p-4 rounded-md">
                 <h3 className="text-sm font-medium text-gray-700 mb-2">Descripción</h3>
-                <p className="text-gray-600">{product.description}</p>
+                <p className="text-gray-600">{capitalizeFirstLetter(product.description)}</p>
               </div>
             </div>
           ))

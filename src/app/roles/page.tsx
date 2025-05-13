@@ -8,12 +8,14 @@ import { Role } from '@/types/models/GeneralModels';
 import { roleService, RoleServiceError } from '@/services/roleService';
 import SearchBar from '@/components/ui/SearchBar';
 import { toast, Toaster } from 'react-hot-toast';
+import { checkUserPermission, AVAILABLE_PERMISSIONS } from '@/utils/permissionChecker';
 
 export default function RolesPage() {
   const [allRoles, setAllRoles] = useState<Role[]>([]);
   const [filteredRoles, setFilteredRoles] = useState<Role[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [canCreateRole, setCanCreateRole] = useState(false);
 
   useEffect(() => {
     const loadRoles = async () => {
@@ -21,6 +23,10 @@ export default function RolesPage() {
         const allRoles = await roleService.fetchRoles(' ');
         setAllRoles(allRoles);
         setFilteredRoles(allRoles);
+        
+        // Verificar si el usuario tiene permiso para crear roles
+        const hasCreatePermission = checkUserPermission(AVAILABLE_PERMISSIONS.CREATE);
+        setCanCreateRole(hasCreatePermission);
       } catch (error) {
         if (error instanceof RoleServiceError) {
           setError(error.message);
@@ -45,12 +51,14 @@ export default function RolesPage() {
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Listado de Roles</h1>
-          <Link
-            href="/roles/nuevo"
-            className="bg-customDarkGreen hover:bg-green-200 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
-          >
-            Agregar Rol
-          </Link>
+          {canCreateRole && (
+            <Link
+              href="/roles/nuevo"
+              className="bg-customDarkGreen hover:bg-green-200 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
+            >
+              Agregar Rol
+            </Link>
+          )}
         </div>
         <div className="mb-6">
           <SearchBar

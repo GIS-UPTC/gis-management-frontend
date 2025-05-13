@@ -39,6 +39,8 @@ export const checkUserPermission = (action: string): boolean => {
       }
     });
 
+    console.log(allPermissions);
+
     return allPermissions.some(permission => permission.name.toLowerCase() === action.toLowerCase());
   } catch (error) {
     console.error('Error al verificar permisos:', error);

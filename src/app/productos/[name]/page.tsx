@@ -9,11 +9,13 @@ import { toast, Toaster } from 'react-hot-toast';
 import { ArrowLeftIcon, LinkIcon, DocumentTextIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { capitalizeFirstLetter } from '@/utils/stringUtils';
+import { checkUserPermission, AVAILABLE_PERMISSIONS } from '@/utils/permissionChecker';
 
 export default function ProductDetailsPage() {
   const params = useParams();
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [canEditProduct, setCanEditProduct] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -27,6 +29,10 @@ export default function ProductDetailsPage() {
         }
 
         setProduct(productData[0]);
+        
+        // Verificar si el usuario tiene permiso para editar productos
+        const hasEditPermission = checkUserPermission(AVAILABLE_PERMISSIONS.EDIT);
+        setCanEditProduct(hasEditPermission);
 
       } catch (error) {
         if (error instanceof ProductServiceError) {
@@ -79,14 +85,16 @@ export default function ProductDetailsPage() {
             <ArrowLeftIcon className="h-8 w-8 text-black hover:text-orange-600" />
           </Link>
           <h1 className="text-2xl font-bold">Detalle del Producto</h1>
-          <div className="ml-auto">
-            <button
-              onClick={() => window.location.href = `/productos/nuevo?edit=${encodeURIComponent(product.name)}`}
-              className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors"
-            >
-              Editar Producto
-            </button>
-          </div>
+          {canEditProduct && (
+            <div className="ml-auto">
+              <button
+                onClick={() => window.location.href = `/productos/nuevo?edit=${encodeURIComponent(product.name)}`}
+                className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                Editar Producto
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="bg-customLightYellow rounded-lg shadow p-6">

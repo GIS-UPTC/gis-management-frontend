@@ -6,9 +6,10 @@ import Header from '@/components/layout/Header';
 import ProjectForm from '@/components/projects/ProjectForm';
 import { Project } from '@/types/models/project.models';
 import { projectService, ProjectServiceError } from '@/services/projectService';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { checkUserPermission, AVAILABLE_PERMISSIONS } from '@/utils/permissionChecker';
 
 export default function NewProjectPage() {
   const router = useRouter();
@@ -16,14 +17,31 @@ export default function NewProjectPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [project, setProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasPermission, setHasPermission] = useState(false);
 
   useEffect(() => {
-    const editProject = searchParams.get('edit')
-    if(editProject){
-      setIsEditing(true)
-      fetchProject(editProject)
-    }
-  }, [searchParams]);
+    // Verificar permisos del usuario
+    const checkPermissions = () => {
+      const editProject = searchParams.get('edit');
+      const requiredPermission = editProject ? AVAILABLE_PERMISSIONS.EDIT : AVAILABLE_PERMISSIONS.CREATE;
+      
+      const hasRequiredPermission = checkUserPermission(requiredPermission);
+      setHasPermission(hasRequiredPermission);
+      
+      if (!hasRequiredPermission) {
+        toast.error('No tienes permiso para ' + (editProject ? 'editar' : 'crear') + ' proyectos');
+        router.push('/proyectos');
+        return;
+      }
+      
+      if (editProject) {
+        setIsEditing(true);
+        fetchProject(editProject);
+      }
+    };
+    
+    checkPermissions();
+  }, [searchParams, router]);
 
   const fetchProject = async (projectTitle: string) => {
     setIsLoading(true);
@@ -67,6 +85,7 @@ export default function NewProjectPage() {
 
   return (
     <>
+      <Toaster position="top-center" />
       <Header moduleName="Proyectos" />
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="flex items-center mb-6">
@@ -82,12 +101,16 @@ export default function NewProjectPage() {
           <div className="flex justify-center items-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
           </div>
-        ) : (
+        ) : hasPermission ? (
           <ProjectForm 
             initialData={project} 
             onSubmit={handleSubmit} 
             isEditing={isEditing}
           />
+        ) : (
+          <div className="text-center py-8 text-red-500">
+            No tienes permiso para {isEditing ? 'editar' : 'crear'} proyectos
+          </div>
         )}
       </div>
     </>

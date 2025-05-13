@@ -34,7 +34,6 @@ export default function RoleForm({ initialData, isEditing = false }: RoleFormPro
     const fetchAllAccesses = async () => {
       setIsLoading(true);
       try {
-        // Asumiendo que accessService tiene un método fetchAccesses
         const accesses = await accessService.fetchAccesses(' ');
         setAllAccesses(accesses);
         setFilteredAccesses(accesses);

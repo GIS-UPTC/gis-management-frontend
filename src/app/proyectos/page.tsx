@@ -8,12 +8,15 @@ import { Project } from '@/types/models/project.models';
 import ProjectTable from '@/components/projects/ProjectTable';
 import { projectService } from '@/services/projectService';
 import SearchBar from '@/components/ui/SearchBar';
+import { checkUserPermission, AVAILABLE_PERMISSIONS } from '@/utils/permissionChecker';
 
 export default function ProjectsPage() {
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [canCreateProject, setCanCreateProject] = useState(false);
+  const [canChangeStatus, setCanChangeStatus] = useState(false);
 
   useEffect(() => {
     const loadProjects = async () => {
@@ -21,6 +24,12 @@ export default function ProjectsPage() {
         const allProjects = await projectService.fetchProjects(' ');
         setAllProjects(allProjects);
         setFilteredProjects(allProjects);
+        
+        // Verificar si el usuario tiene permisos para crear proyectos y cambiar estado
+        const hasCreatePermission = checkUserPermission(AVAILABLE_PERMISSIONS.CREATE);
+        const hasChangeStatusPermission = checkUserPermission(AVAILABLE_PERMISSIONS.CHANGE_STATUS);
+        setCanCreateProject(hasCreatePermission);
+        setCanChangeStatus(hasChangeStatusPermission);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Ocurrió un error al cargar los proyectos. Por favor, intente nuevamente.';
         setError(errorMessage);
@@ -40,12 +49,14 @@ export default function ProjectsPage() {
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Listado de Proyectos</h1>
-          <Link
-            href="/proyectos/nuevo"
-            className="bg-customDarkGreen hover:bg-green-200 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
-          >
-            Agregar Proyecto
-          </Link>
+          {canCreateProject && (
+            <Link
+              href="/proyectos/nuevo"
+              className="bg-customDarkGreen hover:bg-green-200 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
+            >
+              Agregar Proyecto
+            </Link>
+          )}
         </div>
         <div className="mb-6">
           <SearchBar
@@ -90,6 +101,7 @@ export default function ProjectsPage() {
                 };
                 loadProjects();
               }}
+              canChangeStatus={canChangeStatus}
             />
           </div>
         ) : (

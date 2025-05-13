@@ -1,5 +1,5 @@
 import api from '../api';
-import { Access, Role } from '@/types/models/GeneralModels';
+import { Access } from '@/types/models/GeneralModels';
 import { handleApiError } from '@/utils/errorHandler';
 
 export class AccessServiceError extends Error {
@@ -12,7 +12,7 @@ export class AccessServiceError extends Error {
 export const accessService = {
   async searchAccesses(name: string): Promise<Access[]> {
     try {
-      const response = await api.get<Role[]>(`/accesses/${name}/`);
+      const response = await api.get<Access[]>(`/accesses/${name}/`);
       return response.data;
     } catch (error) {
       console.log(error);
@@ -26,7 +26,8 @@ export const accessService = {
 
   async fetchAccesses(name: string): Promise<Access[]> {
     try {
-      const response = await api.get<Role[]>(`/accesses/${name}?all=true/`);
+      const response = await api.get<Access[]>(`/accesses/${name}?all=true/`);
+      console.log(response.data);
       return response.data;
     } catch (error) {
       console.log(error);

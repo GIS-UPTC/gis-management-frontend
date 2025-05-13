@@ -9,11 +9,13 @@ import { toast, Toaster } from 'react-hot-toast';
 import Link from 'next/link';
 import ArrowLeftIcon from '@heroicons/react/24/outline/ArrowLeftIcon';
 import { capitalizeFirstLetter, formatUserFullName } from '@/utils/stringUtils';
+import { checkUserPermission, AVAILABLE_PERMISSIONS } from '@/utils/permissionChecker';
 
 export default function ResearchLineDetailsPage() {
   const params = useParams();
   const [researchLine, setResearchLine] = useState<ResearchLine | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [canEditLine, setCanEditLine] = useState(false);
 
   useEffect(() => {
     const fetchResearchLine = async () => {
@@ -27,6 +29,10 @@ export default function ResearchLineDetailsPage() {
         }
 
         setResearchLine(searchResults[0]);
+        
+        // Verificar si el usuario tiene permiso para editar líneas de investigación
+        const hasEditPermission = checkUserPermission(AVAILABLE_PERMISSIONS.EDIT);
+        setCanEditLine(hasEditPermission);
 
       } catch (error) {
         if (error instanceof ResearchLineServiceError) {
@@ -79,12 +85,14 @@ export default function ResearchLineDetailsPage() {
             <ArrowLeftIcon className="h-8 w-8 text-black hover:text-orange-600" />
           </Link>
           <h1 className="text-2xl font-bold">Detalles de la Línea de Investigación</h1>
-          <button
-            onClick={() => window.location.href = `/lineas/nuevo?edit=${encodeURIComponent(researchLine.name)}`}
-            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors"
-          >
-            Editar Línea
-          </button>
+          {canEditLine && (
+            <button
+              onClick={() => window.location.href = `/lineas/nuevo?edit=${encodeURIComponent(researchLine.name)}`}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              Editar Línea
+            </button>
+          )}
         </div>
   
         <div className="bg-white rounded-lg shadow p-6">

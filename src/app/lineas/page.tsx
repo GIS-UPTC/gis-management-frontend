@@ -8,12 +8,14 @@ import { researchLineService, ResearchLineServiceError } from '@/services/resear
 import SearchBar from '@/components/ui/SearchBar';
 import { toast, Toaster } from 'react-hot-toast';
 import ResearchLinesTable from '@/components/research-lines/ResearchLinesTable';
+import { checkUserPermission, AVAILABLE_PERMISSIONS } from '@/utils/permissionChecker';
 
 export default function ResearchLinesPage() {
   const [allLines, setAllLines] = useState<ResearchLine[]>([]);
   const [filteredLines, setFilteredLines] = useState<ResearchLine[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [canCreateLine, setCanCreateLine] = useState(false);
 
   useEffect(() => {
     const loadResearchLines = async () => {
@@ -21,6 +23,10 @@ export default function ResearchLinesPage() {
         const allLines = await researchLineService.fetchResearchLines(' ');
         setAllLines(allLines);
         setFilteredLines(allLines);
+        
+        // Verificar si el usuario tiene permiso para crear líneas de investigación
+        const hasCreatePermission = checkUserPermission(AVAILABLE_PERMISSIONS.CREATE);
+        setCanCreateLine(hasCreatePermission);
       } catch (error) {
         if (error instanceof ResearchLineServiceError) {
           setError(error.message);
@@ -45,12 +51,14 @@ export default function ResearchLinesPage() {
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Listado de Líneas de Investigación</h1>
-          <Link
-            href="/lineas/nuevo"
-            className="bg-customDarkGreen hover:bg-green-200 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
-          >
-            Agregar Línea de Investigación
-          </Link>
+          {canCreateLine && (
+            <Link
+              href="/lineas/nuevo"
+              className="bg-customDarkGreen hover:bg-green-200 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
+            >
+              Agregar Línea de Investigación
+            </Link>
+          )}
         </div>
         <div className="mb-6">
           <SearchBar

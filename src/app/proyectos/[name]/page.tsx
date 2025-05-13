@@ -5,15 +5,17 @@ import { useParams } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import { projectService, ProjectServiceError } from '@/services/projectService';
 import { toast, Toaster } from 'react-hot-toast';
-import { Project } from '@/types/models/project.models';
+import { Project, Objective } from '@/types/models/project.models';
 import { capitalizeFirstLetter, formatUserFullName } from '@/utils/stringUtils';
 import ArrowLeftIcon from '@heroicons/react/24/outline/ArrowLeftIcon';
 import Link from 'next/link';
+import { checkUserPermission, AVAILABLE_PERMISSIONS } from '@/utils/permissionChecker';
 
 export default function ProjectDetailsPage() {
   const params = useParams();
   const [project, setProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [canEditProject, setCanEditProject] = useState(false);
   // Estado del proyecto ahora es solo de visualización
 
   useEffect(() => {
@@ -22,6 +24,10 @@ export default function ProjectDetailsPage() {
         const projectTitle = decodeURIComponent(params.name as string);
         const fetchedProject = await projectService.searchProjects(projectTitle);
         setProject(fetchedProject[0]);
+        
+        // Verificar si el usuario tiene permiso para editar proyectos
+        const hasEditPermission = checkUserPermission(AVAILABLE_PERMISSIONS.EDIT);
+        setCanEditProject(hasEditPermission);
       } catch (error) {
         if (error instanceof ProjectServiceError) {
           toast.error(error.message);
@@ -112,12 +118,14 @@ export default function ProjectDetailsPage() {
             <ArrowLeftIcon className="h-8 w-8 text-black hover:text-orange-600" />
           </Link>
           <h1 className="text-2xl font-bold">Detalles del Proyecto</h1>
-          <button
-            onClick={() => window.location.href = `/proyectos/nuevo?edit=${encodeURIComponent(project.title)}`}
-            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors"
-          >
-            Editar Proyecto
-          </button>
+          {canEditProject && (
+            <button
+              onClick={() => window.location.href = `/proyectos/nuevo?edit=${encodeURIComponent(project.title)}`}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              Editar Proyecto
+            </button>
+          )}
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
@@ -151,8 +159,8 @@ export default function ProjectDetailsPage() {
                   <p className="mt-1">{new Date(project.creation_date).toLocaleDateString()}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Duración (días)</label>
-                  <p className="mt-1">{project.duration_days}</p>
+                  <label className="block text-sm font-medium text-gray-700">Duración</label>
+                  <p className="mt-1">{project.duration} {project.duration_type === 'DD' ? 'días' : project.duration_type === 'MM' ? 'meses' : 'años'}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Convocatoria</label>
@@ -177,16 +185,26 @@ export default function ProjectDetailsPage() {
             {/* Objetivos */}
             <div className="md:col-span-2">
               <h2 className="text-lg font-semibold mb-4">Objetivos</h2>
-              {project.objectives && project.objectives.length > 0 ? (
+              {project.objective ? (
                 <div className="space-y-3">
-                  {project.objectives.map((objective) => (
-                    <div key={objective.id} className="border-l-4 border-blue-500 pl-4 py-2">
-                      <span className="text-sm font-medium bg-blue-100 text-blue-800 px-2 py-1 rounded-full mr-2">
-                        {objective.type === 'GN' ? 'General' : 'Específico'}
-                      </span>
-                      <span>{objective.description}</span>
-                    </div>
-                  ))}
+                  <div key={project.objective.id} className="border-l-4 border-blue-500 pl-4 py-2">
+                    <span className="text-sm font-medium bg-blue-100 text-blue-800 px-2 py-1 rounded-full mr-2">
+                      {project.objective.type === 'GN' ? 'General' : 'Específico'}
+                    </span>
+                    <span>{project.objective.description}</span>
+                  </div>
+                  {project.objective.objetives && project.objective.objetives.length > 0 && (
+                    <>
+                      {project.objective.objetives.map((subObjective: Objective) => (
+                        <div key={subObjective.id} className="border-l-4 border-green-500 pl-4 py-2 ml-4">
+                          <span className="text-sm font-medium bg-green-100 text-green-800 px-2 py-1 rounded-full mr-2">
+                            {subObjective.type === 'GN' ? 'General' : 'Específico'}
+                          </span>
+                          <span>{subObjective.description}</span>
+                        </div>
+                      ))}
+                    </>
+                  )}
                 </div>
               ) : (
                 <p className="text-gray-500 italic">Este proyecto no tiene objetivos registrados</p>

@@ -87,6 +87,7 @@ export const projectService = {
   async searchProjects(name: string): Promise<Project[]> {
     try {
       const response = await api.get<Project[]>(`/projects/${name}?only_actives=false`);
+      console.log(response.data);
       return response.data;
     } catch (error) {
       return handleApiError(

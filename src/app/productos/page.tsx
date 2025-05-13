@@ -8,14 +8,23 @@ import { Product } from '@/types/models/GeneralModels';
 import { productService, ProductServiceError } from '@/services/productsService';
 import { toast, Toaster } from 'react-hot-toast';
 import SearchBar from '@/components/ui/SearchBar';
+import { checkUserPermission, AVAILABLE_PERMISSIONS } from '@/utils/permissionChecker';
 
 export default function ProductosPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [canCreateProduct, setCanCreateProduct] = useState(false);
+  const [canDeleteProduct, setCanDeleteProduct] = useState(false);
 
   useEffect(() => {
+    // Verificar si el usuario tiene permisos para crear y eliminar productos
+    const hasCreatePermission = checkUserPermission(AVAILABLE_PERMISSIONS.CREATE);
+    const hasDeletePermission = checkUserPermission(AVAILABLE_PERMISSIONS.DELETE);
+    setCanCreateProduct(hasCreatePermission);
+    setCanDeleteProduct(hasDeletePermission);
+    
     loadProducts(searchQuery);
   }, [searchQuery]);
 
@@ -45,6 +54,11 @@ export default function ProductosPage() {
   };
 
   const handleDelete = async (code: string) => {
+    if (!canDeleteProduct) {
+      toast.error('No tienes permiso para eliminar productos');
+      return;
+    }
+    
     if (window.confirm('¿Está seguro que desea eliminar este producto?')) {
       try {
         await productService.deleteProduct(code);
@@ -67,12 +81,14 @@ export default function ProductosPage() {
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Listado de Productos</h1>
-          <Link
-            href="/productos/nuevo"
-            className="bg-customDarkGreen hover:bg-green-200 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
-          >
-            Agregar Producto
-          </Link>
+          {canCreateProduct && (
+            <Link
+              href="/productos/nuevo"
+              className="bg-customDarkGreen hover:bg-green-200 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
+            >
+              Agregar Producto
+            </Link>
+          )}
         </div>
 
         <div className="mb-6">

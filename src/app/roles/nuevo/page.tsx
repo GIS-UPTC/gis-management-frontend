@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import RoleForm from '@/components/roles/RoleForm';
 import { Role } from '@/types/models/GeneralModels';
@@ -9,20 +9,39 @@ import { roleService, RoleServiceError } from '@/services/roleService';
 import { toast } from 'react-hot-toast';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { checkUserPermission, AVAILABLE_PERMISSIONS } from '@/utils/permissionChecker';
 
 export default function NewRolePage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [roleData, setRoleData] = useState<Role | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasPermission, setHasPermission] = useState(false);
 
   useEffect(() => {
-    const editRole = searchParams.get('edit');
-    if (editRole) {
-      setIsEditing(true);
-      fetchRoleData(editRole);
-    }
-  }, [searchParams]);
+    // Verificar permisos del usuario
+    const checkPermissions = () => {
+      const editRole = searchParams.get('edit');
+      const requiredPermission = editRole ? AVAILABLE_PERMISSIONS.EDIT : AVAILABLE_PERMISSIONS.CREATE;
+      
+      const hasRequiredPermission = checkUserPermission(requiredPermission);
+      setHasPermission(hasRequiredPermission);
+      
+      if (!hasRequiredPermission) {
+        toast.error('No tienes permiso para ' + (editRole ? 'editar' : 'crear') + ' roles');
+        router.push('/roles');
+        return;
+      }
+      
+      if (editRole) {
+        setIsEditing(true);
+        fetchRoleData(editRole);
+      }
+    };
+    
+    checkPermissions();
+  }, [searchParams, router]);
 
   const fetchRoleData = async (roleName: string) => {
     setIsLoading(true);
@@ -61,8 +80,12 @@ export default function NewRolePage() {
           <div className="flex justify-center items-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
           </div>
-        ) : (
+        ) : hasPermission ? (
           <RoleForm initialData={roleData} isEditing={isEditing} />
+        ) : (
+          <div className="text-center py-8 text-red-500">
+            No tienes permiso para {isEditing ? 'editar' : 'crear'} roles
+          </div>
         )}
       </div>
     </>

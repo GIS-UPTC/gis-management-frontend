@@ -9,11 +9,13 @@ import { toast, Toaster } from 'react-hot-toast';
 import ArrowLeftIcon from '@heroicons/react/24/outline/ArrowLeftIcon';
 import Link from 'next/link';
 import { capitalizeFirstLetter } from '@/utils/stringUtils';
+import { checkUserPermission, AVAILABLE_PERMISSIONS } from '@/utils/permissionChecker';
 
 export default function RoleDetailsPage() {
   const params = useParams();
   const [role, setRole] = useState<Role | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [canEditRole, setCanEditRole] = useState(false);
 
   useEffect(() => {
     const fetchRole = async () => {
@@ -27,6 +29,10 @@ export default function RoleDetailsPage() {
         }
 
         setRole(searchResults[0]);
+        
+        // Verificar si el usuario tiene permiso para editar roles
+        const hasEditPermission = checkUserPermission(AVAILABLE_PERMISSIONS.EDIT);
+        setCanEditRole(hasEditPermission);
 
       } catch (error) {
         if (error instanceof RoleServiceError) {
@@ -79,12 +85,14 @@ export default function RoleDetailsPage() {
             <ArrowLeftIcon className="h-8 w-8 text-black hover:text-orange-600" />
           </Link>
           <h1 className="text-2xl font-bold">Detalles del Rol</h1>
-          <button
-            onClick={() => window.location.href = `/roles/nuevo?edit=${encodeURIComponent(role.name)}`}
-            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors"
-          >
-            Editar Rol
-          </button>
+          {canEditRole && (
+            <button
+              onClick={() => window.location.href = `/roles/nuevo?edit=${encodeURIComponent(role.name)}`}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              Editar Rol
+            </button>
+          )}
         </div>
   
         <div className="bg-white rounded-lg shadow p-6">

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import { Progress } from '@/types/models/GeneralModels';
@@ -8,12 +8,20 @@ import { progressService } from '@/services/progressesService';
 import { toast, Toaster } from 'react-hot-toast';
 import SearchBar from '@/components/ui/SearchBar';
 import ProgressTable from '@/components/progresses/ProgressTable';
+import { checkUserPermission, AVAILABLE_PERMISSIONS } from '@/utils/permissionChecker';
 
 export default function ProgressesPage() {
   const [progresses, setProgresses] = useState<Progress[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [canCreateProgress, setCanCreateProgress] = useState(false);
+
+  useEffect(() => {
+    // Verificar si el usuario tiene permiso para crear avances
+    const hasCreatePermission = checkUserPermission(AVAILABLE_PERMISSIONS.CREATE);
+    setCanCreateProgress(hasCreatePermission);
+  }, []);
 
   const handleSearch = async (query: string) => {
     setSearchQuery(query);
@@ -45,12 +53,14 @@ export default function ProgressesPage() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Listado de Avances</h1>
 
-          <Link
-            href="/avances/nuevo"
-            className="bg-customDarkGreen hover:bg-green-200 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
-          >
-            Agregar Avance
-          </Link>
+          {canCreateProgress && (
+            <Link
+              href="/avances/nuevo"
+              className="bg-customDarkGreen hover:bg-green-200 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
+            >
+              Agregar Avance
+            </Link>
+          )}
         </div>
 
         <div className="mb-6">

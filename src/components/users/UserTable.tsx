@@ -3,12 +3,14 @@ import { useRouter } from 'next/navigation';
 import { capitalizeFirstLetter, formatUserFullName } from '../../utils/stringUtils';
 import { User } from '@/types/models/GeneralModels';
 import { userService } from '@/services/userService';
+import { toast } from 'react-hot-toast';
 
 interface UserTableProps {
   users: User[];
+  canChangeStatus?: boolean;
 }
 
-export default function UserTable({ users }: UserTableProps) {
+export default function UserTable({ users, canChangeStatus = true }: UserTableProps) {
   const router = useRouter();
 
   const handleRowClick = (user: User) => {
@@ -21,13 +23,19 @@ export default function UserTable({ users }: UserTableProps) {
   const handleChangeStatus = async (user: User, e: React.MouseEvent) => {
     e.stopPropagation(); // Evita que se active el click de la fila
     
+    if (!canChangeStatus) {
+      toast.error('No tienes permiso para cambiar el estado de los usuarios');
+      return;
+    }
+    
     try {
       await userService.changeIsActiveUser(user.id);
+      toast.success('Estado actualizado correctamente');
       window.location.reload();
       
     } catch (error) {
       console.error('Error:', error);
-      alert('Error al cambiar el estado');
+      toast.error('Error al cambiar el estado');
     }
   };
 
@@ -95,11 +103,15 @@ export default function UserTable({ users }: UserTableProps) {
               <td className="px-6 py-4 text-sm">
                 <button
                   onClick={(e) => handleChangeStatus(user, e)}
+                  disabled={!canChangeStatus}
                   className={`px-3 py-1 rounded-md text-sm font-medium ${
-                    user.is_Active
-                      ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                      : 'bg-green-100 text-green-700 hover:bg-green-200'
+                    !canChangeStatus
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : user.is_Active
+                        ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                        : 'bg-green-100 text-green-700 hover:bg-green-200'
                   }`}
+                  title={!canChangeStatus ? 'No tienes permiso para cambiar el estado' : ''}
                 >
                   {user.is_Active ? 'Desactivar' : 'Activar'}
                 </button>

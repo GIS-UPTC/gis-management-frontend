@@ -150,7 +150,7 @@ export const userService = {
   
   async changeIsActiveUser(id: number): Promise<string> {
     try {
-      await api.patch(`/users/${id}/`);
+      await api.patch(`/users/${id}`);
       return 'Estado cambiado correctamente';
     } catch (error) {
       console.log(error)

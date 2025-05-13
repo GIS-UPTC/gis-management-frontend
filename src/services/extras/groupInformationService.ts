@@ -20,7 +20,7 @@ export class GroupInformationServiceError extends Error {
 export const groupInformationService = {
   async getGroupInformation(): Promise<GroupInformation> {
     try {
-      const response = await publicApi.get<GroupInformation>('/group_information/');
+      const response = await publicApi.get<GroupInformation>('/group_information');
       return response.data;
     } catch (error) {
       console.log(error);
@@ -34,7 +34,7 @@ export const groupInformationService = {
 
   async getGroupMember(): Promise<GroupMember[]> {
     try {
-      const response = await publicApi.get<GroupMember[]>('/group_information/members/');
+      const response = await publicApi.get<GroupMember[]>('/group_information/members');
       return response.data;
     } catch (error) {
       console.log(error);
@@ -48,7 +48,7 @@ export const groupInformationService = {
 
   async getGroupProduct(): Promise<GroupProduct[]> {
     try {
-      const response = await publicApi.get<GroupProduct[]>('/group_information/products/');
+      const response = await publicApi.get<GroupProduct[]>('/group_information/products');
       return response.data;
     } catch (error) {
       console.log(error);

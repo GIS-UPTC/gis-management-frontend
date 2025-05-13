@@ -28,7 +28,7 @@ export const reportService = {
 
       console.log(formattedData)
 
-      const response = await api.post<string>('/reports/', formattedData);
+      const response = await api.post<string>('/reports', formattedData);
       return response.data;
     } catch (error) {
       console.log(error)

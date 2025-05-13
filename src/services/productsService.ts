@@ -40,7 +40,7 @@ export const productService = {
 
       formData.append('json_data', JSON.stringify(formattedData));
 
-      const response = await api.post<Product>(`/products/`, formData, {
+      const response = await api.post<Product>(`/products`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -111,7 +111,7 @@ export const productService = {
   async fetchProductSubtypes(name: string): Promise<Type[]> {
     try {
       // Utilizamos el mismo endpoint pero filtramos por subtipos
-      const response = await api.get<Type[]>(`/product_types/${name}/`);
+      const response = await api.get<Type[]>(`/product_types/${name}`);
       return response.data;
     } catch (error) {
       return handleApiError(

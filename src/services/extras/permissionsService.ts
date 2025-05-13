@@ -12,7 +12,7 @@ export class PermissionServiceError extends Error {
 export const permissionService = {
   async searchPermissions(name: string): Promise<Permission[]> {
     try {
-      const response = await api.get<Permission[]>(`/permissions/${name}/`);
+      const response = await api.get<Permission[]>(`/permissions/${name}`);
       return response.data;
     } catch (error) {
       console.log(error)

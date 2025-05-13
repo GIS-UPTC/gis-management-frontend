@@ -79,7 +79,8 @@ export default function ProjectTable({ projects, onStatusChange, canChangeStatus
                      project.status === 'EJ' ? 'En ejecuciu00f3n' : 
                      project.status === 'IN' ? 'Inactivo' : 
                      project.status === 'CN' ? 'Cancelado' : 
-                     project.status === 'FN' ? 'Finalizado' : project.status}
+                     project.status === 'FN' ? 'Finalizado' : 
+                     project.status === 'EM' ? 'En mora' : project.status}
                   </span>
                 )}
               </td>

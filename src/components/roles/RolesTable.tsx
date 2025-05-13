@@ -2,6 +2,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Access, Role } from '@/types/models/GeneralModels';
 import { capitalizeFirstLetter } from '@/utils/stringUtils';
+import { roleService } from '@/services/roleService';
 
 interface RoleTableProps {
   roles: Role[];
@@ -14,6 +15,19 @@ export default function RoleTable({ roles }: RoleTableProps) {
     const encodedName = encodeURIComponent(role.name);
     console.log(encodedName);
     router.push(`/roles/${encodedName}`);
+  };
+
+  const handleChangeStatus = async (role: Role, e: React.MouseEvent) => {
+    e.stopPropagation(); // Evita que se active el click de la fila
+    
+    try {
+      await roleService.changeIsActiveRole(role.id);
+      window.location.reload();
+      
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al cambiar el estado');
+    }
   };
 
   const formatAccesses = (accesses: Access[]) => {
@@ -32,6 +46,7 @@ export default function RoleTable({ roles }: RoleTableProps) {
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Nombre</th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Privilegios</th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Estado</th>
+            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Cambiar Estado</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
@@ -55,6 +70,18 @@ export default function RoleTable({ roles }: RoleTableProps) {
                 >
                   {role.is_active ? 'Activo' : 'Inactivo'}
                 </span>
+              </td>
+              <td className="px-6 py-4 text-sm">
+                <button
+                  onClick={(e) => handleChangeStatus(role, e)}
+                  className={`px-3 py-1 rounded-md text-sm font-medium ${
+                    role.is_active
+                      ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                      : 'bg-green-100 text-green-700 hover:bg-green-200'
+                  }`}
+                >
+                  {role.is_active ? 'Desactivar' : 'Activar'}
+                </button>
               </td>
             </tr>
           ))}

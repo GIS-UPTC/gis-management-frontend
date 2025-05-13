@@ -16,6 +16,7 @@ export default function UsersPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [canCreateUser, setCanCreateUser] = useState(false);
+  const [canChangeStatus, setCanChangeStatus] = useState(false);
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -24,9 +25,11 @@ export default function UsersPage() {
         setAllUsers(allUsers);
         setFilteredUsers(allUsers);
         
-        // Verificar si el usuario tiene permiso para crear usuarios
+        // Verificar si el usuario tiene permisos
         const hasCreatePermission = checkUserPermission(AVAILABLE_PERMISSIONS.CREATE);
+        const hasChangeActivationPermission = checkUserPermission(AVAILABLE_PERMISSIONS.CHANGE_ACTIVATION);
         setCanCreateUser(hasCreatePermission);
+        setCanChangeStatus(hasChangeActivationPermission);
       } catch (error) {
         if (error instanceof UserServiceError) {
           setError(error.message);
@@ -87,7 +90,7 @@ export default function UsersPage() {
           </div>
         ) : filteredUsers.length > 0 ? (
           <div className="bg-white rounded-lg shadow">
-            <UserTable users={filteredUsers} />
+            <UserTable users={filteredUsers} canChangeStatus={canChangeStatus} />
           </div>
         ) : (
           <div className="text-center py-8 text-gray-500">

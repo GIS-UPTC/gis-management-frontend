@@ -82,5 +82,19 @@ export const roleService = {
         'Error al actualizar el rol. Por favor, intente nuevamente.'
       );
     }
-  }
+  },
+
+  async changeIsActiveRole(id: number): Promise<string> {
+    try {
+      await api.patch(`/roles/${id}`);
+      return 'Estado cambiado correctamente';
+    } catch (error) {
+      console.log(error)
+      return handleApiError(
+        error,
+        RoleServiceError,
+        'Error al cambiar el estado. Por favor, intente nuevamente.'
+      );
+    }
+  },
 };

@@ -17,7 +17,7 @@ export default function PublicoLayout({
   return (
     <div className="min-h-screen bg-customBackground">
       {/* Usar el componente Header principal */}
-      <Header moduleName="Información Pública" isPublicSection={true} />
+      <Header moduleName="Información Pública" />
       
       {/* Menú de navegación mejorado debajo del header */}
       <div className="bg-white shadow-md border-b border-gray-200">
@@ -40,9 +40,6 @@ export default function PublicoLayout({
                       : 'text-gray-500 group-hover:text-primary-500'
                   }`} size={20} />
                   <span>Inicio</span>
-                  {pathname === '/publico/inicio' && (
-                    <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-500 rounded-t-md transform translate-y-4"></div>
-                  )}
                 </Link>
               </li>
               <li>
@@ -60,9 +57,6 @@ export default function PublicoLayout({
                       : 'text-gray-500 group-hover:text-primary-500'
                   }`} size={20} />
                   <span>Publicaciones</span>
-                  {pathname === '/publico/publicaciones' && (
-                    <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-500 rounded-t-md transform translate-y-4"></div>
-                  )}
                 </Link>
               </li>
               <li>
@@ -80,9 +74,6 @@ export default function PublicoLayout({
                       : 'text-gray-500 group-hover:text-primary-500'
                   }`} size={20} />
                   <span>Colaboradores</span>
-                  {pathname === '/publico/colaboradores' && (
-                    <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-500 rounded-t-md transform translate-y-4"></div>
-                  )}
                 </Link>
               </li>
             </ul>
@@ -129,7 +120,7 @@ export default function PublicoLayout({
                     }`}
                   >
                     <HiDocumentText size={20} className="mr-3" />
-                    <span>Publicaciones</span>
+                    <span>Productos</span>
                   </Link>
                 </li>
                 <li>
@@ -143,7 +134,7 @@ export default function PublicoLayout({
                     }`}
                   >
                     <HiUserGroup size={20} className="mr-3" />
-                    <span>Colaboradores</span>
+                    <span>Miembros</span>
                   </Link>
                 </li>
               </ul>

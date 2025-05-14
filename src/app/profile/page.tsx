@@ -10,6 +10,7 @@ import ArrowLeftIcon from '@heroicons/react/24/outline/ArrowLeftIcon';
 import Link from 'next/link';
 import { capitalizeFirstLetter, formatUserFullName, validatePassword } from '@/utils/stringUtils';
 import { Eye, EyeOff } from 'lucide-react';
+import { getImageUrl } from '@/utils/imageUtils';
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
@@ -125,7 +126,7 @@ export default function ProfilePage() {
               <div className="flex flex-col md:flex-row items-center">
                 <div className="w-40 h-40 rounded-full overflow-hidden mb-4 md:mb-0 md:mr-6">
                   <img
-                    src={user.photo_url || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+                    src={getImageUrl(user.photo_url) || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
                     alt={`${user.first_name} ${user.surname}`}
                     width={150}
                     height={150}

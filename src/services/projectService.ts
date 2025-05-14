@@ -18,9 +18,9 @@ const formatProjectData = (projectData: Omit<Project, 'id'>) => ({
   schedule_url: projectData.schedule_url,
   status: projectData.status,
   has_financing: projectData.has_financing,
-  convocation: projectData.convocation,
   research_line_id: projectData.research_line_id,
 
+  ...(projectData.convocation && projectData.convocation !== '' ? { convocation: projectData.convocation } : {}),
   // Procesar el objetivo general y sus objetivos específicos anidados
   ...(projectData.objective ? {
     objective: {

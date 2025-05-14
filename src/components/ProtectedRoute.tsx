@@ -81,9 +81,6 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
         const userAccesses = user.role_granting_list.flatMap(granting => 
           granting.role.accesses.map(access => access.name)
         );
-
-        console.log('Current path:', pathname);
-        console.log('User accesses:', userAccesses);
         
         // Si el usuario es líder del grupo, tiene acceso a todo
         if (user.is_group_leader) {

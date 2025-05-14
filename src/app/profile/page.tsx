@@ -338,18 +338,6 @@ export default function ProfilePage() {
                       </button>
                     </div>
                   </div>
-                  <div className="mt-2 text-xs text-gray-600">
-                    <p className="font-medium mb-1">La contraseña debe contener:</p>
-                    <ul className="list-disc pl-5 space-y-1">
-                    <li>Al menos 8 caracteres</li>
-                      <li>Al menos una letra mayúscula</li>
-                      <li>Al menos una letra minúscula</li>
-                      <li>Al menos un número</li>
-                      <li>Al menos un símbolo</li>
-                      <li>No más de 3 números consecutivos</li>
-                      <li>No contener las palabras: gis, uptc, grupo</li>
-                    </ul>
-                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -378,6 +366,18 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 </div>
+                <div className="mt-2 text-xs text-gray-600">
+                    <p className="font-medium mb-1">La contraseña debe contener:</p>
+                    <ul className="list-disc pl-5 space-y-1">
+                    <li>Al menos 8 caracteres</li>
+                      <li>Al menos una letra mayúscula</li>
+                      <li>Al menos una letra minúscula</li>
+                      <li>Al menos un número</li>
+                      <li>Al menos un símbolo</li>
+                      <li>No más de 3 números consecutivos</li>
+                      <li>No contener las palabras: gis, uptc, admin, administrador, user, usuario, estudiante, grupo, investigacion, investigación, universidad, tunja, boyaca, boyacá, colombia, software</li>
+                    </ul>
+                  </div>
               </div>
               <div className="mt-6 flex justify-end space-x-3">
                 <button

@@ -58,7 +58,7 @@ export const validatePassword = (password: string): { isValid: boolean; message?
   }
 
   // Check for forbidden words
-  const forbiddenWords = ['gis', 'uptc', 'grupo'];
+  const forbiddenWords = ['gis', 'uptc', 'admin', 'administrador', 'user', 'usuario', 'estudiante', 'grupo', 'investigacion', 'investigación', 'universidad', 'tunja', 'boyaca', 'boyacá', 'colombia', 'software'];
   const lowerPassword = password.toLowerCase();
   for (const word of forbiddenWords) {
     if (lowerPassword.includes(word)) {

@@ -5,6 +5,7 @@ import { groupInformationService, GroupInformationServiceError } from '@/service
 import { GroupMember } from '@/types/models/groupInformation.models';
 import { FaEnvelope, FaLink, FaGraduationCap, FaUniversity } from 'react-icons/fa';
 import { capitalizeFirstLetter, formatUserFullName } from '@/utils/stringUtils';
+import { getImageUrl } from '@/utils/imageUtils';
 
 export default function ColaboradoresPage() {
   const [colaboradores, setColaboradores] = useState<GroupMember[]>([]);
@@ -68,7 +69,7 @@ export default function ColaboradoresPage() {
               <div className="w-full md:w-1/3 flex justify-center">
                 <div className="w-40 h-40 overflow-hidden rounded-lg border-2 border-gray-200">
                   <img 
-                    src={'/images/default-user.png'} 
+                    src={getImageUrl(colaborador.image_url)} 
                     alt={formatUserFullName(userForFormat)}
                     className="object-cover w-full h-full"
                   />

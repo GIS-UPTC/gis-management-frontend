@@ -37,7 +37,7 @@ export default function ProjectTable({ projects, onStatusChange, canChangeStatus
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Título</th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Código</th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Fecha Creación</th>
-            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Duración (días)</th>
+            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Duración</th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Financiado</th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Estado</th>
           </tr>
@@ -52,7 +52,7 @@ export default function ProjectTable({ projects, onStatusChange, canChangeStatus
               <td className="px-6 py-4 text-sm text-gray-900">{capitalizeFirstLetter(project.title)}</td>
               <td className="px-6 py-4 text-sm text-gray-900">{project.code}</td>
               <td className="px-6 py-4 text-sm text-gray-900">{formatDate(project.creation_date)}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{project.duration}</td>
+              <td className="px-6 py-4 text-sm text-gray-900">{project.duration} {project.duration_type === 'AA' ? "Años" : project.duration_type === 'MM' ? "Meses" : "Dias"}</td>
               <td className="px-6 py-4 text-sm">
                 <span className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${
                   project.has_financing ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'

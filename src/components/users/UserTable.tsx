@@ -35,7 +35,7 @@ export default function UserTable({ users, canChangeStatus = true }: UserTablePr
       
     } catch (error) {
       console.error('Error:', error);
-      toast.error('Error al cambiar el estado');
+      toast.error('No fue posible cambiar el estado del usuario');
     }
   };
 

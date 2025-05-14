@@ -101,6 +101,7 @@ export const userService = {
   async searchUsersByName(name: string): Promise<User[]> {
     try {
       const response = await api.get<User[]>(`/users/${name}?with_inactives=true`);
+      console.log(response.data)
       return response.data;
     } catch (error) {
       console.log(error)

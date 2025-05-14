@@ -26,10 +26,11 @@ export interface GroupMember {
   is_diurn_program: boolean;
   faculty_name: string;
   university_name: string;
-  projects: string[]; // Default: empty array if not provided
+  projects: string[]; 
   other_name: string | null;
   other_surname: string | null;
   faculty_place: string | null;
+  image_url: string;
 }
 
 export interface GroupProduct {

@@ -1,6 +1,6 @@
 import React, { useState, KeyboardEvent } from 'react';
 import { Responsability } from '@/types/models/GeneralModels';
-import { XMarkIcon } from '@heroicons/react/20/solid';
+import { XMarkIcon, PlusIcon } from '@heroicons/react/20/solid';
 
 interface ResponsabilitySelectorProps {
   selectedResponsabilities: Responsability[];
@@ -60,22 +60,30 @@ export default function ResponsabilitySelector({ selectedResponsabilities, onRes
   return (
     <div className="space-y-4">
       {/* Input for adding new responsabilities */}
-      <div className="relative">
+      <div className="relative flex">
         <input
           type="text"
-          className="w-full py-2 px-3 rounded-lg border border-gray-300 focus:outline-none focus:border-orange-500"
+          className="flex-grow py-2 px-3 rounded-l-lg border border-gray-300 focus:outline-none focus:border-orange-500"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Ingrese una responsabilidad..."
         />
+        <button
+          type="button"
+          onClick={addResponsability}
+          className="px-3 py-2 bg-orange-500 text-white rounded-r-lg hover:bg-orange-600 focus:outline-none"
+          aria-label="Agregar responsabilidad"
+        >
+          <PlusIcon className="h-5 w-5" />
+        </button>
       </div>
 
       {/* Selected Responsabilities */}
       <div className="flex flex-wrap gap-2">
         {selectedResponsabilities.length === 0 ? (
           <div className="text-gray-500 italic text-sm">
-            Digite y presione Enter para agregar una responsabilidad
+            Digite y presione Enter o el botón + para agregar una responsabilidad
           </div>
         ) : (
           selectedResponsabilities.map(responsability => (

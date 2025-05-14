@@ -34,7 +34,6 @@ export default function BasicInfoSection({ formData, onInputChange, onCheckboxCh
           value={formData.convocation}
           onChange={onInputChange}
           className="w-full p-2 border rounded-lg"
-          required
         />
       </div>
 

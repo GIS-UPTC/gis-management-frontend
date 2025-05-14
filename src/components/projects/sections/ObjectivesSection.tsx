@@ -167,7 +167,7 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
       <div>
         <h3 className="text-lg font-semibold mb-4">Objetivo General *</h3>
         <div className="space-y-4">
-          {formData.objective ? (
+          {formData.objective.description !== '' ? (
             <div className="flex justify-between items-start p-4 bg-gray-50 rounded-lg">
               <div>
                 <p>{formData.objective.description}</p>

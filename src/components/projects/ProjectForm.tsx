@@ -71,7 +71,12 @@ const initialFormData: Omit<Project, 'id'> = {
     }
   },
   research_line_id: 0,
-  objectives: [],
+  objective: {
+    id: 0,
+    description: '',
+    type: 'GN',
+    objetives: []
+  },
   project_keywords: [],
   participations: [],
   cooperation_list: []
@@ -107,7 +112,7 @@ export default function ProjectForm({ initialData, onSubmit }: ProjectFormProps)
 
       try {
         // Validate required fields
-        if (!formData.title || !formData.code || !formData.description || !formData.creation_date) {
+        if (!formData.title || !formData.description || !formData.creation_date) {
           toast.error('Por favor complete todos los campos requeridos');
           return;
         }

@@ -1,7 +1,7 @@
 // services/projectService.ts
 import { handleApiError, ServiceError } from '@/utils/errorHandler';
 import api from './api';
-import { InCharge, Project, ProjectKeyword } from '@/types/models/project.models';
+import { InCharge, Participation, Project, ProjectKeyword } from '@/types/models/project.models';
 
 export class ProjectServiceError extends ServiceError {
   constructor(message: string) {
@@ -87,8 +87,17 @@ export const projectService = {
   async searchProjects(name: string): Promise<Project[]> {
     try {
       const response = await api.get<Project[]>(`/projects/${name}?only_actives=false`);
-      console.log(response.data);
-      return response.data;
+
+      const updatedProjects: Project[] = response.data.map((project: Project) => ({
+        ...project,
+        participations: project.participations.map((participation: Participation) => ({
+          ...participation,
+          user_id: participation.user.id
+        }))
+      }));
+
+      console.log(updatedProjects)
+      return updatedProjects;
     } catch (error) {
       return handleApiError(
         error,
@@ -101,7 +110,6 @@ export const projectService = {
   async createProject(projectData: Omit<Project, 'id'>): Promise<Project> {
     try {
       const formattedData = formatProjectData(projectData);
-      console.log(formattedData)
       const response = await api.post<Project>('/projects', formattedData);
       return response.data;
     } catch (error) {

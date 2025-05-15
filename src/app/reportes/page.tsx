@@ -53,7 +53,21 @@ export default function GenerateReportPage() {
   // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setReport(prev => ({ ...prev, [name]: value }));
+    
+    // Convertir fechas a UTC si es un campo de fecha
+    if (name === 'start_date' || name === 'end_date') {
+      // Si hay un valor de fecha, convertirlo a UTC
+      if (value) {
+        const dateObj = new Date(value);
+        const utcDate = dateObj.toISOString().split('T')[0]; // Formato YYYY-MM-DD en UTC
+        setReport(prev => ({ ...prev, [name]: utcDate }));
+      } else {
+        setReport(prev => ({ ...prev, [name]: value }));
+      }
+    } else {
+      // Para campos que no son fechas, manejar normalmente
+      setReport(prev => ({ ...prev, [name]: value }));
+    }
 
     // Reset related fields when report type changes
     if (name === 'report_type') {
@@ -161,7 +175,14 @@ export default function GenerateReportPage() {
     e.preventDefault();
     setIsGeneratingReport(true);
     try {
-      const result = await reportService.generateReport(report);
+      // Asegurar que las fechas estén en formato UTC antes de enviar
+      const reportData = {
+        ...report,
+        start_date: report.start_date ? new Date(report.start_date).toISOString() : '',
+        end_date: report.end_date ? new Date(report.end_date).toISOString() : ''
+      };
+      
+      const result = await reportService.generateReport(reportData);
       
       // Convertir la respuesta a blob según el formato
       const blob = new Blob(

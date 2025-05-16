@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Progress } from '@/types/models/GeneralModels';
 import { LinkIcon } from '@heroicons/react/24/outline';
 import { progressService } from '@/services/progressesService';
 import { FaTrash } from 'react-icons/fa';
 import { capitalizeFirstLetter, formatUserFullName } from '@/utils/stringUtils';
+import ConfirmationDialog from '../common/ConfirmationDialog';
 
 interface ProgressTableProps {
     progresses: Progress[];
@@ -12,6 +13,8 @@ interface ProgressTableProps {
 
 export default function ProgressTable({ progresses }: ProgressTableProps) {
     const router = useRouter();
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [progressToDelete, setProgressToDelete] = useState<Progress | null>(null);
 
     const progressTypes: Record<string, string> = {
         "PI": "Propuesta Inicial",
@@ -35,16 +38,24 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
         router.push(`/avances/${encodedName}?id=${encodedId}`);
     };
 
-    const handleDeleteProgress = async (progress: Progress, e: React.MouseEvent) => {
-        e.stopPropagation(); // Evita que se active el click de la fila
+    const handleDeleteClick = (progress: Progress, e: React.MouseEvent) => {
+        e.stopPropagation();
+        setProgressToDelete(progress);
+        setDeleteDialogOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!progressToDelete) return;
 
         try {
-            await progressService.deleteProgress(progress.id);
+            await progressService.deleteProgress(progressToDelete.id);
             window.location.reload();
-
         } catch (error) {
             console.error('Error eliminando progreso:', error);
             alert('Error al eliminar progreso');
+        } finally {
+            setDeleteDialogOpen(false);
+            setProgressToDelete(null);
         }
     };
 
@@ -64,83 +75,94 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
     };
 
     return (
-        <div className="overflow-x-auto">
-            <table className="min-w-full bg-white">
-                <thead className="bg-yellow-200">
-                    <tr>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Proyecto asociado</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Estado proyecto</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Usuario que reporta</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Tipo de avance</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Fecha y hora</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Documento adjunto</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Descripción avance</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Eliminar avance</th>
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                    {progresses.map((progress) => (
-                        <tr
-                            key={progress.id}
-                            onClick={() => handleRowClick(progress)}
-                            className="cursor-pointer hover:bg-gray-50 transition-colors"
-                        >
-                            <td className="px-6 py-4 text-sm text-gray-900">
-                                {capitalizeFirstLetter(truncateText(progress.project.title, 30))}
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-900">
-                                <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-200 text-green-800">
-                                    {projectStatus[progress.project.status] || progress.project.status}
-                                </span>
-
-                            </td>
-                            <td className="px-6 py-4 text-sm">
-                                {formatUserFullName(progress.user)}
-
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-900">
-                                <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-orange-200 text-orange-800">
-                                    {progressTypes[progress.type] || progress.type}
-                                </span>
-
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-900">
-                                {formatDate(progress.date)}
-                            </td>
-                            <td className="px-6 py-4 text-sm">
-                                {progress.document_link ? (
-                                    <span className="inline-flex items-center text-blue-600">
-                                        <LinkIcon className="h-4 w-4 mr-1" />
-                                        Enlace
-                                    </span>
-                                ) : (
-                                    <span className="inline-flex items-center text-green-600">
-                                        No hay documento
-                                    </span>
-                                )}
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-900">
-                                {progress.description ? (
-                                    progress.description
-                                ) : (
-                                    'No hay descripción'
-                                )}
-                            </td>
-                            <td className="px-6 py-4 text-sm">
-                                <button
-                                    onClick={(e) => {
-                                        handleDeleteProgress(progress, e)
-                                    }}
-                                    className="px-3 py-1 rounded-md text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200"
-                                    title="Eliminar avance"
-                                >
-                                    <FaTrash className="inline mr-1" size={14} /> Eliminar
-                                </button>
-                            </td>
+        <>
+            <div className="overflow-x-auto">
+                <table className="min-w-full bg-white">
+                    <thead className="bg-yellow-200">
+                        <tr>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Proyecto asociado</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Estado proyecto</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Usuario que reporta</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Tipo de avance</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Fecha y hora</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Documento adjunto</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Descripción avance</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Eliminar avance</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                        {progresses.map((progress) => (
+                            <tr
+                                key={progress.id}
+                                onClick={() => handleRowClick(progress)}
+                                className="cursor-pointer hover:bg-gray-50 transition-colors"
+                            >
+                                <td className="px-6 py-4 text-sm text-gray-900">
+                                    {capitalizeFirstLetter(truncateText(progress.project.title, 30))}
+                                </td>
+                                <td className="px-6 py-4 text-sm text-gray-900">
+                                    <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-200 text-green-800">
+                                        {projectStatus[progress.project.status] || progress.project.status}
+                                    </span>
+
+                                </td>
+                                <td className="px-6 py-4 text-sm">
+                                    {formatUserFullName(progress.user)}
+
+                                </td>
+                                <td className="px-6 py-4 text-sm text-gray-900">
+                                    <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-orange-200 text-orange-800">
+                                        {progressTypes[progress.type] || progress.type}
+                                    </span>
+
+                                </td>
+                                <td className="px-6 py-4 text-sm text-gray-900">
+                                    {formatDate(progress.date)}
+                                </td>
+                                <td className="px-6 py-4 text-sm">
+                                    {progress.document_link ? (
+                                        <span className="inline-flex items-center text-blue-600">
+                                            <LinkIcon className="h-4 w-4 mr-1" />
+                                            Enlace
+                                        </span>
+                                    ) : (
+                                        <span className="inline-flex items-center text-green-600">
+                                            No hay documento
+                                        </span>
+                                    )}
+                                </td>
+                                <td className="px-6 py-4 text-sm text-gray-900">
+                                    {progress.description ? (
+                                        progress.description
+                                    ) : (
+                                        'No hay descripción'
+                                    )}
+                                </td>
+                                <td className="px-6 py-4 text-sm">
+                                    <button
+                                        onClick={(e) => handleDeleteClick(progress, e)}
+                                        className="px-3 py-1 rounded-md text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200"
+                                        title="Eliminar avance"
+                                    >
+                                        <FaTrash className="inline mr-1" size={14} /> Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            <ConfirmationDialog
+                isOpen={deleteDialogOpen}
+                onClose={() => {
+                    setDeleteDialogOpen(false);
+                    setProgressToDelete(null);
+                }}
+                onConfirm={handleConfirmDelete}
+                title="Eliminar Avance"
+                message="¿Estás seguro de que deseas eliminar este avance? Esta acción no se puede deshacer."
+            />
+        </>
     );
 }

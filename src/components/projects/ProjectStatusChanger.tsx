@@ -10,12 +10,18 @@ interface ProjectStatusChangerProps {
 
 export default function ProjectStatusChanger({ projectId, currentStatus, onStatusChange }: ProjectStatusChangerProps) {
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
+  const [localStatus, setLocalStatus] = useState(currentStatus);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   
-  // Cerrar el menú desplegable cuando se hace clic fuera de él
+  useEffect(() => {
+    setLocalStatus(currentStatus);
+  }, [currentStatus]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (isStatusDropdownOpen && buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node) &&
+          buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
         setIsStatusDropdownOpen(false);
       }
     };
@@ -24,7 +30,7 @@ export default function ProjectStatusChanger({ projectId, currentStatus, onStatu
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isStatusDropdownOpen]);
+  }, []);
 
   const projectStatus: Record<string, string> = {
     "AC": "Activo",
@@ -52,28 +58,33 @@ export default function ProjectStatusChanger({ projectId, currentStatus, onStatu
   const handleStatusChange = async (newStatus: string) => {
     try {
       await projectService.changeProjectStatus(projectId, newStatus);
+      setLocalStatus(newStatus);
       setIsStatusDropdownOpen(false);
       toast.success('Estado actualizado correctamente');
       if (onStatusChange) {
         onStatusChange();
       }
-    } catch {
+    } catch(error) {
+      console.error('Error al actualizar el estado:', error);
       toast.error('Error al actualizar el estado');
     }
   };
 
+  const toggleDropdown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsStatusDropdownOpen(!isStatusDropdownOpen);
+  };
+
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button
         ref={buttonRef}
         type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          setIsStatusDropdownOpen(!isStatusDropdownOpen);
-        }}
-        className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${getStatusClass(currentStatus)}`}
+        onClick={toggleDropdown}
+        className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${getStatusClass(localStatus)}`}
       >
-        {getStatus(currentStatus)}
+        {getStatus(localStatus)}
         <svg
           className="w-3 h-3 ml-1"
           fill="none"
@@ -96,13 +107,13 @@ export default function ProjectStatusChanger({ projectId, currentStatus, onStatu
             top: '100%',
             left: '0',
           }}
-          onClick={(e) => e.stopPropagation()}
         >
           <div className="py-1">
             {Object.keys(projectStatus).map((status) => (
               <button
                 key={status}
                 onClick={(e) => {
+                  e.preventDefault();
                   e.stopPropagation();
                   handleStatusChange(status);
                 }}

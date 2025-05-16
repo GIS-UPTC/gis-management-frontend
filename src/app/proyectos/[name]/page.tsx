@@ -193,14 +193,14 @@ export default function ProjectDetailsPage() {
                     </span>
                     <span>{capitalizeFirstLetter(project.objective.description)}</span>
                   </div>
-                  {project.objective.objetives && project.objective.objetives.length > 0 && (
+                  {project.objective.objectives && project.objective.objectives.length > 0 && (
                     <>
-                      {project.objective.objetives.map((subObjective: Objective) => (
+                      {project.objective.objectives.map((subObjective: Objective) => (
                         <div key={subObjective.id} className="border-l-4 border-green-500 pl-4 py-2 ml-4">
                           <span className="text-sm font-medium bg-green-100 text-green-800 px-2 py-1 rounded-full mr-2">
                             {subObjective.type === 'GN' ? 'General' : 'Específico'}
                           </span>
-                          <span>{subObjective.description}</span>
+                          <span>{capitalizeFirstLetter(subObjective.description)}</span>
                         </div>
                       ))}
                     </>

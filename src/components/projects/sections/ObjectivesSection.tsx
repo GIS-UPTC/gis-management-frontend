@@ -25,7 +25,7 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
         id: Date.now(),
         description: newObjective.description.trim(),
         type: "GN",
-        objetives: [] // Lista vacía de objetivos específicos
+        objectives: [] // Lista vacía de objetivos específicos
       };
 
       setFormData(prev => ({
@@ -39,27 +39,36 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
 
   // Agregar objetivo específico al objetivo general
   const handleAddSpecificObjective = () => {
-    if (newSpecificObjective.description.trim() && formData.objective) {
-      const specificObjective: Objective = {
-        id: Date.now(),
-        description: newSpecificObjective.description.trim(),
-        type: "ES",
-        objetives: [] // Los objetivos específicos también pueden tener sub-objetivos
-      };
-
-      // Crear una copia profunda del objetivo general con sus objetivos específicos
-      const updatedObjective = {
-        ...formData.objective,
-        objetives: [...(formData.objective.objetives || []), specificObjective]
-      };
-
-      setFormData(prev => ({
-        ...prev,
-        objective: updatedObjective
-      }));
-
-      setNewSpecificObjective({ description: '', parentId: 0 });
+    if (!newSpecificObjective.description.trim()) {
+      toast.error('La descripción del objetivo específico no puede estar vacía');
+      return;
     }
+
+    if (!formData.objective) {
+      toast.error('Debe agregar un objetivo general primero');
+      return;
+    }
+
+    const specificObjective: Objective = {
+      id: Date.now(),
+      description: newSpecificObjective.description.trim(),
+      type: "ES",
+      objectives: [] // Los objetivos específicos también pueden tener sub-objetivos
+    };
+
+    // Crear una copia profunda del objetivo general con sus objetivos específicos
+    const updatedObjective = {
+      ...formData.objective,
+      objectives: [...(formData.objective.objectives || []), specificObjective]
+    };
+
+    setFormData(prev => ({
+      ...prev,
+      objective: updatedObjective
+    }));
+
+    setNewSpecificObjective({ description: '', parentId: 0 });
+    toast.success('Objetivo específico agregado correctamente');
   };
 
   // Eliminar el objetivo general
@@ -70,7 +79,7 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
         id: 0,
         description: '',
         type: 'GN',
-        objetives: []
+        objectives: []
       }
     }));
   };
@@ -80,7 +89,7 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
     if (formData.objective) {
       const updatedObjective = {
         ...formData.objective,
-        objetives: formData.objective.objetives.filter(obj => obj.id !== id)
+        objectives: formData.objective.objectives.filter(obj => obj.id !== id)
       };
 
       setFormData(prev => ({
@@ -207,9 +216,9 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
         <div>
           <h3 className="text-lg font-semibold mb-4">Objetivos Específicos</h3>
           <div className="space-y-4">
-            {formData.objective.objetives && formData.objective.objetives.length > 0 && (
+            {formData.objective.objectives && formData.objective.objectives.length > 0 && (
               <div className="space-y-2">
-                {formData.objective.objetives.map(specificObjective => (
+                {formData.objective.objectives.map(specificObjective => (
                   <div key={specificObjective.id} className="flex justify-between items-start p-4 bg-gray-50 rounded-lg">
                     <div>
                       <p>{specificObjective.description}</p>

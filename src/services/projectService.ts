@@ -1,7 +1,7 @@
 // services/projectService.ts
 import { handleApiError, ServiceError } from '@/utils/errorHandler';
 import api from './api';
-import { InCharge, Participation, Project, ProjectKeyword } from '@/types/models/project.models';
+import { InCharge, Participation, Project, ProjectKeyword, Cooperation } from '@/types/models/project.models';
 
 export class ProjectServiceError extends ServiceError {
   constructor(message: string) {
@@ -27,7 +27,7 @@ const formatProjectData = (projectData: Omit<Project, 'id'>) => ({
       ...(projectData.objective.id && { id: projectData.objective.id }),
       description: projectData.objective.description,
       type: projectData.objective.type,
-      objetives: (projectData.objective.objetives || []).map(specificObj => ({
+      objetives: (projectData.objective.objectives || []).map(specificObj => ({
         ...(specificObj.id && { id: specificObj.id }),
         description: specificObj.description,
         type: specificObj.type,
@@ -86,17 +86,20 @@ export const projectService = {
 
   async searchProjects(name: string): Promise<Project[]> {
     try {
-      const response = await api.get<Project[]>(`/projects/${name}?only_actives=false`);
+      const response = await api.get(`/projects/${name}?only_actives=false`);
 
       const updatedProjects: Project[] = response.data.map((project: Project) => ({
         ...project,
         participations: project.participations.map((participation: Participation) => ({
           ...participation,
           user_id: participation.user.id
+        })),
+        cooperation_list: project.cooperation_list.map((cooperation: Cooperation) => ({
+          ...cooperation,
+          cooperator_id: cooperation.cooperator?.id || null
         }))
       }));
 
-      console.log(updatedProjects)
       return updatedProjects;
     } catch (error) {
       return handleApiError(
@@ -124,6 +127,9 @@ export const projectService = {
   async updateProject(id: number, projectData: Omit<Project, 'id'>): Promise<Project> {
     try {
       const formattedData = formatProjectData(projectData);
+      console.log(1)
+      console.log(formattedData)
+      console.log(2)
       const response = await api.put<Project>(`/projects/${id}`, formattedData);
       return response.data;
     } catch (error) {

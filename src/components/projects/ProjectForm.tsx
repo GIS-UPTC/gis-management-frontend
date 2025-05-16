@@ -134,6 +134,7 @@ export default function ProjectForm({ initialData, onSubmit }: ProjectFormProps)
   };
 
   const renderSection = () => {
+    console.log(formData)
     switch (activeSection) {
       case 'basic':
         return (

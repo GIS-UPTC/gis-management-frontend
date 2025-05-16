@@ -54,20 +54,7 @@ export default function GenerateReportPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     
-    // Convertir fechas a UTC si es un campo de fecha
-    if (name === 'start_date' || name === 'end_date') {
-      // Si hay un valor de fecha, convertirlo a UTC
-      if (value) {
-        const dateObj = new Date(value);
-        const utcDate = dateObj.toISOString().split('T')[0]; // Formato YYYY-MM-DD en UTC
-        setReport(prev => ({ ...prev, [name]: utcDate }));
-      } else {
-        setReport(prev => ({ ...prev, [name]: value }));
-      }
-    } else {
-      // Para campos que no son fechas, manejar normalmente
-      setReport(prev => ({ ...prev, [name]: value }));
-    }
+    setReport(prev => ({ ...prev, [name]: value }));
 
     // Reset related fields when report type changes
     if (name === 'report_type') {

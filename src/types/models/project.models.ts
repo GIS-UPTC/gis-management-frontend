@@ -12,7 +12,7 @@ export interface Objective {
   id: number;
   description: string;
   type: "GN" | "ES";
-  objetives: Objective[];
+  objectives: Objective[];
 }
 
 /**

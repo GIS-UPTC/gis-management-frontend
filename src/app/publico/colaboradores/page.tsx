@@ -51,7 +51,7 @@ export default function ColaboradoresPage() {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Colaboradores</h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Miembros</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {colaboradores && colaboradores.length > 0 ? colaboradores.map((colaborador, index) => {
@@ -158,7 +158,7 @@ export default function ColaboradoresPage() {
           );
         }) : (
           <div className="col-span-1 md:col-span-2 text-center py-10">
-            <p className="text-gray-500">No se encontraron colaboradores.</p>
+            <p className="text-gray-500">No se encontraron miembros.</p>
           </div>
         )}
       </div>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { projectService } from '@/services/projectService';
-import { initMousePositionTracking } from '@/utils/mousePosition';
 
 interface ProjectStatusChangerProps {
   projectId: number;
@@ -12,12 +11,6 @@ interface ProjectStatusChangerProps {
 export default function ProjectStatusChanger({ projectId, currentStatus, onStatusChange }: ProjectStatusChangerProps) {
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  
-  // Inicializar el rastreador de posición del mouse
-  useEffect(() => {
-    const cleanup = initMousePositionTracking();
-    return cleanup;
-  }, []);
   
   // Cerrar el menú desplegable cuando se hace clic fuera de él
   useEffect(() => {
@@ -98,11 +91,10 @@ export default function ProjectStatusChanger({ projectId, currentStatus, onStatu
 
       {isStatusDropdownOpen && (
         <div 
-          className="fixed z-50 mt-1 w-32 bg-white rounded-lg shadow-lg border"
+          className="absolute z-50 mt-1 w-32 bg-white rounded-lg shadow-lg border"
           style={{
-            position: 'fixed',
-            top: 'calc(var(--mouse-y) + 10px)',
-            left: 'calc(var(--mouse-x) - 50px)',
+            top: '100%',
+            left: '0',
           }}
           onClick={(e) => e.stopPropagation()}
         >

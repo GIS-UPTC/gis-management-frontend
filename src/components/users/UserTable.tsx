@@ -77,14 +77,14 @@ export default function UserTable({ users, canChangeStatus = true }: UserTablePr
 
                 {user.is_group_leader && (
                   <span
-                  className="inline-block px-2 py-1 mr-1 text-xs font-semibold text-gray-700 bg-yellow-100 rounded-full"
+                  className="inline-block px-2 py-1 mr-1 text-xs font-semibold text-gray-700 bg-blue-100 rounded-full"
                 >
                   Líder de Grupo
                 </span>
                 )}
                 {user.is_main_researcher && (
                   <span
-                  className="inline-block px-2 py-1 mr-1 text-xs font-semibold text-gray-700 bg-yellow-100 rounded-full"
+                  className="inline-block px-2 py-1 mr-1 text-xs font-semibold text-gray-700 bg-blue-100 rounded-full"
                 >
                   Investigador Principal
                 </span>

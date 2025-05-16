@@ -16,7 +16,8 @@ export default function ProjectTable({ projects, onStatusChange, canChangeStatus
   const router = useRouter();
 
   const handleRowClick = (project: Project) => {
-    router.push(`/proyectos/${project.title}`);
+    const encodedTitle = encodeURIComponent(project.title);
+    router.push(`/proyectos/${encodedTitle}`);
   };
 
   const formatDate = (dateString: string) => {

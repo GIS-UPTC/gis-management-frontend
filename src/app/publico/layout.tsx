@@ -56,7 +56,8 @@ export default function PublicoLayout({
                       ? 'text-primary-600'
                       : 'text-gray-500 group-hover:text-primary-500'
                   }`} size={20} />
-                  <span>Publicaciones</span>
+                  <span>Productos
+                  </span>
                 </Link>
               </li>
               <li>
@@ -73,7 +74,7 @@ export default function PublicoLayout({
                       ? 'text-primary-600'
                       : 'text-gray-500 group-hover:text-primary-500'
                   }`} size={20} />
-                  <span>Colaboradores</span>
+                  <span>Miembros</span>
                 </Link>
               </li>
             </ul>

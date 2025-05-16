@@ -41,7 +41,7 @@ export default function ProjectDetailsPage() {
     };
 
     fetchProject();
-  }, [params.id]);
+  }, [params.name]);
 
   if (isLoading) {
     return (
@@ -152,7 +152,7 @@ export default function ProjectDetailsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Línea de Investigación</label>
-                  <p className="mt-1">{capitalizeFirstLetter(project.research_line.name)}</p>
+                  <p className="mt-1">{project.research_line ? capitalizeFirstLetter(project.research_line.name) : 'No especificada'}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Fecha de Creación</label>
@@ -179,7 +179,7 @@ export default function ProjectDetailsPage() {
             {/* Descripción */}
             <div className="md:col-span-2">
               <h2 className="text-lg font-semibold mb-2">Descripción</h2>
-              <p className="text-gray-700">{capitalizeFirstLetter(project.description)}</p>
+              <p className="text-gray-700">{project.description ? capitalizeFirstLetter(project.description) : 'No hay descripción disponible'}</p>
             </div>
 
             {/* Objetivos */}
@@ -191,7 +191,7 @@ export default function ProjectDetailsPage() {
                     <span className="text-sm font-medium bg-blue-100 text-blue-800 px-2 py-1 rounded-full mr-2">
                       {project.objective.type === 'GN' ? 'General' : 'Específico'}
                     </span>
-                    <span>{project.objective.description}</span>
+                    <span>{capitalizeFirstLetter(project.objective.description)}</span>
                   </div>
                   {project.objective.objetives && project.objective.objetives.length > 0 && (
                     <>
@@ -207,7 +207,7 @@ export default function ProjectDetailsPage() {
                   )}
                 </div>
               ) : (
-                <p className="text-gray-500 italic">Este proyecto no tiene objetivos registrados</p>
+                <p className="mt-1 text-gray-500">No hay objetivos registrados</p>
               )}
             </div>
 

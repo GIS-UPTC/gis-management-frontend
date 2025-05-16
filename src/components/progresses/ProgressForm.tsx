@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Progress, User } from '@/types/models/GeneralModels';
-import { userService } from '@/services/userService';
 import { projectService } from '@/services/projectService';
 import { toast, Toaster } from 'react-hot-toast';
 import { XMarkIcon, DocumentIcon } from '@heroicons/react/24/outline';
@@ -37,18 +36,31 @@ interface ProgressFormProps {
 
 export default function ProgressForm({ onSuccess }: ProgressFormProps) {
   const [formData, setFormData] = useState<FormData>(initialFormData);
-  const [userQuery, setUserQuery] = useState('');
   const [projectQuery, setProjectQuery] = useState('');
-  const [userResults, setUserResults] = useState<User[]>([]);
   const [projectResults, setProjectResults] = useState<Project[]>([]);
-  const [isSearchingUser, setIsSearchingUser] = useState(false);
   const [isSearchingProject, setIsSearchingProject] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showUserResults, setShowUserResults] = useState(false);
   const [showProjectResults, setShowProjectResults] = useState(false);
   const [fileInfo, setFileInfo] = useState<FileInfo>({ file: null, name: '', size: '' });
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Obtener el usuario actual del sessionStorage
+  useEffect(() => {
+    const userStr = sessionStorage.getItem('user');
+    if (userStr) {
+      try {
+        const currentUser = JSON.parse(userStr) as User;
+        setFormData(prev => ({
+          ...prev,
+          user: currentUser
+        }));
+      } catch (error) {
+        console.error('Error al obtener datos del usuario:', error);
+        toast.error('Error al cargar los datos del usuario');
+      }
+    }
+  }, []);
 
   const progressTypes = [
     { value: "PI", label: "Propuesta Inicial" },
@@ -98,28 +110,6 @@ export default function ProgressForm({ onSuccess }: ProgressFormProps) {
     }
   };
 
-  const handleSearchUser = async (query: string) => {
-    setUserQuery(query);
-    if (query.length < 2) {
-      setUserResults([]);
-      return;
-    }
-
-    setIsSearchingUser(true);
-    try {
-      const results = await userService.searchUsersByName(query);
-      setUserResults(results);
-      setShowUserResults(true);
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
-      setUserResults([]);
-    } finally {
-      setIsSearchingUser(false);
-    }
-  };
-
   const handleSearchProject = async (query: string) => {
     setProjectQuery(query);
     if (query.length < 3) {
@@ -142,15 +132,6 @@ export default function ProgressForm({ onSuccess }: ProgressFormProps) {
     }
   };
 
-  const handleSelectUser = (user: User) => {
-    setFormData(prev => ({
-      ...prev,
-      user
-    }));
-    setShowUserResults(false);
-    setUserQuery('');
-  };
-
   const handleSelectProject = (project: Project) => {
     setFormData(prev => ({
       ...prev,
@@ -158,13 +139,6 @@ export default function ProgressForm({ onSuccess }: ProgressFormProps) {
     }));
     setShowProjectResults(false);
     setProjectQuery('');
-  };
-
-  const handleRemoveUser = () => {
-    setFormData(prev => ({
-      ...prev,
-      user: null
-    }));
   };
 
   const handleRemoveProject = () => {
@@ -181,7 +155,7 @@ export default function ProgressForm({ onSuccess }: ProgressFormProps) {
 
     // Validar que exista usuario y proyecto
     if (!formData.user) {
-      setError('Debe seleccionar un usuario');
+      setError('No se encontró información del usuario');
       setIsSubmitting(false);
       return;
     }
@@ -240,7 +214,6 @@ export default function ProgressForm({ onSuccess }: ProgressFormProps) {
   // Cerrar los dropdowns cuando se hace clic fuera
   useEffect(() => {
     const handleClickOutside = () => {
-      setShowUserResults(false);
       setShowProjectResults(false);
     };
     
@@ -258,54 +231,20 @@ export default function ProgressForm({ onSuccess }: ProgressFormProps) {
         {/* Usuario */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Usuario *
+            Usuario
           </label>
-          <div className="relative">
+          <div className="p-2 border rounded-lg bg-white">
             {formData.user ? (
-              <div className="flex items-center justify-between p-2 border rounded-lg bg-white">
+              <div className="flex items-center justify-between">
                 <div>
                   <span className="font-medium">{formData.user.first_name} {formData.user.other_name ?? ''} {formData.user.surname} {formData.user.other_surname ?? ''}</span>
                   {formData.user.email && (
                     <span className="ml-2 text-sm text-gray-500">{formData.user.email}</span>
                   )}
                 </div>
-                <button
-                  type="button"
-                  onClick={handleRemoveUser}
-                  className="p-1 hover:bg-gray-100 rounded-full"
-                >
-                  <XMarkIcon className="h-5 w-5 text-gray-500" />
-                </button>
               </div>
             ) : (
-              <div onClick={(e) => e.stopPropagation()}>
-                <SearchBar
-                  onSearch={handleSearchUser}
-                  isLoading={isSearchingUser}
-                  placeholder="Buscar usuario por nombre..."
-                />
-                
-                {showUserResults && userResults.length > 0 && (
-                  <div className="absolute mt-1 w-full z-10 bg-white border rounded-md shadow-lg max-h-60 overflow-auto">
-                    {userResults.map((user) => (
-                      <div
-                        key={user.id}
-                        className="p-3 hover:bg-orange-100 cursor-pointer border-b"
-                        onClick={() => handleSelectUser(user)}
-                      >
-                        <div className="font-medium">{user.first_name} {user.other_name ?? ''} {user.surname} {user.other_surname ?? ''}</div>
-                        {user.email && <div className="text-sm text-gray-500">{user.email}</div>}
-                      </div>
-                    ))}
-                  </div>
-                )}
-                
-                {showUserResults && userQuery.length >= 3 && userResults.length === 0 && !isSearchingUser && (
-                  <div className="absolute mt-1 w-full z-10 bg-white border rounded-md shadow-lg p-3">
-                    No se encontraron usuarios
-                  </div>
-                )}
-              </div>
+              <div className="text-gray-500">Cargando información del usuario...</div>
             )}
           </div>
         </div>

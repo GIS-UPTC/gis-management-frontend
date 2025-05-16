@@ -45,7 +45,7 @@ const initialFormData: Omit<Project, 'id'> = {
       other_surname: '',
       interest_topics: [],
       participations: [],
-      responsabilities: [],
+      responsibilities: [],
       program: {
         id: 0,
         name: '',
@@ -75,7 +75,7 @@ const initialFormData: Omit<Project, 'id'> = {
     id: 0,
     description: '',
     type: 'GN',
-    objetives: []
+    objectives: []
   },
   project_keywords: [],
   participations: [],

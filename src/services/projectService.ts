@@ -27,11 +27,11 @@ const formatProjectData = (projectData: Omit<Project, 'id'>) => ({
       ...(projectData.objective.id && { id: projectData.objective.id }),
       description: projectData.objective.description,
       type: projectData.objective.type,
-      objetives: (projectData.objective.objectives || []).map(specificObj => ({
+      objectives: (projectData.objective.objectives || []).map(specificObj => ({
         ...(specificObj.id && { id: specificObj.id }),
         description: specificObj.description,
         type: specificObj.type,
-        objetives: [] // Por ahora no soportamos más niveles de anidación
+        objectives: [] // Por ahora no soportamos más niveles de anidación
       }))
     }
   } : {}),
@@ -88,6 +88,10 @@ export const projectService = {
     try {
       const response = await api.get(`/projects/${name}?only_actives=false`);
 
+      console.log("1 search priori")
+      console.log(response)
+      console.log("2 search priori")
+
       const updatedProjects: Project[] = response.data.map((project: Project) => ({
         ...project,
         participations: project.participations.map((participation: Participation) => ({
@@ -99,6 +103,10 @@ export const projectService = {
           cooperator_id: cooperation.cooperator?.id || null
         }))
       }));
+
+      console.log("1 search")
+      console.log(updatedProjects)
+      console.log("2 search")
 
       return updatedProjects;
     } catch (error) {
@@ -127,9 +135,9 @@ export const projectService = {
   async updateProject(id: number, projectData: Omit<Project, 'id'>): Promise<Project> {
     try {
       const formattedData = formatProjectData(projectData);
-      console.log(1)
+      console.log("1 update")
       console.log(formattedData)
-      console.log(2)
+      console.log("2 update")
       const response = await api.put<Project>(`/projects/${id}`, formattedData);
       return response.data;
     } catch (error) {

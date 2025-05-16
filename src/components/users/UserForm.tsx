@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, InterestTopic, RoleGranting, Program, Responsability } from '@/types/models/GeneralModels';
+import { User, InterestTopic, RoleGranting, Program, Responsibility } from '@/types/models/GeneralModels';
 import { userService } from '@/services/userService';
 import TopicSelector from './TopicSelector';
 import ProgramSelector from './ProgramSelector';
@@ -32,7 +32,7 @@ const initialFormData: FormData = {
   interest_topics: [],
   participations: [],
   role_granting_list: [],
-  responsabilities: [],
+  responsibilities: [],
   program: null as unknown as Program,
   is_group_leader: false,
   is_main_researcher: false
@@ -56,7 +56,7 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
     if (initialData) {
       setFormData({
         ...initialData,
-        responsabilities: initialData.responsabilities || []
+        responsibilities: initialData.responsibilities || []
       });
       if (initialData.photo_url) {
         setPreviewUrl(initialData.photo_url);
@@ -115,7 +115,7 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
     }));
   };
 
-  const handleResponsabilitiesChange = (responsabilities: Responsability[]) => {
+  const handleResponsabilitiesChange = (responsabilities: Responsibility[]) => {
     setFormData(prev => ({
       ...prev,
       responsabilities: responsabilities
@@ -179,7 +179,7 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
         interest_topics: formData.interest_topics,
         participations: formData.participations,
         role_granting_list: formData.role_granting_list,
-        responsabilities: formData.responsabilities,
+        responsibilities: formData.responsibilities,
         program: formData.program,
         is_group_leader: formData.is_group_leader,
         is_main_researcher: formData.is_main_researcher
@@ -506,7 +506,7 @@ export default function UserForm({ initialData, isEditing = false }: UserFormPro
                   Responsabilidades
                 </label>
                 <ResponsabilitiesSelector
-                  selectedResponsabilities={formData.responsabilities}
+                  selectedResponsabilities={formData.responsibilities}
                   onResponsabilitiesChange={handleResponsabilitiesChange}
                 />
               </div>

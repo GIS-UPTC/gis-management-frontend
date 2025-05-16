@@ -85,7 +85,7 @@ export const userService = {
       };
 
       const formattedData = formatUserData(userData, transformRoleGrantingList);
-      
+
       const response = await api.put<User>(`/users/${id}`, formattedData);
       return response.data;
     } catch (error) {
@@ -101,7 +101,6 @@ export const userService = {
   async searchUsersByName(name: string): Promise<User[]> {
     try {
       const response = await api.get<User[]>(`/users/${name}?with_inactives=true`);
-      console.log(response.data)
       return response.data;
     } catch (error) {
       console.log(error)

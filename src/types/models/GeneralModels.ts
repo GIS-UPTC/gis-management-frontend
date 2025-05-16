@@ -94,7 +94,7 @@ export interface InterestTopic {
  * - Se usa como parte de GroupParticipation
  * - Define las responsabilidades asignadas a un usuario en un grupo específico
  */
-export interface Responsability {
+export interface Responsibility {
   id: number;
   description: string;
 }
@@ -106,7 +106,7 @@ export interface Responsability {
  */
 export interface GroupParticipation {
   id: number;
-  responsibilities: Responsability[];
+  responsibilities: Responsibility[];
 }
 
 /**
@@ -191,7 +191,7 @@ export interface User {
   other_surname?: string;
   interest_topics: InterestTopic[];
   participations: GroupParticipation[];
-  responsabilities: Responsability[];
+  responsibilities: Responsibility[];
   program: Program;
   role_granting_list: RoleGranting[];
   is_group_leader: boolean;

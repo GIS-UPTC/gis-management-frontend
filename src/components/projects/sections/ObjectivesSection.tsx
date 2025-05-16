@@ -39,36 +39,27 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
 
   // Agregar objetivo específico al objetivo general
   const handleAddSpecificObjective = () => {
-    if (!newSpecificObjective.description.trim()) {
-      toast.error('La descripción del objetivo específico no puede estar vacía');
-      return;
+    if (newSpecificObjective.description.trim() && formData.objective) {
+      const specificObjective: Objective = {
+        id: Date.now(),
+        description: newSpecificObjective.description.trim(),
+        type: "ES",
+        objectives: [] // Los objetivos específicos también pueden tener sub-objetivos
+      };
+
+      // Crear una copia profunda del objetivo general con sus objetivos específicos
+      const updatedObjective = {
+        ...formData.objective,
+        objectives: [...(formData.objective.objectives || []), specificObjective]
+      };
+
+      setFormData(prev => ({
+        ...prev,
+        objective: updatedObjective
+      }));
+
+      setNewSpecificObjective({ description: '', parentId: 0 });
     }
-
-    if (!formData.objective) {
-      toast.error('Debe agregar un objetivo general primero');
-      return;
-    }
-
-    const specificObjective: Objective = {
-      id: Date.now(),
-      description: newSpecificObjective.description.trim(),
-      type: "ES",
-      objectives: [] // Los objetivos específicos también pueden tener sub-objetivos
-    };
-
-    // Crear una copia profunda del objetivo general con sus objetivos específicos
-    const updatedObjective = {
-      ...formData.objective,
-      objectives: [...(formData.objective.objectives || []), specificObjective]
-    };
-
-    setFormData(prev => ({
-      ...prev,
-      objective: updatedObjective
-    }));
-
-    setNewSpecificObjective({ description: '', parentId: 0 });
-    toast.success('Objetivo específico agregado correctamente');
   };
 
   // Eliminar el objetivo general

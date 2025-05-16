@@ -61,9 +61,9 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
 
     const formatDate = (dateString: string | null): string => {
         if (!dateString) return 'N/A';
-        const date = new Date(dateString);
+        const date = new Date(dateString+'Z');
 
-        return date.toLocaleString('es-ES', {
+        return date.toLocaleString('es-CO', {
             dateStyle: 'short',
             timeStyle: 'short'
         });

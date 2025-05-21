@@ -72,7 +72,7 @@ export default function ProgressDetailPage({ params }: PageProps) {
 
   const formatDate = (dateString: string | null): string => {
     if (!dateString) return 'N/A';
-    const fechaLocal = new Date(dateString);
+    const fechaLocal = new Date(dateString + 'Z');
   
     const formatoColombia = new Intl.DateTimeFormat("es-CO", {
       timeZone: "America/Bogota",

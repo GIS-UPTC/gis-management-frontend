@@ -11,39 +11,33 @@ import ProgressTable from '@/components/progresses/ProgressTable';
 import { checkUserPermission, AVAILABLE_PERMISSIONS } from '@/utils/permissionChecker';
 
 export default function ProgressesPage() {
-  const [progresses, setProgresses] = useState<Progress[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [allProgresses, setAllProgresses] = useState<Progress[]>([]);
+  const [filteredProgresses, setFilteredProgresses] = useState<Progress[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
   const [canCreateProgress, setCanCreateProgress] = useState(false);
 
   useEffect(() => {
-    // Verificar si el usuario tiene permiso para crear avances
-    const hasCreatePermission = checkUserPermission(AVAILABLE_PERMISSIONS.CREATE);
-    setCanCreateProgress(hasCreatePermission);
+    const loadProgresses = async () => {
+      try {
+        const allProgresses = await progressService.fetchProgresses(' ');
+        setAllProgresses(allProgresses);
+        setFilteredProgresses(allProgresses);
+        
+        // Verificar si el usuario tiene permisos
+        const hasCreatePermission = checkUserPermission(AVAILABLE_PERMISSIONS.CREATE);
+        setCanCreateProgress(hasCreatePermission);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Ocurrió un error al cargar los avances.';
+        setError(errorMessage);
+        toast.error(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProgresses();
   }, []);
-
-  const handleSearch = async (query: string) => {
-    setSearchQuery(query);
-    if (query.length < 3) {
-      setProgresses([]);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const results = await progressService.searchProgresses(query);
-      setProgresses(results);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Ocurrió un error al buscar los avances.';
-      setError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <>
@@ -52,7 +46,6 @@ export default function ProgressesPage() {
       <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Listado de Avances</h1>
-
           {canCreateProgress && (
             <Link
               href="/avances/nuevo"
@@ -62,20 +55,20 @@ export default function ProgressesPage() {
             </Link>
           )}
         </div>
-
         <div className="mb-6">
-          <div className="flex gap-2">
-            <div className="flex-grow">
-              <SearchBar
-                onSearch={handleSearch}
-                isLoading={isLoading}
-                placeholder="Buscar avances (ingrese el nombre del proyecto)..."
-              />
-            </div>
-          </div>
-          {searchQuery.length > 0 && searchQuery.length < 3 && (
-            <p className="text-sm text-orange-600 mt-1">Ingrese al menos 3 caracteres para buscar</p>
-          )}
+          <SearchBar
+            onSearch={(query) => {
+              if (query.length === 0) {
+                setFilteredProgresses(allProgresses);
+              } else {
+                const filtered = allProgresses.filter(progress =>
+                  progress.project.title.toLowerCase().includes(query.toLowerCase())
+                );
+                setFilteredProgresses(filtered);
+              }
+            }}
+            placeholder="Buscar por nombre del proyecto..."
+          />
         </div>
 
         {error ? (
@@ -86,17 +79,13 @@ export default function ProgressesPage() {
           <div className="flex justify-center items-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
           </div>
-        ) : progresses.length > 0 ? (
+        ) : filteredProgresses.length > 0 ? (
           <div className="bg-white rounded-lg shadow">
-            <ProgressTable progresses={progresses} />
-          </div>
-        ) : searchQuery.length >= 3 ? (
-          <div className="text-center py-8 text-gray-500">
-            No se encontraron avances que coincidan con la búsqueda
+            <ProgressTable progresses={filteredProgresses} />
           </div>
         ) : (
           <div className="text-center py-8 text-gray-500">
-            Utilice el buscador para encontrar avances
+            No hay avances registrados
           </div>
         )}
       </div>

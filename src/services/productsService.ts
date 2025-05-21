@@ -55,9 +55,22 @@ export const productService = {
     }
   },
 
-  async getProducts(name: string): Promise<Product[]> {
+  async searchProducts(name: string): Promise<Product[]> {
     try {
       const response = await api.get<Product[]>(`/products/${name}`);
+      return response.data;
+    } catch (error) {
+      return handleApiError(
+        error,
+        ProductServiceError,
+        'Error al obtener el producto. Por favor, intente nuevamente.'
+      );
+    }
+  },
+
+  async fetchProducts(name: string): Promise<Product[]> {
+    try {
+      const response = await api.get<Product[]>(`/products/${name}?all=true`);
       return response.data;
     } catch (error) {
       return handleApiError(

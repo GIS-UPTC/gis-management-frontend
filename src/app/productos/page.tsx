@@ -11,47 +11,41 @@ import SearchBar from '@/components/ui/SearchBar';
 import { checkUserPermission, AVAILABLE_PERMISSIONS } from '@/utils/permissionChecker';
 
 export default function ProductosPage() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
   const [canCreateProduct, setCanCreateProduct] = useState(false);
   const [canDeleteProduct, setCanDeleteProduct] = useState(false);
 
   useEffect(() => {
-    // Verificar si el usuario tiene permisos para crear y eliminar productos
-    const hasCreatePermission = checkUserPermission(AVAILABLE_PERMISSIONS.CREATE);
-    const hasDeletePermission = checkUserPermission(AVAILABLE_PERMISSIONS.DELETE);
-    setCanCreateProduct(hasCreatePermission);
-    setCanDeleteProduct(hasDeletePermission);
-    
-    loadProducts(searchQuery);
-  }, [searchQuery]);
-
-  const loadProducts = async (query: string) => {
-    setIsLoading(true);
-    try {
-      if (query.length > 2) {
-        const productData = await productService.getProducts(query);
-        setProducts(productData);
+    const loadProducts = async () => {
+      try {
+        const allProducts = await productService.fetchProducts(' ');
+        setAllProducts(allProducts);
+        setFilteredProducts(allProducts);
+        
+        // Verificar si el usuario tiene permisos
+        const hasCreatePermission = checkUserPermission(AVAILABLE_PERMISSIONS.CREATE);
+        const hasDeletePermission = checkUserPermission(AVAILABLE_PERMISSIONS.DELETE);
+        setCanCreateProduct(hasCreatePermission);
+        setCanDeleteProduct(hasDeletePermission);
+      } catch (error) {
+        if (error instanceof ProductServiceError) {
+          setError(error.message);
+          toast.error(error.message);
+        } else {
+          const errorMessage = 'Ocurrió un error al cargar los productos. Por favor, intente nuevamente.';
+          setError(errorMessage);
+          toast.error(errorMessage);
+        }
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      if (error instanceof ProductServiceError) {
-        setError(error.message);
-        toast.error(error.message);
-      } else {
-        const errorMessage = 'Ocurrió un error al cargar los productos. Por favor, intente nuevamente.';
-        setError(errorMessage);
-        toast.error(errorMessage);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-  };
+    loadProducts();
+  }, []);
 
   const handleDelete = async (code: string) => {
     if (!canDeleteProduct) {
@@ -63,7 +57,10 @@ export default function ProductosPage() {
       try {
         await productService.deleteProduct(code);
         toast.success('Producto eliminado correctamente');
-        loadProducts(searchQuery);
+        // Recargar todos los productos después de eliminar
+        const updatedProducts = await productService.fetchProducts(' ');
+        setAllProducts(updatedProducts);
+        setFilteredProducts(updatedProducts);
       } catch (error) {
         if (error instanceof ProductServiceError) {
           toast.error(error.message);
@@ -93,8 +90,17 @@ export default function ProductosPage() {
 
         <div className="mb-6">
           <SearchBar
-            onSearch={handleSearch}
-            isLoading={isLoading}
+            onSearch={(query) => {
+              if (query.length === 0) {
+                setFilteredProducts(allProducts);
+              } else {
+                const filtered = allProducts.filter(product =>
+                  product.name.toLowerCase().includes(query.toLowerCase()) ||
+                  product.description.toLowerCase().includes(query.toLowerCase())
+                );
+                setFilteredProducts(filtered);
+              }
+            }}
             placeholder="Buscar productos..."
           />
         </div>
@@ -107,13 +113,13 @@ export default function ProductosPage() {
           <div className="flex justify-center items-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
           </div>
-        ) : products.length > 0 ? (
+        ) : filteredProducts.length > 0 ? (
           <div className="bg-white rounded-lg shadow">
-            <ProductsTable products={products} onDelete={handleDelete} />
+            <ProductsTable products={filteredProducts} onDelete={handleDelete} />
           </div>
         ) : (
           <div className="text-center py-8 text-gray-500">
-            Utilice el buscador para buscar productos
+            No hay productos registrados
           </div>
         )}
       </div>

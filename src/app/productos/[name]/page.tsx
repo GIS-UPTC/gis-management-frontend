@@ -21,7 +21,7 @@ export default function ProductDetailsPage() {
     const fetchProduct = async () => {
       try {
         const productName = decodeURIComponent(params.name as string);
-        const productData = await productService.getProducts(productName);
+        const productData = await productService.searchProducts(productName);
 
         if (!productData) {
           toast.error('Producto no encontrado');

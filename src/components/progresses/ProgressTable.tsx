@@ -69,11 +69,6 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
         });
     };
 
-    const truncateText = (text: string | null, maxLength: number) => {
-        if (!text) return 'N/A';
-        return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-    };
-
     return (
         <>
             <div className="overflow-x-auto">
@@ -98,7 +93,7 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
                                 className="cursor-pointer hover:bg-gray-50 transition-colors"
                             >
                                 <td className="px-6 py-4 text-sm text-gray-900">
-                                    {capitalizeFirstLetter(truncateText(progress.project.title, 30))}
+                                    {capitalizeFirstLetter(progress.project.title)}
                                 </td>
                                 <td className="px-6 py-4 text-sm text-gray-900">
                                     <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-200 text-green-800">

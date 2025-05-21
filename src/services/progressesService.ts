@@ -25,6 +25,19 @@ export const progressService = {
         }
     },
 
+    async fetchProgresses(name: string): Promise<Progress[]> {
+        try {
+            const response = await api.get<Progress[]>(`/progresses/${name}?all=true`);
+            return response.data;
+        } catch (error) {
+            return handleApiError(
+                error,
+                ProgressServiceError,
+                'Error al buscar avances. Por favor, intente nuevamente.'
+            );
+        }
+    },
+
     async createProgress(progressData: Omit<Progress, 'id'>, file?: File): Promise<Progress> {
         try {
 

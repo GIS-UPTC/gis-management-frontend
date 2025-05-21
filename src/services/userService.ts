@@ -27,7 +27,7 @@ const formatUserData = (userData: Omit<User, 'id'>, transformRoleGrantingList: T
   interest_topics: userData.interest_topics,
   participations:  userData.participations,
   role_granting_list:  transformRoleGrantingList(userData.role_granting_list),
-  responsibilities:     userData.responsabilities,
+  responsibilities:     userData.responsibilities,
   program:              userData.program,
   is_group_leader:      userData.is_group_leader,
   is_main_researcher:   userData.is_main_researcher,

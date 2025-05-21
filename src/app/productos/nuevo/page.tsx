@@ -46,7 +46,7 @@ export default function NewProductPage() {
   const fetchProductData = async (productName: string) => {
     setIsLoading(true);
     try {
-      const product = await productService.getProducts(productName);
+      const product = await productService.searchProducts(productName);
       setProductData(product[0]);
     } catch (error) {
       if (error instanceof ProductServiceError) {

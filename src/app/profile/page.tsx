@@ -16,6 +16,7 @@ export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -80,6 +81,15 @@ export default function ProfilePage() {
       setIsSubmitting(false);
     }
   }
+
+  const handleLogout = () => {
+    setIsLogoutDialogOpen(true);
+  };
+
+  const confirmLogout = () => {
+    loginService.logout();
+    toast.success('Sesión cerrada correctamente');
+  };
 
   if (isLoading) {
     return (
@@ -162,7 +172,7 @@ export default function ProfilePage() {
                 <button
                   type="button"
                   className="px-4 py-2 bg-red-100 text-red-800 rounded-lg hover:bg-red-200"
-                  onClick={() => loginService.logout()}
+                  onClick={handleLogout}
                 >
                   Cerrar Sesión
                 </button>
@@ -397,6 +407,30 @@ export default function ProfilePage() {
                   className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50"
                 >
                   {isSubmitting ? 'Guardando...' : 'Guardar'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Diálogo de confirmación de cierre de sesión */}
+        {isLogoutDialogOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md">
+              <h2 className="text-xl font-bold mb-4">Cerrar Sesión</h2>
+              <p className="text-gray-600 mb-6">¿Está seguro que desea cerrar su sesión?</p>
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => setIsLogoutDialogOpen(false)}
+                  className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={confirmLogout}
+                  className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                >
+                  Cerrar Sesión
                 </button>
               </div>
             </div>

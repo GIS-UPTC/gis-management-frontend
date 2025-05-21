@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { HiMenu, HiX } from 'react-icons/hi';
-import { FaUser, FaChevronDown } from 'react-icons/fa';
+import { FaUser, FaChevronDown, FaSignOutAlt } from 'react-icons/fa';
 import { User } from '@/types/models/GeneralModels';
+import { loginService } from '@/services/loginService';
+import { toast } from 'react-hot-toast';
 
 interface HeaderProps {
   moduleName: string;
@@ -61,10 +64,13 @@ const hasAccessToRoute = (path: string, user: User | null): boolean => {
   return true;
 };
 
-const Header: React.FC<HeaderProps> = ({ moduleName}) => {
+const Header: React.FC<HeaderProps> = ({ moduleName}): React.ReactElement => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const profileMenuRef = useRef<HTMLLIElement>(null);
 
   useEffect(() => {
     const userStr = sessionStorage.getItem('user');
@@ -76,6 +82,19 @@ const Header: React.FC<HeaderProps> = ({ moduleName}) => {
         console.error('Error al obtener datos del usuario:', error);
       }
     }
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const navItems = [
@@ -95,6 +114,15 @@ const Header: React.FC<HeaderProps> = ({ moduleName}) => {
   const filteredDropdownItems = dropdownItems.filter(item => hasAccessToRoute(item.path, user));
   
   const showDropdown = filteredDropdownItems.length > 0;
+
+  const handleLogout = () => {
+    setIsLogoutDialogOpen(true);
+  };
+
+  const confirmLogout = () => {
+    loginService.logout();
+    toast.success('Sesión cerrada correctamente');
+  };
 
   return (
     <header className="bg-[#F9E27D] shadow-md">
@@ -182,15 +210,38 @@ const Header: React.FC<HeaderProps> = ({ moduleName}) => {
                     </li>
                   )}
                   
-                  {/* Icono de perfil de usuario */}
-                  <li className="ml-8"> {/* Mayor margen izquierdo para separarlo */}
-                    <Link 
-                      href="/profile"
+                  {/* Icono de perfil de usuario con menú desplegable */}
+                  <li className="ml-8 relative" ref={profileMenuRef}>
+                    <button
+                      onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                       className="p-2 rounded-full bg-yellow-200 hover:bg-yellow-300 transition-all hover:scale-110 flex items-center justify-center"
-                      aria-label="Perfil de usuario"
+                      aria-label="Menú de usuario"
                     >
                       <FaUser className="text-gray-800" size={20} />
-                    </Link>
+                    </button>
+
+                    {/* Menú desplegable del perfil */}
+                    {isProfileMenuOpen && (
+                      <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                        <div className="py-1">
+                          <Link
+                            href="/profile"
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            onClick={() => setIsProfileMenuOpen(false)}
+                          >
+                            <FaUser className="mr-2" size={16} />
+                            Mi Perfil
+                          </Link>
+                          <button
+                            onClick={handleLogout}
+                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            <FaSignOutAlt className="mr-2" size={16} />
+                            Cerrar Sesión
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </li>
                 </ul>
               </nav>
@@ -266,6 +317,30 @@ const Header: React.FC<HeaderProps> = ({ moduleName}) => {
           </nav>
         )}
       </div>
+
+      {/* Diálogo de confirmación de cierre de sesión */}
+      {isLogoutDialogOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">Cerrar Sesión</h2>
+            <p className="text-gray-600 mb-6">¿Está seguro que desea cerrar su sesión?</p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setIsLogoutDialogOpen(false)}
+                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmLogout}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+              >
+                Cerrar Sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

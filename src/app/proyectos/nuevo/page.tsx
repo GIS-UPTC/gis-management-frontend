@@ -70,14 +70,18 @@ export default function NewProjectPage() {
       if (isEditing && project) {
         await projectService.updateProject(project.id, projectData);
         toast.success('Proyecto actualizado exitosamente');
+        router.push('/proyectos');
       } else {
-        console.log(projectData)
         await projectService.createProject(projectData);
         toast.success('Proyecto creado exitosamente');
+        router.push('/proyectos');
       }
-      router.push('/proyectos');
-    } catch {
-      toast.error('Error al guardar el proyecto');
+    } catch (error) {
+      if (error instanceof ProjectServiceError) {
+        toast.error(error.message);
+      } else {
+        toast.error('Error al guardar el proyecto. Por favor, intente nuevamente.');
+      }
     } finally {
       setIsLoading(false);
     }

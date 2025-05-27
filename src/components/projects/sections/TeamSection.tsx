@@ -7,6 +7,7 @@ import { userService } from '@/services/userService';
 import { toast, Toaster } from 'react-hot-toast';
 import { Combobox } from '@headlessui/react';
 import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
+import { formatUserFullName } from '@/utils/stringUtils';
 
 interface TeamSectionProps {
   formData: Omit<Project, 'id'>;
@@ -26,7 +27,6 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
   const [isLoading, setIsLoading] = useState(false);
   const [isResearchLineOpen, setIsResearchLineOpen] = useState(false);
   const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(false);
-  const [userSearchQuery, setUserSearchQuery] = useState('');
 
   const fetchResearchLines = async () => {
     try {
@@ -75,11 +75,6 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
     setIsResearchLineOpen(false);
   };
 
-  const handleUserSearchChange = (query: string) => {
-    setUserSearchQuery(query);
-    fetchUsers(query);
-  };
-
   const handleAddParticipation = () => {
     if (selectedUser && newParticipation.start_date && newParticipation.role && newParticipation.responsibility) {
       const participation: Participation = {
@@ -100,7 +95,6 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
       // Reset form state
       setSelectedUser(null);
       setUsers([]);
-      setUserSearchQuery('');
       setNewParticipation({
         start_date: '',
         end_date: '',
@@ -196,7 +190,7 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
               <div className="flex justify-between items-start">
                 <div>
                   <p className="font-medium">
-                    {participation.user.first_name} {participation.user.other_name} {participation.user.surname} {participation.user.other_surname}
+                    {formatUserFullName(participation.user)}
                   </p>
                   <p className="text-sm text-gray-500">
                     Rol: {participation.role === 'IP' ? 'Investigador Principal' :
@@ -234,23 +228,16 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
               }}>
                 <div className="relative">
                   <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border focus-within:border-orange-500">
-                    <Combobox.Input
-                      className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
-                      placeholder="Buscar usuario por nombre..."
-                      displayValue={() => userSearchQuery}
-                      onChange={(e) => handleUserSearchChange(e.target.value)}
-                      onFocus={() => {
-                        setIsUsersDropdownOpen(true);
-                        if (!userSearchQuery) fetchUsers('');
-                      }}
-                    />
                     <Combobox.Button
-                      className="absolute inset-y-0 right-0 flex items-center pr-2"
+                      className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0 flex justify-between items-center"
                       onClick={() => {
                         setIsUsersDropdownOpen(true);
-                        if (!userSearchQuery) fetchUsers('');
+                        fetchUsers('');
                       }}
                     >
+                      <span className="text-gray-900">
+                        Seleccionar miembro del equipo...
+                      </span>
                       <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                     </Combobox.Button>
                   </div>
@@ -263,11 +250,10 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
                         </div>
                       ) : users.length === 0 ? (
                         <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
-                          {userSearchQuery ? `No se encontraron usuarios con "${userSearchQuery}"` : "No hay usuarios disponibles para agregar"}
+                          No hay usuarios disponibles para agregar
                         </div>
                       ) : (
                         users.map((user) => {
-                          // Verificar si el usuario ya está en el equipo
                           const isAlreadyMember = formData.participations.some(
                             p => p.user.id === user.id
                           );
@@ -290,7 +276,7 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
                               {({ selected }) => (
                                 <>
                                   <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
-                                    {user.first_name} {user.surname}
+                                    {formatUserFullName(user)}
                                   </span>
                                   {selected && !isAlreadyMember && (
                                     <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-orange-600">
@@ -316,7 +302,7 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
 
             {selectedUser && (
               <div className="space-y-4 p-4 bg-orange-100 rounded-lg">
-                <p className="font-medium">Usuario seleccionado: {selectedUser.first_name} {selectedUser.surname}</p>
+                <p className="font-medium">Usuario seleccionado: {formatUserFullName(selectedUser)}</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">

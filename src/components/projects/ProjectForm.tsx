@@ -117,6 +117,14 @@ export default function ProjectForm({ initialData, onSubmit }: ProjectFormProps)
           return;
         }
 
+        // Validate cooperations
+        if (formData.cooperation_list.length === 0) {
+          toast.error('Debe agregar al menos un cooperador usando cualquiera de las opciones disponibles', {
+            duration: 4000,
+          });
+          return;
+        }
+
         onSubmit(formData);
       } catch {
         toast.error('Error al guardar el proyecto');

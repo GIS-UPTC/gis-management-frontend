@@ -14,9 +14,42 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
   const [newObjective, setNewObjective] = useState({ description: '', type: 'GN' });
   const [newSpecificObjective, setNewSpecificObjective] = useState({ description: '', parentId: 0 });
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [keywords, setKeywords] = useState<ProjectKeyword[]>([]);
+  const [allKeywords, setAllKeywords] = useState<ProjectKeyword[]>([]);
+  const [filteredKeywords, setFilteredKeywords] = useState<ProjectKeyword[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [tempIdCounter, setTempIdCounter] = useState(-1);
+
+  // Cargar todas las palabras clave al inicio
+  useEffect(() => {
+    const loadKeywords = async () => {
+      setIsLoading(true);
+      try {
+        const keywords = await projectService.fetchKeywords(' ');
+        setAllKeywords(keywords);
+        setFilteredKeywords(keywords);
+      } catch (error) {
+        toast.error('Error al cargar las palabras clave');
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadKeywords();
+  }, []);
+
+  // Filtrar palabras clave localmente cuando cambia el término de búsqueda
+  useEffect(() => {
+    if (searchKeyword.trim() === '') {
+      setFilteredKeywords(allKeywords);
+    } else {
+      const filtered = allKeywords.filter(keyword => 
+        keyword.name.toLowerCase().includes(searchKeyword.toLowerCase()) &&
+        !formData.project_keywords.some(selected => selected.id === keyword.id)
+      );
+      setFilteredKeywords(filtered);
+    }
+  }, [searchKeyword, allKeywords, formData.project_keywords]);
 
   // Agregar objetivo general (solo puede haber uno)
   const handleAddGeneralObjective = () => {
@@ -128,37 +161,6 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
       project_keywords: prev.project_keywords.filter(k => k.id !== id)
     }));
   };
-
-  const searchKeywords = async (query: string) => {
-    if (query.length < 2) {
-      setKeywords([]);
-      return;
-    }
-    
-    setIsLoading(true);
-    try {
-      const results = await projectService.searchKeywords(query);
-      // Filtrar palabras clave que ya están seleccionadas
-      const filteredKeywords = results.filter(keyword => 
-        !formData.project_keywords.some(selected => selected.id === keyword.id)
-      );
-      setKeywords(filteredKeywords);
-    } catch {
-      toast.error('Error al buscar palabras clave');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      if (searchKeyword) {
-        searchKeywords(searchKeyword);
-      }
-    }, 500);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchKeyword]);
 
   return (
     <div className="space-y-6">
@@ -275,7 +277,7 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
                 ) : null}
                 
                 <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                  {keywords.length === 0 && searchKeyword.length >= 3 ? (
+                  {filteredKeywords.length === 0 && searchKeyword.length >= 3 ? (
                     <Combobox.Option
                       value="add"
                       className={({ active }) =>
@@ -288,7 +290,7 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
                       <span className="ml-3 font-normal">Crear nueva palabra clave: &quot;{searchKeyword}&quot;</span>
                       </span>
                     </Combobox.Option>
-                  ) : keywords.map((keyword) => (
+                  ) : filteredKeywords.map((keyword) => (
                     <Combobox.Option
                       key={keyword.id}
                       value={keyword}
@@ -308,9 +310,11 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
             </Combobox>
           </div>
 
-          {keywords.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {keywords.map(keyword => (
+          {/* Lista de todas las palabras clave disponibles */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {allKeywords
+              .filter(keyword => !formData.project_keywords.some(selected => selected.id === keyword.id))
+              .map(keyword => (
                 <div
                   key={keyword.id}
                   className="flex items-center justify-between p-2 bg-gray-50 rounded-lg"
@@ -325,9 +329,9 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
                   </button>
                 </div>
               ))}
-            </div>
-          )}
+          </div>
 
+          {/* Palabras clave seleccionadas */}
           {formData.project_keywords.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {formData.project_keywords.map(keyword => (

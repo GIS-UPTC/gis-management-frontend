@@ -33,17 +33,10 @@ export default function CooperationSection({ formData, setFormData, onValidation
   // Estado para el tipo de cooperación
   const [cooperationType, setCooperationType] = useState<'IN' | 'EX'>('IN');
 
-  // Efecto para validar que haya al menos un cooperador
+  // Efecto para actualizar el estado de validación
   useEffect(() => {
-    const hasCooperators = formData.cooperation_list.length > 0;
     if (onValidationChange) {
-      onValidationChange(hasCooperators);
-    }
-    
-    if (!hasCooperators) {
-      toast.error('Debe agregar al menos un cooperador usando cualquiera de las opciones disponibles', {
-        duration: 4000,
-      });
+      onValidationChange(formData.cooperation_list.length > 0);
     }
   }, [formData.cooperation_list, onValidationChange]);
 

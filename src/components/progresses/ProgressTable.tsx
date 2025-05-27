@@ -7,6 +7,12 @@ import { FaTrash } from 'react-icons/fa';
 import { capitalizeFirstLetter, formatUserFullName } from '@/utils/stringUtils';
 import ConfirmationDialog from '../common/ConfirmationDialog';
 
+// Función para truncar texto
+const truncateText = (text: string | null, maxLength: number): string => {
+    if (!text) return 'No hay descripción';
+    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+};
+
 interface ProgressTableProps {
     progresses: Progress[];
 }
@@ -76,7 +82,6 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
                     <thead className="bg-yellow-200">
                         <tr>
                             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Proyecto asociado</th>
-                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Estado proyecto</th>
                             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Usuario que reporta</th>
                             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Tipo de avance</th>
                             <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Fecha y hora</th>
@@ -93,13 +98,9 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
                                 className="cursor-pointer hover:bg-gray-50 transition-colors"
                             >
                                 <td className="px-6 py-4 text-sm text-gray-900">
-                                    {capitalizeFirstLetter(progress.project.title)}
-                                </td>
-                                <td className="px-6 py-4 text-sm text-gray-900">
-                                    <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-200 text-green-800">
+                                <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-200 text-green-800">
                                         {projectStatus[progress.project.status] || progress.project.status}
-                                    </span>
-
+                                    </span> {capitalizeFirstLetter(progress.project.title)}
                                 </td>
                                 <td className="px-6 py-4 text-sm">
                                     {formatUserFullName(progress.user)}
@@ -127,11 +128,7 @@ export default function ProgressTable({ progresses }: ProgressTableProps) {
                                     )}
                                 </td>
                                 <td className="px-6 py-4 text-sm text-gray-900">
-                                    {progress.description ? (
-                                        progress.description
-                                    ) : (
-                                        'No hay descripción'
-                                    )}
+                                    {truncateText(progress.description, 200)}
                                 </td>
                                 <td className="px-6 py-4 text-sm">
                                     <button

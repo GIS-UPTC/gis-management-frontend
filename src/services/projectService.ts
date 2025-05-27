@@ -177,7 +177,20 @@ export const projectService = {
       return handleApiError(
         error,
         ProjectServiceError,
-        'Error al ejecutar operación PATCH. Por favor, intente nuevamente.'
+        'Error al buscar palabras clave. Por favor, intente nuevamente.'
+      );
+    }
+  },
+
+  async fetchKeywords(name: string): Promise<ProjectKeyword[]> {
+    try {
+      const response = await api.get<ProjectKeyword[]>(`/keywords/${name}?all=true`);
+      return response.data;
+    } catch (error) {
+      return handleApiError(
+        error,
+        ProjectServiceError,
+        'Error al obtener palabras clave. Por favor, intente nuevamente.'
       );
     }
   },

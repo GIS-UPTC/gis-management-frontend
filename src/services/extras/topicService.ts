@@ -19,7 +19,21 @@ export const topicService = {
       return handleApiError(
         error,
         TopicServiceError,
-        'Error al buscar roles. Por favor, intente nuevamente.'
+        'Error al buscar temas de interes. Por favor, intente nuevamente.'
+      );
+    }
+  },
+
+  async fetchTopics(name: string): Promise<InterestTopic[]> {
+    try {
+      const response = await api.get<InterestTopic[]>(`/interest_topics/${name}`);
+      return response.data;
+    } catch (error) {
+      console.log(error)
+      return handleApiError(
+        error,
+        TopicServiceError,
+        'Error al obtener temas de interes. Por favor, intente nuevamente.'
       );
     }
   }

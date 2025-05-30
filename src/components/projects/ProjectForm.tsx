@@ -118,8 +118,8 @@ export default function ProjectForm({ initialData, onSubmit }: ProjectFormProps)
         }
 
         // Validate cooperations
-        if (formData.cooperation_list.length === 0) {
-          toast.error('Debe agregar al menos un cooperador usando cualquiera de las opciones disponibles', {
+        if (formData.participations.length === 0) {
+          toast.error('Debe agregar al menos un miembro del equipo', {
             duration: 4000,
           });
           return;

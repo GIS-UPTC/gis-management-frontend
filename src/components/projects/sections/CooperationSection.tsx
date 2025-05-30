@@ -14,15 +14,12 @@ interface CooperationSectionProps {
 }
 
 export default function CooperationSection({ formData, setFormData, onValidationChange }: CooperationSectionProps) {
-  // Estados para búsqueda de usuarios del GIS
   const [gisUsers, setGisUsers] = useState<User[]>([]);
   const [isGisLoading, setIsGisLoading] = useState(false);
 
-  // Estados para búsqueda de usuarios a cargo
   const [inChargeUsers, setInChargeUsers] = useState<InCharge[]>([]);
   const [isInChargeLoading, setIsInChargeLoading] = useState(false);
 
-  // Estado para agregar nuevo usuario a cargo manualmente
   const [newInCharge, setNewInCharge] = useState<Partial<InCharge>>({
     first_name: '',
     last_name: '',
@@ -30,17 +27,14 @@ export default function CooperationSection({ formData, setFormData, onValidation
     group_or_entity: ''
   });
 
-  // Estado para el tipo de cooperación
   const [cooperationType, setCooperationType] = useState<'IN' | 'EX'>('IN');
 
-  // Efecto para actualizar el estado de validación
   useEffect(() => {
     if (onValidationChange) {
-      onValidationChange(formData.cooperation_list.length > 0);
+      onValidationChange(true);
     }
   }, [formData.cooperation_list, onValidationChange]);
 
-  // Búsqueda de usuarios del GIS
   const searchGisUsers = async (query: string) => {
     if (query.length < 3) return;
 
@@ -55,14 +49,11 @@ export default function CooperationSection({ formData, setFormData, onValidation
     }
   };
 
-  // Búsqueda de usuarios a cargo
   const searchInChargeUsers = async (query: string) => {
     if (query.length < 3) return;
 
     try {
       setIsInChargeLoading(true);
-      // Aquí deberías usar el servicio real para buscar usuarios a cargo
-      // Por ahora, simulamos la respuesta con el formato correcto de InCharge
       const inChargeResults = await projectService.searchInCharges(query)
       
       setInChargeUsers(inChargeResults);
@@ -73,9 +64,7 @@ export default function CooperationSection({ formData, setFormData, onValidation
     }
   };
 
-  // Seleccionar usuario del GIS
   const handleGisUserSelect = (user: User) => {
-    // Verificar si el usuario ya está en la lista de cooperaciones
     const isAlreadyAdded = formData.cooperation_list.some(
       cooperation => cooperation.cooperator?.id === user.id
     );
@@ -98,13 +87,10 @@ export default function CooperationSection({ formData, setFormData, onValidation
       cooperation_list: [...prev.cooperation_list, newCooperationItem]
     }));
 
-    // Limpiar resultados de búsqueda
     setGisUsers([]);
   };
 
-  // Seleccionar usuario a cargo
   const handleInChargeUserSelect = (inCharge: InCharge) => {
-    // Verificar si el usuario ya está en la lista de cooperaciones
     const isAlreadyAdded = formData.cooperation_list.some(
       cooperation => 
         (cooperation.in_charge && 
@@ -208,8 +194,7 @@ export default function CooperationSection({ formData, setFormData, onValidation
       <Toaster position="top-center" />
       <div className="flex items-center gap-2">
         <h3 className="text-lg font-semibold">Cooperaciones</h3>
-        <span className="text-red-500">*</span>
-        <span className="text-sm text-gray-500">(Seleccione una de las opciones)</span>
+        <span className="text-sm text-gray-500">(Opcional)</span>
       </div>
       
       {/* Lista de cooperaciones existentes */}

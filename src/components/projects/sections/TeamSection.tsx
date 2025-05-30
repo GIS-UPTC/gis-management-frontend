@@ -116,7 +116,7 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
       <Toaster position="top-center" />
       {/* Research Line Section */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">Línea de Investigación</h3>
+        <h3 className="text-lg font-semibold mb-4">Línea de Investigación (Opcional)</h3>
         <div className="space-y-4">
           <Combobox value={formData.research_line || null} onChange={handleSelectResearchLine}>
             <div className="relative">
@@ -129,7 +129,7 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
                   }}
                 >
                   <span className="text-gray-900">
-                  Seleccionar línea de investigación...
+                    {formData.research_line ? formData.research_line.name : 'Seleccionar línea de investigación (opcional)...'}
                   </span>
                   <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                 </Combobox.Button>

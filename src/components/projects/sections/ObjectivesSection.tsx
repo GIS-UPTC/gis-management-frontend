@@ -251,7 +251,7 @@ export default function ObjectivesSection({ formData, setFormData }: ObjectivesS
 
       {/* Keywords Section */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">Palabras Clave *</h3>
+        <h3 className="text-lg font-semibold mb-4">Palabras Clave</h3>
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
             <Combobox value={null} onChange={handleAddKeyword}>

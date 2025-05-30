@@ -44,6 +44,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const pathname = usePathname();
   const [isClient, setIsClient] = useState(false);
   const [hasAccess, setHasAccess] = useState(false);
+  
 
   useEffect(() => {
     setIsClient(true);

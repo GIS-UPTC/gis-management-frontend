@@ -18,7 +18,7 @@ const formatProjectData = (projectData: Omit<Project, 'id'>) => ({
   schedule_url: projectData.schedule_url,
   status: projectData.status,
   has_financing: projectData.has_financing,
-  research_line_id: projectData.research_line_id,
+  ...(projectData.research_line_id ? { research_line_id: projectData.research_line_id } : {}),
 
   ...(projectData.convocation && projectData.convocation !== '' ? { convocation: projectData.convocation } : {}),
   // Procesar el objetivo general y sus objetivos específicos anidados
@@ -36,7 +36,7 @@ const formatProjectData = (projectData: Omit<Project, 'id'>) => ({
     }
   } : {}),
 
-  project_keywords: projectData.project_keywords.map(kw => ({
+  project_keywords: (projectData.project_keywords || []).map(kw => ({
     ...(kw.id && { id: kw.id }),
     name: kw.name
   })),
@@ -65,8 +65,6 @@ const formatProjectData = (projectData: Omit<Project, 'id'>) => ({
       }
     } : {})
   }))
-
-
 });
 
 export const projectService = {
@@ -121,6 +119,7 @@ export const projectService = {
   async createProject(projectData: Omit<Project, 'id'>): Promise<Project> {
     try {
       const formattedData = formatProjectData(projectData);
+      console.log(formattedData)
       const response = await api.post<Project>('/projects', formattedData);
       return response.data;
     } catch (error) {

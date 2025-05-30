@@ -12,10 +12,10 @@ export const AVAILABLE_PERMISSIONS = {
 
 export const checkUserPermission = (action: string): boolean => {
   try {
-    // Obtener el usuario del sessionStorage
-    const userJson = sessionStorage.getItem('user');
+    // Obtener el usuario del localStorage
+    const userJson = localStorage.getItem('user');
     if (!userJson) {
-      console.error('No hay usuario en sessionStorage');
+      console.error('No hay usuario en localStorage');
       return false;
     }
 
@@ -50,9 +50,9 @@ export const checkUserPermission = (action: string): boolean => {
 
 export const getUserPermissions = (): string[] => {
   try {
-    const userJson = sessionStorage.getItem('user');
+    const userJson = localStorage.getItem('user');
     if (!userJson) {
-      console.error('No hay usuario en sessionStorage');
+      console.error('No hay usuario en localStorage');
       return [];
     }
 

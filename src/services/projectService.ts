@@ -86,10 +86,6 @@ export const projectService = {
     try {
       const response = await api.get(`/projects/${name}?only_actives=false`);
 
-      console.log("1 search priori")
-      console.log(response)
-      console.log("2 search priori")
-
       const updatedProjects: Project[] = response.data.map((project: Project) => ({
         ...project,
         participations: project.participations.map((participation: Participation) => ({
@@ -101,10 +97,6 @@ export const projectService = {
           cooperator_id: cooperation.cooperator?.id || null
         }))
       }));
-
-      console.log("1 search")
-      console.log(updatedProjects)
-      console.log("2 search")
 
       return updatedProjects;
     } catch (error) {
@@ -119,7 +111,6 @@ export const projectService = {
   async createProject(projectData: Omit<Project, 'id'>): Promise<Project> {
     try {
       const formattedData = formatProjectData(projectData);
-      console.log(formattedData)
       const response = await api.post<Project>('/projects', formattedData);
       return response.data;
     } catch (error) {
@@ -134,9 +125,6 @@ export const projectService = {
   async updateProject(id: number, projectData: Omit<Project, 'id'>): Promise<Project> {
     try {
       const formattedData = formatProjectData(projectData);
-      console.log("1 update")
-      console.log(formattedData)
-      console.log("2 update")
       const response = await api.put<Project>(`/projects/${id}`, formattedData);
       return response.data;
     } catch (error) {
@@ -150,7 +138,6 @@ export const projectService = {
 
   async changeProjectStatus(id: number, status: string): Promise<string> {
     try {
-
       const allowed = ["AC", "IN", "EJ", "CN", "FN"];
 
       if (!allowed.includes(status)) {

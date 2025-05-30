@@ -73,7 +73,7 @@ const Header: React.FC<HeaderProps> = ({ moduleName}): React.ReactElement => {
   const profileMenuRef = useRef<HTMLLIElement>(null);
 
   useEffect(() => {
-    const userStr = sessionStorage.getItem('user');
+    const userStr = localStorage.getItem('user');
     if (userStr) {
       try {
         const userData: User = JSON.parse(userStr);

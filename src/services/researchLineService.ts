@@ -1,11 +1,6 @@
 import api from './api';
 import { ResearchLine } from '@/types/models/GeneralModels';
 import { handleApiError } from '@/utils/errorHandler';
-import { AxiosError } from 'axios';
-
-interface ErrorResponse {
-  detail: string;
-}
 
 export class ResearchLineServiceError extends Error {
   constructor(message: string) {
@@ -34,23 +29,14 @@ export const researchLineService = {
       const response = await api.get<ResearchLine[]>(`/research_lines/${name}?with_inactives=${withInactives}`);
       return response.data;
     } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      if (axiosError.response?.data?.detail) {
-        if(axiosError.response.data.detail === 'Token invalido' || axiosError.response.data.detail === 'Se ha terminado el tiempo de la sesion') {
-          sessionStorage.removeItem('access_token');
-        }
-        throw new ResearchLineServiceError(axiosError.response.data.detail);
-      }
-      throw new ResearchLineServiceError('Error al buscar lineas de investigacion. Por favor, intente nuevamente.');
+      return handleApiError(
+        error,
+        ResearchLineServiceError,
+        'Error al buscar lineas de investigacion. Por favor, intente nuevamente.'
+      );
     }
   },
 
-  /**
-   * Creates a new research line
-   * @param data - The research line data to create
-   * @returns The created research line
-   * @throws ResearchLineServiceError if the creation fails
-   */
   async createResearchLine(data: Omit<ResearchLine, 'id'>): Promise<ResearchLine> {
     try {
       const formattedData = {
@@ -61,14 +47,11 @@ export const researchLineService = {
       const response = await api.post<ResearchLine>('/research_lines', formattedData);
       return response.data;
     } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      if (axiosError.response?.data?.detail) {
-        if(axiosError.response.data.detail === 'Token invalido' || axiosError.response.data.detail === 'Se ha terminado el tiempo de la sesion') {
-          sessionStorage.removeItem('access_token');
-        }
-        throw new ResearchLineServiceError(axiosError.response.data.detail);
-      }
-      throw new ResearchLineServiceError('Error al crear la linea de investigacion. Por favor, intente nuevamente.');
+      return handleApiError(
+        error,
+        ResearchLineServiceError,
+        'Error al crear la linea de investigacion. Por favor, intente nuevamente.'
+      );
     }
   },
 
@@ -82,14 +65,11 @@ export const researchLineService = {
       const response = await api.put<ResearchLine>(`/research_lines/${id}`, formattedData);
       return response.data;
     } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      if (axiosError.response?.data?.detail) {
-        if(axiosError.response.data.detail === 'Token invalido' || axiosError.response.data.detail === 'Se ha terminado el tiempo de la sesion') {
-          sessionStorage.removeItem('access_token');
-        }
-        throw new ResearchLineServiceError(axiosError.response.data.detail);
-      }
-      throw new ResearchLineServiceError('Error al crear la linea de investigacion. Por favor, intente nuevamente.');
+      return handleApiError(
+        error,
+        ResearchLineServiceError,
+        'Error al actualizar la linea de investigacion. Por favor, intente nuevamente.'
+      );
     }
   },
 
@@ -98,14 +78,11 @@ export const researchLineService = {
       await api.patch<ResearchLine>(`/research_lines/${id}`);
       return "Linea de investigacion actualizada exitosamente";
     } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      if (axiosError.response?.data?.detail) {
-        if(axiosError.response.data.detail === 'Token invalido' || axiosError.response.data.detail === 'Se ha terminado el tiempo de la sesion') {
-          sessionStorage.removeItem('access_token');
-        }
-        throw new ResearchLineServiceError(axiosError.response.data.detail);
-      }
-      throw new ResearchLineServiceError('Error al crear la linea de investigacion. Por favor, intente nuevamente.');
+      return handleApiError(
+        error,
+        ResearchLineServiceError,
+        'Error al actualizar el estado de la linea de investigacion. Por favor, intente nuevamente.'
+      );
     }
   }
 };

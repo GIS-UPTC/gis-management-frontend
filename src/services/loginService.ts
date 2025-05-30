@@ -24,7 +24,6 @@ export const loginService = {
     const formData = new URLSearchParams();
     formData.append('username', credentials.email);
 
-    // Encriptar la contraseña antes de enviarla
     const encryptedPassword = encryptPassword(credentials.password);
     formData.append('password', encryptedPassword);
 
@@ -37,10 +36,9 @@ export const loginService = {
 
       const { access_token, user } = response.data;
       
-      // Guardar token y usuario en sessionStorage
       setAuthToken(access_token);
-      sessionStorage.setItem('access_token', access_token);
-      sessionStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('access_token', access_token);
+      localStorage.setItem('user', JSON.stringify(user));
 
 
       return response.data;
@@ -57,14 +55,12 @@ export const loginService = {
 
   async logout() {
     try {
-      // Llamar al endpoint de logout en el backend
       await api.post('/auth/logout');
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     } finally {
-      // Limpiar datos de sesión localmente
-      sessionStorage.removeItem('access_token');
-      sessionStorage.removeItem('user');
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('user');
       setAuthToken(null);
       if (typeof window !== 'undefined') {
         window.location.href = '/auth/login';
@@ -73,16 +69,16 @@ export const loginService = {
   },
 
   getToken(): string | null {
-    return sessionStorage.getItem('access_token');
+    return localStorage.getItem('access_token');
   },
 
   getUser(): User | null {
-    const userStr = sessionStorage.getItem('user');
+    const userStr = localStorage.getItem('user');
     if (!userStr) return null;
     try {
       return JSON.parse(userStr) as User;
     } catch (error) {
-      console.error('Error al parsear usuario del sessionStorage:', error);
+      console.error('Error al parsear usuario del localStorage:', error);
       return null;
     }
   },

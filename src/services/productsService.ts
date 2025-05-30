@@ -110,7 +110,6 @@ export const productService = {
   async fetchProductTypes(name: string): Promise<Type[]> {
     try {
       const response = await api.get<Type[]>(`/product_types/${name}`);
-      console.log(response)
       return response.data;
     } catch (error) {
       return handleApiError(
@@ -123,7 +122,6 @@ export const productService = {
 
   async fetchProductSubtypes(name: string): Promise<Type[]> {
     try {
-      // Utilizamos el mismo endpoint pero filtramos por subtipos
       const response = await api.get<Type[]>(`/product_types/${name}`);
       return response.data;
     } catch (error) {

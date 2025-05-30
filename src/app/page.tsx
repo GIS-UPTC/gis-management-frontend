@@ -9,7 +9,7 @@ export default function HomePage() {
 
   useEffect(() => {
     // Verificar si el usuario está autenticado
-    const userStr = sessionStorage.getItem('user');
+    const userStr = localStorage.getItem('user');
     let user: User | null = null;
     
     if (userStr) {

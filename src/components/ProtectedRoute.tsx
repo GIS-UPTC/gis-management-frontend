@@ -48,9 +48,9 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   useEffect(() => {
     setIsClient(true);
-    const accessToken = sessionStorage.getItem('access_token');
+    const accessToken = localStorage.getItem('access_token');
     
-    const userStr = sessionStorage.getItem('user');
+    const userStr = localStorage.getItem('user');
     
     // Permitir acceso a las rutas públicas sin autenticación
     if (pathname.startsWith('/publico')) {

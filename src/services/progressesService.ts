@@ -40,7 +40,6 @@ export const progressService = {
 
     async createProgress(progressData: Omit<Progress, 'id'>, file?: File): Promise<Progress> {
         try {
-
             const formattedData = {
                 type: progressData.type,
                 user_id: progressData.user.id,
@@ -49,8 +48,6 @@ export const progressService = {
                 ...(progressData.description ? { description: progressData.description } : {}),
                 ...(progressData.document_link ? { document_link: progressData.document_link } : {})
             }
-
-            console.log(formattedData)
 
             const formData = new FormData();
 

@@ -27,7 +27,6 @@ export const accessService = {
   async fetchAccesses(name: string): Promise<Access[]> {
     try {
       const response = await api.get<Access[]>(`/accesses/${name}?all=true`);
-      console.log(response.data);
       return response.data;
     } catch (error) {
       console.log(error);

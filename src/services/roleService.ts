@@ -3,7 +3,6 @@ import { handleApiError, ServiceError } from '@/utils/errorHandler';
 import api from './api';
 import { Role } from '@/types/models/GeneralModels';
 
-// Error específico para el servicio de roles
 export class RoleServiceError extends ServiceError {
   constructor(message: string) {
     super(message, 'RoleServiceError');

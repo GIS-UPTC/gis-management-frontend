@@ -28,6 +28,43 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
   const [isResearchLineOpen, setIsResearchLineOpen] = useState(false);
   const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(false);
 
+  // Calcular la fecha máxima permitida basada en la duración del proyecto
+  const calculateMaxDate = () => {
+    if (!formData.creation_date || !formData.duration || !formData.duration_type) {
+      return new Date().toISOString().split('T')[0];
+    }
+
+    const startDate = new Date(formData.creation_date);
+    const maxDate = new Date(startDate);
+
+    switch (formData.duration_type) {
+      case 'DD':
+        maxDate.setDate(startDate.getDate() + formData.duration);
+        break;
+      case 'MM':
+        maxDate.setMonth(startDate.getMonth() + formData.duration);
+        break;
+      case 'AA':
+        maxDate.setFullYear(startDate.getFullYear() + formData.duration);
+        break;
+    }
+
+    return maxDate.toISOString().split('T')[0];
+  };
+
+  // Validar que la fecha de inicio esté dentro del rango del proyecto
+  const validateStartDate = (date: string) => {
+    if (!formData.creation_date) return true;
+    return date >= formData.creation_date;
+  };
+
+  // Validar que la fecha de fin esté dentro del rango del proyecto
+  const validateEndDate = (date: string) => {
+    if (!date) return true;
+    const maxDate = calculateMaxDate();
+    return date <= maxDate;
+  };
+
   const fetchResearchLines = async () => {
     try {
       setIsLoading(true);
@@ -77,6 +114,17 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
 
   const handleAddParticipation = () => {
     if (selectedUser && newParticipation.start_date && newParticipation.role && newParticipation.responsibility) {
+      // Validar fechas
+      if (!validateStartDate(newParticipation.start_date)) {
+        toast.error('La fecha de inicio debe ser posterior a la fecha de creación del proyecto');
+        return;
+      }
+
+      if (newParticipation.end_date && !validateEndDate(newParticipation.end_date)) {
+        toast.error('La fecha de fin debe estar dentro del rango de duración del proyecto');
+        return;
+      }
+
       const participation: Participation = {
         id: Date.now(),
         user: selectedUser,
@@ -311,14 +359,18 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
                     <input
                       type="date"
                       value={newParticipation.start_date}
-                      onChange={(e) => setNewParticipation(prev => ({ ...prev, start_date: e.target.value }))}
+                      onChange={(e) => {
+                        const date = e.target.value;
+                        if (validateStartDate(date)) {
+                          setNewParticipation(prev => ({ ...prev, start_date: date }));
+                        } else {
+                          toast.error('La fecha de inicio debe ser posterior a la fecha de creación del proyecto');
+                        }
+                      }}
                       className="w-full p-2 border rounded-lg"
                       required
-                      max={(() => {
-                        const today = new Date();
-                        const maxDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                        return maxDate.toISOString().split('T')[0];
-                      })()}
+                      min={formData.creation_date}
+                      max={calculateMaxDate()}
                     />
                   </div>
                   <div>
@@ -328,13 +380,17 @@ export default function TeamSection({ formData, setFormData }: TeamSectionProps)
                     <input
                       type="date"
                       value={newParticipation.end_date}
-                      onChange={(e) => setNewParticipation(prev => ({ ...prev, end_date: e.target.value }))}
+                      onChange={(e) => {
+                        const date = e.target.value;
+                        if (validateEndDate(date)) {
+                          setNewParticipation(prev => ({ ...prev, end_date: date }));
+                        } else {
+                          toast.error('La fecha de fin debe estar dentro del rango de duración del proyecto');
+                        }
+                      }}
                       className="w-full p-2 border rounded-lg"
-                      max={(() => {
-                        const today = new Date();
-                        const maxDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                        return maxDate.toISOString().split('T')[0];
-                      })()}
+                      min={newParticipation.start_date || formData.creation_date}
+                      max={calculateMaxDate()}
                     />
                   </div>
                   <div>

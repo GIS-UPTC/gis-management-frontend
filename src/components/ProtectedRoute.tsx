@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, ReactNode, useState } from 'react';
 import { User } from '@/types/models/GeneralModels';
+import { loginService } from '@/services/loginService';
 
 // Mapeo de rutas a accesos requeridos
 const routeAccessMap: Record<string, string[]> = {
@@ -48,9 +49,10 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   useEffect(() => {
     setIsClient(true);
-    const accessToken = localStorage.getItem('access_token');
     
-    const userStr = localStorage.getItem('user');
+    // Usar el servicio de login actualizado que prioriza cookies
+    const accessToken = loginService.getToken();
+    const user = loginService.getUser();
     
     // Permitir acceso a las rutas públicas sin autenticación
     if (pathname.startsWith('/publico')) {
@@ -74,10 +76,8 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
       return;
     }
 
-    if (userStr) {
+    if (user) {
       try {
-        const user: User = JSON.parse(userStr);
-        
         // Verificar si el usuario tiene los accesos requeridos
         const userAccesses = user.role_granting_list.flatMap(granting => 
           granting.role.accesses.map(access => access.name)

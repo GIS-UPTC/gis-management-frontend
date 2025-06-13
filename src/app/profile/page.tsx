@@ -25,6 +25,7 @@ export default function ProfilePage() {
   useEffect(() => {
     const loadUser = () => {
       try {
+        // Usar el servicio de login actualizado que prioriza cookies
         const currentUser = loginService.getUser();
         if (!currentUser) {
           toast.error('No se encontró información del usuario');

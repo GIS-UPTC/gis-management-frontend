@@ -3,22 +3,14 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { User } from '@/types/models/GeneralModels';
+import { loginService } from '@/services/loginService';
 
 export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Verificar si el usuario está autenticado
-    const userStr = localStorage.getItem('user');
-    let user: User | null = null;
-    
-    if (userStr) {
-      try {
-        user = JSON.parse(userStr);
-      } catch (error) {
-        console.error('Error al parsear datos del usuario:', error);
-      }
-    }
+    // Usar el servicio de login actualizado que prioriza cookies
+    const user: User | null = loginService.getUser();
 
     // Si el usuario está autenticado, redirigir a la página principal de la aplicación
     // Si no está autenticado, redirigir a la sección pública

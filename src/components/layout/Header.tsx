@@ -73,14 +73,10 @@ const Header: React.FC<HeaderProps> = ({ moduleName}): React.ReactElement => {
   const profileMenuRef = useRef<HTMLLIElement>(null);
 
   useEffect(() => {
-    const userStr = localStorage.getItem('user');
-    if (userStr) {
-      try {
-        const userData: User = JSON.parse(userStr);
-        setUser(userData);
-      } catch (error) {
-        console.error('Error al obtener datos del usuario:', error);
-      }
+    // Usar el servicio de login actualizado que prioriza cookies
+    const userData = loginService.getUser();
+    if (userData) {
+      setUser(userData);
     }
   }, []);
 

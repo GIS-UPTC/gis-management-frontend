@@ -1,31 +1,22 @@
 import { useState, useEffect } from 'react';
 import { User } from '@/types/models/GeneralModels';
+import { loginService } from '@/services/loginService';
 
 export function usePermissions() {
   const [user, setUser] = useState<User | null>(null);
   
   useEffect(() => {
-    const userStr = localStorage.getItem('user');
-    if (userStr) {
-      try {
-        setUser(JSON.parse(userStr));
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-      }
+    // Usar el servicio de login actualizado que prioriza cookies
+    const currentUser = loginService.getUser();
+    if (currentUser) {
+      setUser(currentUser);
     }
   }, []);
 
   const hasPermission = (accessName: string, permissionName: string): boolean => {
-    const userStr = localStorage.getItem('user');
-    if (!userStr) return false;
-    
-    let currentUser: User;
-    try {
-      currentUser = JSON.parse(userStr);
-    } catch (error) {
-      console.error('Error parsing user data in hasPermission:', error);
-      return false;
-    }
+    // Usar el servicio de login actualizado que prioriza cookies
+    const currentUser = loginService.getUser();
+    if (!currentUser) return false;
     
     if (currentUser.is_group_leader) {
       console.log('Usuario es líder de grupo, tiene todos los permisos');

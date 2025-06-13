@@ -1,5 +1,5 @@
 import { User, Permission } from '@/types/models/GeneralModels';
-import { loginService } from '@/services/loginService';
+import CookieService from '@/services/cookieService';
 
 /**
  * Lista de permisos disponibles en el sistema
@@ -9,10 +9,8 @@ export const AVAILABLE_PERMISSIONS = {
   READ: 'read',
   UPDATE: 'update',
   DELETE: 'delete',
-  EDIT: 'edit',
   CHANGE_ACTIVATION: 'change_activation',
   CHANGE_PASSWORD: 'change_password',
-  CHANGE_STATUS: 'change_status',
   VIEW_REPORTS: 'view_reports',
   MANAGE_ROLES: 'manage_roles',
   MANAGE_PERMISSIONS: 'manage_permissions',
@@ -20,16 +18,17 @@ export const AVAILABLE_PERMISSIONS = {
 
 /**
  * Verifica si el usuario tiene un permiso específico
- * Ahora usa el servicio de login actualizado que prioriza cookies sobre localStorage
+ * Funciona tanto en cliente como en servidor usando cookies
  * @param action - Acción a verificar
+ * @param cookieHeader - Header de cookies del servidor (opcional)
  */
-export const checkUserPermission = (action: string): boolean => {
+export const checkUserPermissionSSR = (action: string, cookieHeader?: string): boolean => {
   try {
-    // Usar el servicio de login actualizado que prioriza cookies
-    const user: User | null = loginService.getUser();
+    // Obtener el usuario desde las cookies
+    const user: User | null = CookieService.getUserData(cookieHeader);
     
     if (!user) {
-      console.error('No hay usuario disponible');
+      console.error('No hay usuario en las cookies');
       return false;
     }
 
@@ -62,15 +61,15 @@ export const checkUserPermission = (action: string): boolean => {
 
 /**
  * Obtiene todos los permisos del usuario
- * Ahora usa el servicio de login actualizado que prioriza cookies sobre localStorage
+ * Funciona tanto en cliente como en servidor usando cookies
+ * @param cookieHeader - Header de cookies del servidor (opcional)
  */
-export const getUserPermissions = (): string[] => {
+export const getUserPermissionsSSR = (cookieHeader?: string): string[] => {
   try {
-    // Usar el servicio de login actualizado que prioriza cookies
-    const user: User | null = loginService.getUser();
+    const user: User | null = CookieService.getUserData(cookieHeader);
     
     if (!user) {
-      console.error('No hay usuario disponible');
+      console.error('No hay usuario en las cookies');
       return [];
     }
 
@@ -100,3 +99,19 @@ export const getUserPermissions = (): string[] => {
     return [];
   }
 };
+
+/**
+ * Verifica si el usuario está autenticado
+ * @param cookieHeader - Header de cookies del servidor (opcional)
+ */
+export const isUserAuthenticatedSSR = (cookieHeader?: string): boolean => {
+  return CookieService.isAuthenticated(cookieHeader);
+};
+
+/**
+ * Obtiene el usuario actual
+ * @param cookieHeader - Header de cookies del servidor (opcional)
+ */
+export const getCurrentUserSSR = (cookieHeader?: string): User | null => {
+  return CookieService.getUserData(cookieHeader);
+}; 

@@ -10,10 +10,16 @@ export class UserServiceSSRError extends Error {
   }
 }
 
+// Tipo para el role granting transformado para la API
+interface TransformedRoleGranting {
+  role_id: number;
+  permissions_ids: number[];
+}
+
 // Función helper para formatear datos de usuario
 const formatUserData = (
   userData: Omit<User, 'id'>, 
-  transformRoleGrantingList: (roleGrantingList: RoleGranting[]) => any[]
+  transformRoleGrantingList: (roleGrantingList: RoleGranting[]) => TransformedRoleGranting[]
 ) => {
   return {
     name: userData.first_name,
@@ -81,7 +87,7 @@ export const userServiceSSR = {
    */
   async createUser(userData: Omit<User, 'id'>, file?: File, cookieHeader?: string): Promise<User> {
     try {
-      const transformRoleGrantingList = (roleGrantingList: RoleGranting[]) => {
+      const transformRoleGrantingList = (roleGrantingList: RoleGranting[]): TransformedRoleGranting[] => {
         return roleGrantingList.map(item => ({
           role_id: item.role.id,
           permissions_ids: item.permissions.map(p => p.id)
@@ -125,7 +131,7 @@ export const userServiceSSR = {
    */
   async updateUser(id: number, userData: Omit<User, 'id'>, cookieHeader?: string): Promise<User> {
     try {
-      const transformRoleGrantingList = (roleGrantingList: RoleGranting[]) => {
+      const transformRoleGrantingList = (roleGrantingList: RoleGranting[]): TransformedRoleGranting[] => {
         return roleGrantingList.map(item => ({
           role_id: item.role.id,
           permissions_ids: item.permissions.map(p => p.id)

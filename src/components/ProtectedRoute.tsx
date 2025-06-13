@@ -2,7 +2,6 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, ReactNode, useState } from 'react';
-import { User } from '@/types/models/GeneralModels';
 import { loginService } from '@/services/loginService';
 
 // Mapeo de rutas a accesos requeridos

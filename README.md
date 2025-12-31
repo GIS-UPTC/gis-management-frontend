@@ -71,8 +71,3 @@ src/
 ├── utils/            # Utilidades y helpers
 ├── types/            # Definiciones de tipos TypeScript
 └── middleware.ts     # Middleware de autenticación y protección de rutas
-```
-
-## 📄 Documentación Adicional
-
-Para más detalles sobre la implementación técnica del SSR y la gestión de cookies, consulta el archivo [SSR_IMPLEMENTATION.md](./SSR_IMPLEMENTATION.md).
